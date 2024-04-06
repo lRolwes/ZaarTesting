@@ -13,7 +13,6 @@ import {
   sepolia,
 } from 'wagmi/chains';
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-
 const config = getDefaultConfig({
   appName: 'Zaar',
   projectId: 'YOUR_PROJECT_ID',
