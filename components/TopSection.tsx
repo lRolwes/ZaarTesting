@@ -2,13 +2,15 @@
 import Image from 'next/image';
 import React from "react";
 import { useAccount, useDisconnect, useEnsAvatar, useEnsName, useBalance} from 'wagmi'
+import useNormalizedBalance from "./Account";
 
 export const TopSection = () => {
-    const { address } = useAccount()
-    const { disconnect } = useDisconnect()
+    const { address } = useAccount();
     const { data: ensName } = useEnsName({ address })
     const { data: ensAvatar } = useEnsAvatar({ name: ensName! })
-    const { balance} = useBalance({ address: address!})
+    const { normalizedBalance, normloading, normerror } = useNormalizedBalance();
+    if (normloading) return <div>Loading...</div>;
+    if (normerror) return <div>Error: {error.message}</div>;
 
     return(
         <div className="w-full z-50 h-[140px]">
@@ -37,7 +39,7 @@ export const TopSection = () => {
                             </div>
                         </div>
                         <div className="flex flex-col items-left justify-left w-1/3 max-w-20 sm:w-auto mb-2 sm:mb-0 mr-0 sm:mr-6">
-                            <div className="bg-dark-gray border border-dark-gray-all text-yellow font-bold text-2xl px-3 py-1 rounded">{balance ? balance : 0}</div>
+                            <div className="bg-dark-gray border border-dark-gray-all text-yellow font-bold text-2xl px-3 py-1 rounded">{normalizedBalance !== null ? normalizedBalance.toString() : '0'}</div>
                             <div className="text-light-green mt-2 text-sm uppercase">
                                 <Image 
                                 src="/images/prtc-token-icon.png" 
