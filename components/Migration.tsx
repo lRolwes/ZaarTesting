@@ -1,13 +1,15 @@
 import Image from 'next/image';
 import React from "react";
 import { useAccount, useDisconnect, useEnsAvatar, useEnsName, useBalance} from 'wagmi'
-
+import { useReadPrtc, useReadPrtcBalanceOf } from '../generated';
 export const Migration = () => {
     const { address } = useAccount()
-    const { disconnect } = useDisconnect()
-    const { data: ensName } = useEnsName({ address })
-    const { data: ensAvatar } = useEnsAvatar({ name: ensName! })
-    const { balance} = useBalance({ address: address!})
+    /*const { balance} = useBalance({ address: address!})
+    const { data } = useReadPrtcBalanceOf({
+        address: '0x3604e94d1208c16a805f1be2e0c94199295ff4e4',
+    })*/
+    const res = useReadPrtcBalanceOf({ account: '0x52cb712bE013B45208D1223d1dBC060Ee6b06B9a' });
+    console.log(res)
 return(
 
 <div className="pt-2 px-0 py-4 sm:px-8 ">
@@ -16,9 +18,9 @@ return(
         <div className="mb-4 w-[500px]">
             <a href="#collections" className="inline-block bg-gray text-light-green py-2 px-4 uppercase text-xs rounded-sm font-bold hover:bg-gray-100 hover:text-black transition-colors duration-300 ease-in-out mb-4">Unstake</a>
             <div className="relative bg-dark-gray rounded-sm shadow-md h-30 py-[50px] w-full">
-            <input id="you-pay" type = "text" className="w-full h-full tracking-wider bg-transparent pl-4 text-3xl font-semibold outline-none" placeholder= {balance ? balance : 0}/>
+            <input id="you-pay" type = "text" className="w-full h-full tracking-wider bg-transparent pl-4 text-3xl font-semibold outline-none" placeholder= '0'/>
             <span className="absolute left-4 top-4 text-gray uppercase text-xs">You migrate</span>
-            <span className="absolute right-4 bottom-3 text-gray text-sm uppercase" id="balance">Balance: {balance ? balance : 0} PRTC</span>
+            <span className="absolute right-4 bottom-3 text-gray text-sm uppercase" id="balance">Balance:0 PRTC</span>
             {/* Max button removed */}
             <span className="absolute text-2xl right-4 top-1/2 transform -translate-y-1/2 text-xl font-bold cursor-default font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center bg-gray uppercase mt-1">
                 <Image 
