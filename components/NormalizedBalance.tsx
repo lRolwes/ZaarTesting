@@ -1,22 +1,14 @@
-import Image from "next/image";
-import React from "react";
 import { useState, useEffect } from "react";
 import {
   useAccount,
-  useDisconnect,
-  useEnsAvatar,
-  useEnsName,
-  useBalance,
 } from "wagmi";
 import {
-  useReadPrtc,
   useReadPrtcBalanceOf,
   useReadPrtcDecimals,
 } from "../generated";
 
 const useNormalizedBalance = () => {
   const { address } = useAccount();
-
   const {
     data: balance,
     loading: balanceLoading,
