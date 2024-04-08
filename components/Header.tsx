@@ -29,14 +29,7 @@ export const Header = () => {
                 height={30}
                 />
             </a>
-            <div className="absolute translate-y-[80px] left-0 ml-0 w-[150px] bg-black border border-dark-gray-all rounded-sm shadow-lg transition-opacity duration-300 visible hover:visible opacity-0 hover:opacity-100 z-20 uppercase">
-                        {/* Each menu item is a block element with padding, text color, border, and hover effect */}
-                        <a href="#" className="block px-4 py-3 text-sm text-light-green border-b border-dark-gray hover:bg-gray-900 hover:text-white"><i className="far fa-user-alt text-gray mr-2"></i>Profile</a>
-                        <a href="#" className="block px-4 py-3 text-sm text-light-green border-b border-dark-gray hover:bg-gray-900 hover:text-white"><i className="fal fa-eye text-gray mr-2"></i>Watchlist</a>
-                        <a href="settings.html" className="block px-4 py-3 text-sm text-light-green border-b border-dark-gray hover:bg-gray-900 hover:text-white"><i className="far fa-cog text-gray mr-2"></i>Settings</a>
-                        {/* Add a negative margin to remove the gap */}
-                        <a href="#" className="block px-4 py-3 text-sm text-light-green hover:bg-gray-900 hover:text-white"><i className="fas fa-sign-out text-gray mr-2"></i>Log Out</a>
-            </div>
+            
 
             {/* Spacer div to push navigation to the edge */}
             <div className="flex-grow md:hidden"></div>
@@ -66,21 +59,7 @@ export const Header = () => {
                 <div className="group relative  z-20 flex flex-row">
 
                     <CustomButton/>
-
-                    {/* Dropdown Menu 
-
-                    <div className = "ml-7">Dropdown</div>
-                    <div className="absolute left-0 translate-x-[-65px] w-[calc(100%+65px)] bg-black border border-dark-gray-all rounded-sm shadow-lg transition-opacity duration-300 invisible group-hover:visible opacity-0 group-hover:opacity-100 z-20 uppercase">
-                        <a href="#" className="block px-4 py-3 text-sm text-light-green border-b border-dark-gray hover:bg-gray-900 hover:text-white"><i className="far fa-user-alt text-gray mr-2"></i>Profile</a>
-                        <a href="#" className="block px-4 py-3 text-sm text-light-green border-b border-dark-gray hover:bg-gray-900 hover:text-white"><i className="fal fa-eye text-gray mr-2"></i>Watchlist</a>
-                        <a href="settings.html" className="block px-4 py-3 text-sm text-light-green border-b border-dark-gray hover:bg-gray-900 hover:text-white"><i className="far fa-cog text-gray mr-2"></i>Settings</a>
-                        <a href="#" className="block px-4 py-3 text-sm text-light-green hover:bg-gray-900 hover:text-white"><i className="fas fa-sign-out text-gray mr-2"></i>Log Out</a>
-                    </div>
-                     */}
                 </div>
-               
-
-  
             </div>
         </div>
         </div>

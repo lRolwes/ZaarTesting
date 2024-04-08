@@ -1,90 +1,69 @@
+/*
+This file displays the migration component. 
+It allows users to migrate their PRTC tokens to Zaar tokens.
+*/
 import Image from "next/image";
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect} from "react";
 import {
   useAccount,
   useWriteContract,
 } from "wagmi";
 import {
-  useReadPrtc,
-  useReadPrtcBalanceOf,
   useReadPrtcDecimals,
   useReadPrtcAllowance,
   zaarAddress,
   useSimulatePrtcApprove,
   useSimulateZaarBridge,
-  useReadZaarBalanceOf, 
   useReadZaarDecimals,
 } from "../generated";
-import { addressResolverAbi } from "viem/_types/constants/abis";
+import useNormalizedBalance from "./NormalizedBalance";
 export const Migration = () => {
   //current user address
   const { address } = useAccount();
-  //reading user account balance unormalized
-  const {
-    data: balance,
-    error: balanceError,
-  } = useReadPrtcBalanceOf({ args: [address] });
-  const {
-    data: zaarBalance,
-    error: zaarBalanceError,
-  } = useReadZaarBalanceOf({ args: [address] });
-  const [normalizedBalance, setNormalizedBalance] = useState(null);
-  const [normalizedZaarBalance, setNormalizedZaarBalance] = useState(null);
-
   //reads number of decimals for this currency
-  const { data: zaarDecimal, error: zaarDecimalError } = useReadZaarDecimals();
   const { data: prtcDecimal, error: prtcDecimalError } = useReadPrtcDecimals();
-  useEffect(() => {
-    if (balance && prtcDecimal) {
-      setNormalizedBalance(balance / BigInt(Math.pow(10, prtcDecimal)));
-    }
-  }, [balance, prtcDecimal]);
-  useEffect(() => {
-    if (zaarBalance && zaarDecimal) {
-      setNormalizedZaarBalance(zaarBalance / BigInt(Math.pow(10, zaarDecimal)));
-    }
-  }, [zaarBalance, zaarDecimal]);
+  const { normalizedPrtcBalance, normalizedZaarBalance, normerror } = useNormalizedBalance();
   //reads current approved allowance
   const { data: allowance, error: allowanceError } = useReadPrtcAllowance({
     args: [address, zaarAddress[11155111]],
   });
   //stores amount to be migrated from input field
   //initialized to balance
-  const [youPay, setYouPay] = useState(
-    normalizedBalance ? normalizedBalance.toString() : ""
+  const [payAmntNormalized, setYouPay] = useState(
+    normalizedPrtcBalance ? normalizedPrtcBalance.toString() : ""
   );
-  //compares payment amount to current allowance
-  //converts payment amount to un-normalized form
-  //stores the amount remaining to be approved unormalized
-  const apprAmnt =
-    (youPay ? BigInt(youPay) : BigInt(0)) *
-      BigInt(Math.pow(10, prtcDecimal ? prtcDecimal : 0)) -
-    (allowance ? allowance : BigInt(0));
-  //converts payment amount to un-normalized form
-  const payAmnt =
-    (youPay ? BigInt(youPay) : BigInt(0)) *
-    BigInt(Math.pow(10, prtcDecimal ? prtcDecimal : 0));
-  //handles input from payment amount input box
+  //collects input from payment amount input box
   const handleInputChange = (event) => {
     setYouPay(event.target.value);
   };
-  //do we have funds to approve before we can migrate?
-  const [approved, setApproved] = useState(apprAmnt<=0);
-  // get prepared function to approve
+  //converts payment amount to un-normalized form
+  const payAmntUnormalized =
+    (payAmntNormalized ? BigInt(payAmntNormalized) : BigInt(0)) *
+    BigInt(Math.pow(10, prtcDecimal ? prtcDecimal : 0));
+  //compares payment amount to current allowance
+  //stores the amount remaining to be approved unormalized in variable approvalAmnt
+  const approvalAmnt =
+    (payAmntUnormalized ? BigInt(payAmntUnormalized) : BigInt(0)) -
+    (allowance ? allowance : BigInt(0));
+  //Checks if we have funds approved before we can migrate
+  const [approved, setApproved] = useState(approvalAmnt<=0);
+  //get prepared function to approve
   const { data: approve } = useSimulatePrtcApprove({
-    args: [zaarAddress[11155111], apprAmnt],
+    args: [zaarAddress[11155111], approvalAmnt],
   });
-  const { writeContract } = useWriteContract();
   // get prepared function to migrate
   const { data: bridge } = useSimulateZaarBridge({
-    args: [payAmnt],
+    args: [payAmntUnormalized],
   });
-
+  //creating a Write contract to use our prepared functions
+  const { writeContract } = useWriteContract();
+  
   //operations to be executed after approving funds
   //if we need to approve funds before migrating set to false
+  //this helps determine if the migrate button should be enabled
   function approveClick() {
-    if (apprAmnt <=0 ) {
+    if (approvalAmnt <=0 ) {
         setApproved(true);
     }
     else { 
@@ -115,9 +94,9 @@ export const Migration = () => {
               type="text"
               className="w-full h-full tracking-wider bg-transparent pl-4 text-3xl font-semibold outline-none"
               placeholder={
-                normalizedBalance !== null ? normalizedBalance.toString() : "0"
+                normalizedPrtcBalance !== null ? normalizedPrtcBalance.toString() : "0"
               }
-              value={youPay}
+              value={payAmntNormalized}
               onChange={handleInputChange}
             />
             <span className="absolute left-4 top-4 text-gray uppercase text-xs">
@@ -128,8 +107,8 @@ export const Migration = () => {
               id="balance"
             >
               Balance:
-              {normalizedBalance !== null
-                ? normalizedBalance.toString()
+              {normalizedPrtcBalance !== null
+                ? normalizedPrtcBalance.toString()
                 : "0"}{" "}
               PRTC
             </span>
@@ -150,10 +129,10 @@ export const Migration = () => {
         <div className="mb-4 h-full w-[500px]">
           <div className="relative bg-dark-gray rounded-sm shadow-md h-300 py-[50px]">
             <div className="w-full h-full bg-transparent pl-4 text-3xl font-semibold outline-none">
-              {youPay
-                ? youPay.toString()
-                : normalizedBalance
-                  ? normalizedBalance.toString()
+              {payAmntNormalized
+                ? payAmntNormalized.toString()
+                : normalizedPrtcBalance
+                  ? normalizedPrtcBalance.toString()
                   : "0"}
             </div>
             <span className="absolute left-4 top-4 text-gray uppercase text-xs">
@@ -182,9 +161,9 @@ export const Migration = () => {
           </div>
           <button
             id="approve-btn"
-            className="mt-4 bg-yellow text-black uppercase font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+            className={`mt-4 bg-yellow text-black uppercase font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline w-full ${(!Boolean(approve?.request)) ? 'opacity-50' : ''}`}
             type="button"
-            disabled={!Boolean(approve?.request)}
+            disabled={!Boolean(approve?.request) }
             onClick={() => {
                 writeContract(approve!.request);
                 approveClick();

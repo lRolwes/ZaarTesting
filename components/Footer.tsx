@@ -36,39 +36,7 @@ export const Footer = () =>{
                 <a target="_blank" rel="noopener noreferrer">Feedback</a>
                 </li>
             </ul>
-            <div className="flex items-center gap-3">
-                <div className="flex items-center gap-3">
-                <div className="flex gap-1 items-center">
-                    {/* Placeholder for currency display icon */}
-                    <div className="text-xs text-gray font-medium"><i className="fab fa-ethereum text-white"></i> $3,568.69</div>
-                </div>
-                </div>
-                <div className="border-r h-full w-1 h-4"></div>
-                <div className="flex gap-3">
-                <div className="flex hidden sm:inline-block">
-                    <div className="text-gray-400 flex items-center gap-1 text-xs font-medium">
-                    {/* Placeholder for list icon */}
-                    <span className="text-gray"><i className="fas fa-lg fa-gas-pump"></i> 11</span>
-                    </div>
-                </div>
-                <div className="hidden sm:inline-block rounded hover:text-gray cursor-pointer text-gray font-normal text-xs flex items-center border border-dark-gray-all py-[3px] pl-2 pr-0.5" aria-expanded="false">
-                    Standard
-                    <i className="fas fa-caret-down ml-1"></i>
-                </div>
-                </div>
-                <div className="border-r h-full w-1 h-4"></div>
-                <div className="flex items-center rounded-sm border border-dark-gray-all h-7">
-                {/* Placeholder for button labeled 'Pro' */}
-                <button type="button" className="!hover:border-gray-400 flex items-center justify-center rounded-sm cursor-pointer px-2 text-xs py-1.5 font-medium text-gray hover:text-gray-600 h-6.5">
-                    Pro
-                </button>
-                <div className="h-7 w-[1px] bg-dark-gray-all"></div>
-                {/* Placeholder for button labeled 'Collector' */}
-                <button type="button" className="!hover:border-gray-400 flex items-center justify-center rounded-sm cursor-pointer px-2 text-xs py-1.5 font-medium text-yellow hover:text-gray-600 h-6.5 text-primary bg-gray">
-                    Collector
-                </button>
-                </div>
-            </div>
+   
             </div>
         </nav>
     </div>

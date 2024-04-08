@@ -8,9 +8,7 @@ export const TopSection = () => {
     const { address } = useAccount();
     const { data: ensName } = useEnsName({ address })
     const { data: ensAvatar } = useEnsAvatar({ name: ensName! })
-    const { normalizedBalance, normloading, normerror } = useNormalizedBalance();
-    if (normloading) return <div>Loading...</div>;
-    if (normerror) return <div>Error: {error.message}</div>;
+    const { normalizedPrtcBalance, normalizedZaarBalance, normerror } = useNormalizedBalance();
 
     return(
         <div className="w-full z-50 h-[140px]">
@@ -39,7 +37,7 @@ export const TopSection = () => {
                             </div>
                         </div>
                         <div className="flex flex-col items-left justify-left w-1/3 max-w-20 sm:w-auto mb-2 sm:mb-0 mr-0 sm:mr-6">
-                            <div className="bg-dark-gray border border-dark-gray-all text-yellow font-bold text-2xl px-3 py-1 rounded">{normalizedBalance !== null ? normalizedBalance.toString() : '0'}</div>
+                            <div className="bg-dark-gray border border-dark-gray-all text-yellow font-bold text-2xl px-3 py-1 rounded">{normalizedPrtcBalance !== null ? normalizedPrtcBalance.toString() : '0'}</div>
                             <div className="text-light-green mt-2 text-sm uppercase">
                                 <Image 
                                 src="/images/prtc-token-icon.png" 
@@ -49,6 +47,19 @@ export const TopSection = () => {
                                 height={100}
                                 /> 
                                 PRTC
+                            </div>
+                        </div>
+                        <div className="flex flex-col items-left justify-left w-1/3 max-w-20 sm:w-auto mb-2 sm:mb-0 mr-0 sm:mr-6">
+                            <div className="bg-dark-gray border border-dark-gray-all text-yellow font-bold text-2xl px-3 py-1 rounded">{normalizedZaarBalance !== null ? normalizedZaarBalance.toString() : '0'}</div>
+                            <div className="text-light-green mt-2 text-sm uppercase">
+                                <Image 
+                                src="/images/zaar-token-icon.png" 
+                                alt="logo" 
+                                className="rounded-sm h-5 inline-block mr-1 md:ml-0"
+                                width={30}
+                                height={100}
+                                /> 
+                                ZAAR
                             </div>
                         </div>
                     </div>
