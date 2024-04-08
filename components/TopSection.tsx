@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import React from "react";
 import { useAccount, useDisconnect, useEnsAvatar, useEnsName, useBalance} from 'wagmi'
-import useNormalizedBalance from "./Account";
+import useNormalizedBalance from "./NormalizedBalance";
 
 export const TopSection = () => {
     const { address } = useAccount();
