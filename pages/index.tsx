@@ -6,7 +6,7 @@ import { Footer } from '../components/Footer';
 import { Header } from '../components/Header';
 import { TopSection } from '../components/TopSection';
 import { Migration } from '../components/Migration';
-import { CustomButton } from '../components/CustomButton';
+import { CustomButton } from '../components/ConnectWallet';
 
 const Home: NextPage = () => {
   return (

@@ -2,18 +2,14 @@
 import Image from 'next/image';
 import React from "react";
 import { useAccount, useDisconnect, useEnsAvatar, useEnsName, useBalance} from 'wagmi'
-import useNormalizedBalance from "./NormalizedBalance";
+import useNormalizedBalance from "../hooks/NormalizedBalance";
 
 export const TopSection = () => {
-    const { address } = useAccount();
-    const { data: ensName } = useEnsName({ address })
-    const { data: ensAvatar } = useEnsAvatar({ name: ensName! })
-    const { normalizedPrtcBalance, normalizedZaarBalance, normerror } = useNormalizedBalance();
+    const { normalizedPrtcBalance, normalizedZaarBalance } = useNormalizedBalance();
 
     return(
         <div className="w-full z-50 h-[140px]">
             {/* top section */}
-
             <div className="bg-dark-gray h-full w-full bg-gradient-to-b from-yellow/15 to-transparent border-dark-gray ">
             <div className="container-fluid mx-auto flex flex-col sm:flex-row justify-between items-left ml-4 sm:ml-0 pl-0 sm:pl-4 py-6 pt-4 pb-0">
                 {/* User Info Section */}
@@ -29,7 +25,7 @@ export const TopSection = () => {
                                 <Image 
                                 src="/images/xprtc-token-icon.png" 
                                 alt="logo" 
-                                className="rounded-sm h-5 inline-block mr-1 md:ml-0"
+                                className="rounded-sm h-5 w-5 inline-block mr-1 md:ml-0"
                                 width={20}
                                 height={100}/> 
                                 <span className="lowercase">x</span>
@@ -42,7 +38,7 @@ export const TopSection = () => {
                                 <Image 
                                 src="/images/prtc-token-icon.png" 
                                 alt="logo" 
-                                className="rounded-sm h-5 inline-block mr-1 md:ml-0"
+                                className="rounded-sm h-5 w-5 inline-block mr-1 md:ml-0"
                                 width={30}
                                 height={100}
                                 /> 
@@ -55,7 +51,7 @@ export const TopSection = () => {
                                 <Image 
                                 src="/images/zaar-token-icon.png" 
                                 alt="logo" 
-                                className="rounded-sm h-5 inline-block mr-1 md:ml-0"
+                                className="rounded-sm h-5 w-5 inline-block mr-1 md:ml-0"
                                 width={30}
                                 height={100}
                                 /> 

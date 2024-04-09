@@ -1,10 +1,8 @@
 
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from "react";
-import { useBalance } from 'wagmi'
-import { type UseAccountParameters } from 'wagmi'
-import { CustomButton } from './CustomButton';
+import { ConnectWallet } from './ConnectWallet';
 
 export const Header = () => {
     return (
@@ -20,7 +18,7 @@ export const Header = () => {
                 </svg>
             </button>
             {/* Logo */}
-            <a href="index.html">
+            <Link href="index.html">
                 <Image 
                 src="/images/logo-3d.png" 
                 alt="logo" 
@@ -28,11 +26,7 @@ export const Header = () => {
                 width={30}
                 height={30}
                 />
-            </a>
-            
-
-            {/* Spacer div to push navigation to the edge */}
-            <div className="flex-grow md:hidden"></div>
+            </Link>
         </div>
 
       
@@ -40,25 +34,8 @@ export const Header = () => {
         
         <div className="ml-auto">
             <div className="flex items-center text-gray -mr-5">
-                {/*<button type="button" className="flex items-center justify-center rounded cursor-pointer px-2 py-3 text-sm font-medium text-gray border border-dark-gray-all h-10 hidden md:flex ml-6 gap-1 divide-x-1 divide-gray-300">
-                    <div className="pl-0.5 inline-flex items-center max-w-full">
-                        <div className="truncate">4.20</div>
-                        <span className="ml-0.5 relative mb-[1px]">
-                                <i className="fab fa-ethereum ml-0.5"></i>                           
-                        </span>
-                    </div>
-                </button>
-                  } Trigger button 
-                    <button type="button" className="flex items-center justify-center rounded cursor-pointer px-2 py-2 text-sm font-medium text-gray-700 border border-gray-700 h-10 md:flex mx-3 max-w-xs gap-2">
-                        <div className="flex-shrink-0 rounded relative overflow-hidden w-7 h-7 bg-gray">
-                            
-                        </div>
-                        <div className="truncate text-yellow-400">0x1234...34C</div>
-                    </button>
-    */}
                 <div className="group relative  z-20 flex flex-row">
-
-                    <CustomButton/>
+                    <ConnectWallet/>
                 </div>
             </div>
         </div>

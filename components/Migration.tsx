@@ -4,7 +4,12 @@ It allows users to migrate their PRTC tokens to Zaar tokens.
 */
 import Image from "next/image";
 import React from "react";
+import Link from "next/link";
 import { useState, useEffect} from "react";
+import { 
+  parseEther,
+  formatEther,
+} from "viem";
 import {
   useAccount,
   useWriteContract,
@@ -15,9 +20,8 @@ import {
   zaarAddress,
   useSimulatePrtcApprove,
   useSimulateZaarBridge,
-  useReadZaarDecimals,
 } from "../generated";
-import useNormalizedBalance from "./NormalizedBalance";
+import useNormalizedBalance from "../hooks/NormalizedBalance";
 export const Migration = () => {
   //current user address
   const { address } = useAccount();
@@ -39,15 +43,23 @@ export const Migration = () => {
   };
   //converts payment amount to un-normalized form
   const payAmntUnormalized =
-    (payAmntNormalized ? BigInt(payAmntNormalized) : BigInt(0)) *
-    BigInt(Math.pow(10, prtcDecimal ? prtcDecimal : 0));
+    parseEther(payAmntNormalized);
   //compares payment amount to current allowance
   //stores the amount remaining to be approved unormalized in variable approvalAmnt
   const approvalAmnt =
     (payAmntUnormalized ? BigInt(payAmntUnormalized) : BigInt(0)) -
     (allowance ? allowance : BigInt(0));
+
   //Checks if we have funds approved before we can migrate
   const [approved, setApproved] = useState(approvalAmnt<=0);
+  useEffect(() => {
+    if (allowance >= payAmntUnormalized ) {
+      setApproved(true);
+    }
+    else{
+      setApproved(false);
+    }
+  }, [allowance, payAmntUnormalized]);
   //get prepared function to approve
   const { data: approve } = useSimulatePrtcApprove({
     args: [zaarAddress[11155111], approvalAmnt],
@@ -62,6 +74,7 @@ export const Migration = () => {
   //operations to be executed after approving funds
   //if we need to approve funds before migrating set to false
   //this helps determine if the migrate button should be enabled
+  /*
   function approveClick() {
     if (approvalAmnt <=0 ) {
         setApproved(true);
@@ -69,12 +82,13 @@ export const Migration = () => {
     else { 
         setApproved(false);
     }
-  }
+  }*/
 
   function approveInfo() {
+    const normalizedAllowance = (allowance ? allowance.toString() : 0) / (Math.pow(10, prtcDecimal ? prtcDecimal : 0));;
     return (
       "Current approved allowance: " +
-      (allowance ? allowance.toString() : 0)
+      (normalizedAllowance ? normalizedAllowance.toString() : 0)
     );
   }
 
@@ -82,12 +96,12 @@ export const Migration = () => {
     <div className="pt-2 px-0 py-4 sm:px-8 ">
       <div className="bg-black text-white w-full sm:max-w-lg mx-auto p-8 rounded-sm w-[900px] bg-black ">
         <div className="mb-4 w-[500px]">
-          <a
-            href="#collections"
+          <Link
+            href="https://app.protectorate.xyz/stake."
             className="inline-block bg-gray text-light-green py-2 px-4 uppercase text-xs rounded-sm font-bold hover:bg-gray-100 hover:text-black transition-colors duration-300 ease-in-out mb-4"
           >
             Unstake
-          </a>
+          </Link>
           <div className="relative bg-dark-gray rounded-sm shadow-md h-30 py-[50px] w-full">
             <input
               id="you-pay"
@@ -112,12 +126,11 @@ export const Migration = () => {
                 : "0"}{" "}
               PRTC
             </span>
-            {/* Max button removed */}
             <span className="absolute text-2xl right-4 top-1/2 transform -translate-y-1/2 text-xl font-bold cursor-default font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center bg-gray uppercase mt-1">
               <Image
                 src="/images/prtc-token-icon.png"
                 alt="logo"
-                className="rounded-sm h-6 mr-2 md:ml-0"
+                className="rounded-sm h-6 w-6 mr-2 md:ml-0"
                 width={30}
                 height={100}
               />{" "}
@@ -152,7 +165,7 @@ export const Migration = () => {
               <Image
                 src="/images/zaar-token-icon.png"
                 alt="logo"
-                className="rounded-sm h-6 mr-2 md:ml-0"
+                className="rounded-sm h-6 w-6 mr-2 md:ml-0"
                 width={30}
                 height={100}
               />{" "}
@@ -161,17 +174,16 @@ export const Migration = () => {
           </div>
           <button
             id="approve-btn"
-            className={`mt-4 bg-yellow text-black uppercase font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline w-full ${(!Boolean(approve?.request)) ? 'opacity-50' : ''}`}
+            className={`mt-10 bg-yellow text-black uppercase font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline w-full `}
             type="button"
             disabled={!Boolean(approve?.request) }
             onClick={() => {
-                writeContract(approve!.request);
-                approveClick();
+                !approved ? writeContract(approve!.request) : writeContract(bridge!.request)
             }}
           >
-            Approve
+            {!approved ? 'Approve' : 'Migrate'}
           </button>
-          <button
+          {/*<button
             id="migrate-btn"
             className={`mt-4 bg-yellow text-black uppercase font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline w-full ${(!Boolean(bridge?.request) || !approved) ? 'opacity-50' : ''}`}
             type="button"
@@ -181,7 +193,7 @@ export const Migration = () => {
             }}
           >
             Migrate
-          </button>
+          </button> */}
           <div> {approveInfo()} </div>
         </div>
       </div>

@@ -8,6 +8,10 @@ import {
   useReadZaarBalanceOf,
   useReadZaarDecimals,
 } from "../generated";
+import{
+  parseEther, 
+  formatEther,
+} from "viem";
 
 const useNormalizedBalance = () => {
   const { address } = useAccount();
@@ -20,26 +24,25 @@ const useNormalizedBalance = () => {
     data: zaarBalance,
     error: zaarBalanceError,
   } = useReadZaarBalanceOf({ args: [address] });
-  const {data: decimal, error: decimalError,} = useReadPrtcDecimals();
-  const { data: zaarDecimal, error: zaarDecimalError } = useReadZaarDecimals();
-  const [normalizedPrtcBalance, setNormalizedPrtcBalance] = useState(null);
-  const [normalizedZaarBalance, setNormalizedZaarBalance] = useState(null);
+
+  const [normalizedPrtcBalance, setNormalizedPrtcBalance] = useState(BigInt(0));
+  const [normalizedZaarBalance, setNormalizedZaarBalance] = useState(BigInt(0));
   useEffect(() => {
-    if (!prtcBalanceLoading && prtcBalance && decimal) {
-      setNormalizedPrtcBalance((prtcBalance/BigInt(Math.pow(10, decimal))));
+    if (!prtcBalanceLoading && prtcBalance ) {
+      setNormalizedPrtcBalance(formatEther(prtcBalance));
     }
-  }, [prtcBalance, decimal, prtcBalanceLoading]);
+  }, [prtcBalance, prtcBalanceLoading]);
     useEffect(() => {
-    if (zaarBalance && zaarDecimal) {
-      setNormalizedZaarBalance(zaarBalance / BigInt(Math.pow(10, zaarDecimal)));
+    if (zaarBalance) {
+      setNormalizedZaarBalance(formatEther(zaarBalance));
     }
-  }, [zaarBalance, zaarDecimal]);
+  }, [zaarBalance]);
 
   return {
     normalizedPrtcBalance,
     normalizedZaarBalance,
     loading: prtcBalanceLoading,
-    error: prtcBalanceError || decimalError,
+    error: prtcBalanceError,
   };
 };
 
