@@ -3,9 +3,11 @@ This file displays the migration component.
 It allows users to migrate their PRTC tokens to Zaar tokens.
 */
 import Image from "next/image";
-import React from "react";
+import React, { use } from "react";
+import { useToaster } from 'react-hot-toast/headless';
 import Link from "next/link";
 import { useState, useEffect} from "react";
+import { config } from "../wagmi.config";
 import { 
   parseEther,
   formatEther,
@@ -14,6 +16,7 @@ import {
   useAccount,
   useWriteContract,
 } from "wagmi";
+import { waitForTransactionReceipt } from '@wagmi/core'
 import {
   useReadPrtcDecimals,
   useReadPrtcAllowance,
@@ -22,14 +25,24 @@ import {
   useSimulateZaarBridge,
 } from "../generated";
 import useNormalizedBalance from "../hooks/NormalizedBalance";
+import { write } from "fs";
+import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { http, createConfig } from '@wagmi/core'
+import { mainnet, sepolia } from '@wagmi/core/chains'
 export const Migration = () => {
+  const config = createConfig({
+    chains: [ sepolia],
+    transports: {
+      [sepolia.id]: http(),
+    },
+  })
   //current user address
   const { address } = useAccount();
   //reads number of decimals for this currency
   const { data: prtcDecimal, error: prtcDecimalError } = useReadPrtcDecimals();
-  const { normalizedPrtcBalance, normalizedZaarBalance, normerror } = useNormalizedBalance();
+  const { normalizedPrtcBalance, normalizedZaarBalance} = useNormalizedBalance();
   //reads current approved allowance
-  const { data: allowance, error: allowanceError } = useReadPrtcAllowance({
+  const { data: allowance } = useReadPrtcAllowance({
     args: [address, zaarAddress[11155111]],
   });
   //stores amount to be migrated from input field
@@ -62,7 +75,7 @@ export const Migration = () => {
   }, [allowance, payAmntUnormalized]);
   //get prepared function to approve
   const { data: approve } = useSimulatePrtcApprove({
-    args: [zaarAddress[11155111], approvalAmnt],
+    args: [zaarAddress[11155111], payAmntUnormalized],
   });
   // get prepared function to migrate
   const { data: bridge } = useSimulateZaarBridge({
@@ -70,20 +83,26 @@ export const Migration = () => {
   });
   //creating a Write contract to use our prepared functions
   const { writeContract } = useWriteContract();
+  const [result, setResult] = useState("");
+  useEffect(() => {
+    if(result !== ""){
+      alert("hello2");
+      alert(result.toString());
+    }},[result]);
+  function approver() {
+    const myhash = async() => writeContract(approve!.request);
+    const waiter = async() =>{ 
+      const receipt = await waitForTransactionReceipt(config, { hash: myhash }); // Pass hashString as argument
+      setResult(receipt.status ? "Approved" : "Failed");
+    }
+    waiter();
+    return;
+  }
   
-  //operations to be executed after approving funds
-  //if we need to approve funds before migrating set to false
-  //this helps determine if the migrate button should be enabled
-  /*
-  function approveClick() {
-    if (approvalAmnt <=0 ) {
-        setApproved(true);
-    }
-    else { 
-        setApproved(false);
-    }
-  }*/
-
+  function migrater() {
+    writeContract(bridge!.request);
+    return;
+  }
   function approveInfo() {
     const normalizedAllowance = (allowance ? allowance.toString() : 0) / (Math.pow(10, prtcDecimal ? prtcDecimal : 0));;
     return (
@@ -178,23 +197,13 @@ export const Migration = () => {
             type="button"
             disabled={!Boolean(approve?.request) }
             onClick={() => {
-                !approved ? writeContract(approve!.request) : writeContract(bridge!.request)
+                !approved ? approver() : migrater()
+                //writeContract(approve!.request)
             }}
           >
             {!approved ? 'Approve' : 'Migrate'}
           </button>
-          {/*<button
-            id="migrate-btn"
-            className={`mt-4 bg-yellow text-black uppercase font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline w-full ${(!Boolean(bridge?.request) || !approved) ? 'opacity-50' : ''}`}
-            type="button"
-            disabled={(!Boolean(bridge?.request)) || !approved}
-            onClick={() => {
-                writeContract(bridge!.request);
-            }}
-          >
-            Migrate
-          </button> */}
-          <div> {approveInfo()} </div>
+          <div> {approveInfo()}, {result} </div>
         </div>
       </div>
     </div>

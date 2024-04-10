@@ -31,7 +31,6 @@ export const Header = () => {
 
       
         {/* Connect Button */}
-        
         <div className="ml-auto">
             <div className="flex items-center text-gray -mr-5">
                 <div className="group relative  z-20 flex flex-row">
