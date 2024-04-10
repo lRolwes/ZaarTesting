@@ -4,17 +4,13 @@ It allows users to migrate their PRTC tokens to Zaar tokens.
 */
 import Image from "next/image";
 import React, { use } from "react";
-import { useToaster } from 'react-hot-toast/headless';
 import Link from "next/link";
 import { useState, useEffect} from "react";
-import { config } from "../wagmi.config";
 import { 
   parseEther,
-  formatEther,
 } from "viem";
 import {
   useAccount,
-  useWriteContract,
 } from "wagmi";
 import { waitForTransactionReceipt } from '@wagmi/core'
 import {
@@ -25,25 +21,21 @@ import {
   useSimulateZaarBridge,
 } from "../generated";
 import useNormalizedBalance from "../hooks/NormalizedBalance";
-import { write } from "fs";
-import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { http, createConfig } from '@wagmi/core'
-import { mainnet, sepolia } from '@wagmi/core/chains'
+import { writeContract } from '@wagmi/core'
+import {config} from '../config';
+import toast, { Toaster } from 'react-hot-toast';
+
 export const Migration = () => {
-  const config = createConfig({
-    chains: [ sepolia],
-    transports: {
-      [sepolia.id]: http(),
-    },
-  })
+  const notify = () => toast('Loading...');
+
   //current user address
   const { address } = useAccount();
   //reads number of decimals for this currency
   const { data: prtcDecimal, error: prtcDecimalError } = useReadPrtcDecimals();
   const { normalizedPrtcBalance, normalizedZaarBalance} = useNormalizedBalance();
   //reads current approved allowance
-  const { data: allowance } = useReadPrtcAllowance({
-    args: [address, zaarAddress[11155111]],
+  const { data: allowance, refetch:refetchAllowance} = useReadPrtcAllowance({
+    args: [address? address: "0x0000000000000000000000000000000000000000", zaarAddress[11155111]],
   });
   //stores amount to be migrated from input field
   //initialized to balance
@@ -51,7 +43,7 @@ export const Migration = () => {
     normalizedPrtcBalance ? normalizedPrtcBalance.toString() : ""
   );
   //collects input from payment amount input box
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setYouPay(event.target.value);
   };
   //converts payment amount to un-normalized form
@@ -66,7 +58,7 @@ export const Migration = () => {
   //Checks if we have funds approved before we can migrate
   const [approved, setApproved] = useState(approvalAmnt<=0);
   useEffect(() => {
-    if (allowance >= payAmntUnormalized ) {
+    if ((allowance ? allowance : 0 )>= payAmntUnormalized ) {
       setApproved(true);
     }
     else{
@@ -82,29 +74,43 @@ export const Migration = () => {
     args: [payAmntUnormalized],
   });
   //creating a Write contract to use our prepared functions
-  const { writeContract } = useWriteContract();
+  //const { writeContract } = useWriteContract();
   const [result, setResult] = useState("");
-  useEffect(() => {
-    if(result !== ""){
-      alert("hello2");
-      alert(result.toString());
-    }},[result]);
-  function approver() {
-    const myhash = async() => writeContract(approve!.request);
-    const waiter = async() =>{ 
-      const receipt = await waitForTransactionReceipt(config, { hash: myhash }); // Pass hashString as argument
-      setResult(receipt.status ? "Approved" : "Failed");
+
+  async function approver() {
+    const toastId = toast.loading("Waiting from confirmation from your wallet");
+    let myhash = await writeContract(config, approve!.request);
+    let receipt = await waitForTransactionReceipt(config, { hash: myhash });
+    setResult(receipt.status ? "Approved" : "Failed");
+    toast.dismiss(toastId);
+    if (result == "Approved"){
+      toast.success("Success! Funds approved for migration");
     }
-    waiter();
+    else{
+      toast.error("Failed to approve funds for migration. Please try again.");
+    }
+    refetchAllowance();
     return;
   }
   
-  function migrater() {
-    writeContract(bridge!.request);
+  async function migrater() {
+    const toastId = toast.loading("Waiting from confirmation from your wallet");
+    let myhash = await writeContract(config, bridge!.request);
+    let receipt = await waitForTransactionReceipt(config, { hash: myhash });
+    setResult(receipt.status ? "Approved" : "Failed");
+    toast.dismiss(toastId);
+    if (result == "Approved"){
+      toast.success("Success! Funds approved for migration");
+    }
+    else{
+      toast.error("Failed to approve funds for migration. Please try again.");
+    }
+    refetchAllowance();
     return;
   }
+
   function approveInfo() {
-    const normalizedAllowance = (allowance ? allowance.toString() : 0) / (Math.pow(10, prtcDecimal ? prtcDecimal : 0));;
+    const normalizedAllowance = (allowance ? allowance: BigInt(0))/ BigInt(Math.pow(10, prtcDecimal ? prtcDecimal : 0));;
     return (
       "Current approved allowance: " +
       (normalizedAllowance ? normalizedAllowance.toString() : 0)
@@ -113,6 +119,7 @@ export const Migration = () => {
 
   return (
     <div className="pt-2 px-0 py-4 sm:px-8 ">
+      <Toaster />
       <div className="bg-black text-white w-full sm:max-w-lg mx-auto p-8 rounded-sm w-[900px] bg-black ">
         <div className="mb-4 w-[500px]">
           <Link
@@ -203,7 +210,7 @@ export const Migration = () => {
           >
             {!approved ? 'Approve' : 'Migrate'}
           </button>
-          <div> {approveInfo()}, {result} </div>
+          <div> {approveInfo()} </div>
         </div>
       </div>
     </div>

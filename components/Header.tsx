@@ -11,12 +11,6 @@ export const Header = () => {
         {/* Logo and Navigation */}
         <div className="flex items-center justify-between md:space-x-4 text-sm">
             
-            {/* Hamburger Icon */}
-            <button id="menu-btn" className="p-2 ml-4 focus:outline-none md:hidden text-light-green border border-dark-gray-all hover:border-light-green-all rounded-sm transition-colors duration-150">
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                </svg>
-            </button>
             {/* Logo */}
             <Link href="index.html">
                 <Image 
