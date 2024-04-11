@@ -9,10 +9,10 @@ export const Header = () => {
     
         <div className="flex justify-between items-center p-4 px-8 pl-2 border-dark-gray">
         {/* Logo and Navigation */}
-        <div className="flex items-center justify-between md:space-x-4 text-sm">
+        <div className="flex items-center justify-between md:space-x-4 text-lg">
             
             {/* Logo */}
-            <Link href="index.html">
+            <Link href="/">
                 <Image 
                 src="/images/logo-3d.png" 
                 alt="logo" 
@@ -23,7 +23,9 @@ export const Header = () => {
             </Link>
         </div>
 
-      
+        <nav className="space-x-6 ml-[10px] uppercase relative text-lg ">
+                    <Link href="#" className="ml-[10px] text-yellow hover:text-gray-300">Earn XP (Coming Soon!)</Link>
+        </nav>
         {/* Connect Button */}
         <div className="ml-auto">
             <div className="flex items-center text-gray -mr-5">

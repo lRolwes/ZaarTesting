@@ -19,7 +19,8 @@ module.exports = {
         'text-light-grey' : '#c1c1c1',
       },
       fontFamily: {
-        'W95FA': ['W95FA', 'sans-serif'],
+        primary: ['PrimaryFont', 'sans-serif'],
+        secondary: ['SecondaryFont', 'W95FA'],
       },
     },
   },
