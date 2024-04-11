@@ -160,7 +160,7 @@ export const prtcAbi = [
  * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x3604e94d1208c16a805f1be2e0c94199295ff4e4)
  */
 export const prtcAddress = {
-  11155111: '0x3604E94d1208C16a805f1Be2e0C94199295FF4E4',
+  11155111: '0xb9098D3669A78e9AfE8b94a97290407400D9dA31',
 } as const
 
 /**
@@ -337,7 +337,7 @@ export const zaarAbi = [
  * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xf24D176D55d3a0E76D6dDaD7d5e9BB68518aCE5a)
  */
 export const zaarAddress = {
-  11155111: '0xf24D176D55d3a0E76D6dDaD7d5e9BB68518aCE5a',
+  11155111: '0x95AC17CE4021417E25B8eDF807366fC3bE091B5E',
 } as const
 
 /**

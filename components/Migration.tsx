@@ -212,7 +212,6 @@ export const Migration = () => {
             disabled={!Boolean(approve?.request) }
             onClick={() => {
                 !approved ? approver() : migrater()
-                //writeContract(approve!.request)
             }}
           >
             {!approved ? 'Approve' : 'Migrate'}

@@ -22,18 +22,16 @@ const HeroContent = () => {
               <span className="inline-block text-yellow bg-yellow bg-opacity-20 tracking-widest mb-3 px-6 py-1 rounded-full text-lg z-20">
                 <i className="fad fa-stars "></i> LAUNCHING SOON™
               </span>
-              <div className="flex justify-center items-center w-1/2 h-auto z-20">
+              <div className="flex justify-center items-center w-full h-auto z-20 ">
                 <Image
                   src="/images/logo-white.png"
                   alt="logo"
-                  className="rounded-sm w-2/5 z-20 item-center"
-                  width = {100}
-                  height = {100}
-                  layout = "responsive"
-                  objectFit="contain"
+                  className="rounded-sm w-2/5 z-20 item-center relative"
+                  width = {700}
+                  height={700}
                 />
               </div>
-              <h1 className="text-3xl font-bold mb-3 text-white uppercase mt-5">
+              <h1 className="text-3xl font-bold mb-3 text-white uppercase mt-5 z-20">
                 A full-featured mobile-friendly NFT marketplace
               </h1>
               <div className="flex justify-center space-x-8 mb-"></div>
@@ -146,7 +144,7 @@ const Home: NextPage = () => {
         ></link>
       </Head>
 
-      <main id="landing" className = "font-primary">
+      <main id="landing" className = "font-secondary">
         <HomeHeader />
         <HeroContent />
         <BottomSection />
