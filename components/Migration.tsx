@@ -32,7 +32,7 @@ export const Migration = () => {
   const { address } = useAccount();
   //reads number of decimals for this currency
   const { data: prtcDecimal, error: prtcDecimalError } = useReadPrtcDecimals();
-  const { normalizedPrtcBalance, normalizedZaarBalance} = useNormalizedBalance();
+  const { normalizedPrtcBalance, normalizedZaarBalance, refetchBalance } = useNormalizedBalance();
   //reads current approved allowance
   const { data: allowance, refetch:refetchAllowance} = useReadPrtcAllowance({
     args: [address? address: "0x0000000000000000000000000000000000000000", zaarAddress[11155111]],
@@ -74,38 +74,45 @@ export const Migration = () => {
     args: [payAmntUnormalized],
   });
   //creating a Write contract to use our prepared functions
-  //const { writeContract } = useWriteContract();
-  const [result, setResult] = useState("");
 
   async function approver() {
     const toastId = toast.loading("Waiting from confirmation from your wallet");
-    let myhash = await writeContract(config, approve!.request);
-    let receipt = await waitForTransactionReceipt(config, { hash: myhash });
-    setResult(receipt.status ? "Approved" : "Failed");
-    toast.dismiss(toastId);
-    if (result == "Approved"){
-      toast.success("Success! Funds approved for migration");
-    }
-    else{
+    try{
+      let myhash = await writeContract(config, approve!.request);
+      let receipt = await waitForTransactionReceipt(config, { hash: myhash });
+      toast.dismiss(toastId);
+      if (receipt.status){
+        toast.success("Success! Funds approved for migration");
+      }
+      else{
+        toast.error("Failed to approve funds for migration. Please try again.");
+      }}
+    catch (error){
+      toast.dismiss(toastId);
       toast.error("Failed to approve funds for migration. Please try again.");
-    }
+        }
     refetchAllowance();
     return;
   }
   
   async function migrater() {
     const toastId = toast.loading("Waiting from confirmation from your wallet");
-    let myhash = await writeContract(config, bridge!.request);
-    let receipt = await waitForTransactionReceipt(config, { hash: myhash });
-    setResult(receipt.status ? "Approved" : "Failed");
-    toast.dismiss(toastId);
-    if (result == "Approved"){
-      toast.success("Success! Funds approved for migration");
-    }
-    else{
-      toast.error("Failed to approve funds for migration. Please try again.");
-    }
+    try{
+      let myhash = await writeContract(config, bridge!.request);
+      let receipt = await waitForTransactionReceipt(config, { hash: myhash });
+      toast.dismiss(toastId);
+      if (receipt.status){
+        toast.success("Success! Funds approved for migration");
+      }
+      else{
+        toast.error("Failed to approve funds for migration. Please try again.");
+      }}
+    catch (error){
+      toast.dismiss(toastId);
+      toast.error("Failed to approve funds for migration. Please try again later.");
+        }
     refetchAllowance();
+    refetchBalance();
     return;
   }
 
