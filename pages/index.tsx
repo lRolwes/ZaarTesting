@@ -36,7 +36,7 @@ const HeroContent = () => {
               <div className="flex justify-center space-x-8 mb-"></div>
               <Link
                 href="/migration"
-                className="inline-block bg-yellow hover:bg-opacity-70 text-black py-2 px-4 uppercase rounded-sm font-bold mb-20 hover:text-black"
+                className="inline-block bg-yellow hover:bg-whitish hover:border-2 hover:border-yellow hover:text-black text-black py-2 px-4 uppercase rounded-sm font-bold mb-20 hover:text-black"
               >
                 Migrate Now
               </Link>
@@ -74,7 +74,7 @@ const BottomSection = () => {
                   </div>
                   <Link
                     href="/migration"
-                    className="hidden sm:block bg-yellow hover:opacity-70 text-black hover:text-black py-2 px-4 w-40 mx-auto uppercase mt-4 mb-12 font-bold"
+                    className="hidden sm:block bg-yellow hover:bg-whitish hover:border-2 hover:border-yellow hover:text-black text-black hover:text-black py-2 px-4 w-40 mx-auto uppercase mt-4 mb-12 font-bold"
                   >
                     Migrate now
                   </Link>
@@ -90,7 +90,7 @@ const BottomSection = () => {
                   </div>
                   <Link
                     href="/migration"
-                    className="block sm:hidden bg-yellow text-black hover:opacity-70 hover:text-black font-bold py-2 px-4 w-40 mx-auto uppercase mt-4 mb-12">
+                    className="block sm:hidden bg-yellow text-black hover:bg-whitish hover:border-2 hover:border-yellow hover:text-black font-bold py-2 px-4 w-40 mx-auto uppercase mt-4 mb-12">
                     Migrate now
                   </Link>
                 </div>

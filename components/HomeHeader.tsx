@@ -19,21 +19,21 @@ export const HomeHeader = () => {
               {/* Your mobile navigation menu goes here */}
               <ConnectWallet />
 
-              <Link href="/migration" className="text-yellow hover:text-gray ">
+              <Link href="/migration" className="text-yellow hover:text-white transform hover:-translate-y-1">
                 <div className="p-5 ">MIGRATE PRTC</div>
               </Link>
-              <Link href="#" className="text-gray hover:text-gray ">
-                <div className="p-5 ">EARN XP (Coming Soon)</div>
+              <Link href="#" className="text-disabled-gray hover:text-disabled-gray ">
+                <div className="p-5 text-disabled-gray hover:text-disabled-gray ">EARN XP (Coming Soon)</div>
               </Link>
               <Link
                 href="https://t.me/ZaarTradingBot"
-                className="text-yellow hover:text-gray "
+                className="text-yellow hover:text-white transform hover:-translate-y-1 "
               >
                 <div className="p-5 ">TELEGRAM TRADING</div>
               </Link>
               <button
                 onClick={handleMenuButtonClick}
-                className="p-3 text-black bg-yellow hover:text-gray text-4xl rounded-md font-bold fixed top-4 right-5"
+                className="p-3 text-black bg-yellow hover:text-white transform hover:-translate-y-1 text-4xl rounded-md font-bold fixed top-4 right-5"
               >
                 X
               </button>
@@ -54,18 +54,24 @@ export const HomeHeader = () => {
           <div className="flex-grow md:hidden"></div>
         </div>
         <div className="lg:block hidden">
-          <nav className="space-x-7 uppercase relative text-lg md:ml-3 font-l">
-            <Link href="/migration" className="text-yellow hover:text-gray ">
+          <nav className="space-x-7 uppercase relative text-md md:ml-3 font-l flex flex-row">
+            <Link href="/migration" className="contain ">
+            <div className="text-yellow  hover:text-white transform hover:-translate-y-1 ">
               Migrate PRTC
+              </div>
             </Link>
-            <Link href="#" className="text-yellow hover:text-gray ">
+            <Link href="#" className="contain text-disabled-gray hover:text-disabled-gray">
+              <div>  
               Earn XP (coming Soon!)
+              </div>
             </Link>
             <Link
               href="https://t.me/ZaarTradingBot"
-              className="text-yellow hover:text-gray "
+              className="text-yellow  contain "
             >
+              <div className="text-yellow  hover:text-white transform hover:-translate-y-1 ">
               Telegram Trading
+              </div>
             </Link>
           </nav>
         </div>

@@ -17,6 +17,8 @@ module.exports = {
         'gray-medium': '#404040',
         'text-gray': '#929292',
         'text-light-grey' : '#c1c1c1',
+        'whitish':'#ededed',
+        'disabled-gray': '#5a5a5a',
       },
       fontFamily: {
         primary: ['PrimaryFont', 'sans-serif'],

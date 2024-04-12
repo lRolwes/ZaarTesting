@@ -234,7 +234,7 @@ export const Migration = () => {
           </div>
           <button
             id="approve-btn"
-            className={`mt-10 bg-yellow text-black uppercase font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline w-full hover:opacity-70 transition-colors duration-300 ease-in-out ${(okToApprove || okToBridge) ? 'cursor-pointer': 'opacity-50'}`}
+            className={`mt-10 bg-yellow text-black uppercase font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline w-full transition-colors duration-300 ease-in-out ${(okToApprove || okToBridge) ? 'cursor-pointer hover:bg-whitish hover:border-2 hover:border-yellow hover:text-black': 'opacity-50'}`}
             type="button"
             disabled={!okToApprove && !okToBridge}
             onClick={() => {
