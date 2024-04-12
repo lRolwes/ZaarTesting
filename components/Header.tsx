@@ -31,7 +31,7 @@ export const Header = () => {
               href="https://t.me/ZaarTradingBot"
               className="text-yellow hover:text-gray "
             >
-              <div className="p-5 ">START TRADING</div>
+              <div className="p-5 ">TELEGRAM TRADING</div>
             </Link>
             <button
               onClick={handleMenuButtonClick}
