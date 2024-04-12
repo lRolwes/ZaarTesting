@@ -155,7 +155,7 @@ export const Migration = () => {
       <div className="bg-black text-white w-full sm:max-w-lg mx-auto p-8 rounded-sm w-[900px] bg-black ">
         <div className="mb-4 md:w-[500px]">
           <Link
-            href="https://app.protectorate.xyz/stake?blocked=1"
+            href="https://app.protectorate.xyz/stake"
             className="inline-block bg-gray text-light-green py-2 px-4 uppercase text-xs rounded-sm font-bold hover:bg-gray-100 hover:text-black transition-colors duration-300 ease-in-out mb-4"
           >
             Unstake
