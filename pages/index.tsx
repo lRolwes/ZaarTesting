@@ -111,20 +111,7 @@ const Home: NextPage = () => {
           content="zaar · website"
           name="A first-in-class NFT trading platform for traders of every caliber."
         />
-        <link rel="icon" href="/images/favicon.png" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, shrink-to-fit=no"
-        />
-        <html data-wf-domain="www.zaar.io" />
-        <title>Zaar</title>
-        <meta
-          content="A first-in-class NFT trading platform for traders of every caliber."
-          name="description"
-        />
-        <meta content="zaar · website" property="og:title" />
-        <link rel="icon" href="assets/img/favicon.png" />
-
+        <link rel="icon" href="/images/favicon.png"/>
       </Head>
 
       <main id="landing" className = "font-secondary">
