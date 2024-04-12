@@ -24,7 +24,8 @@ export const Header = () => {
         </div>
 
         <nav className="space-x-6 ml-[10px] uppercase relative text-lg ">
-                    <Link href="#" className="ml-[10px] text-yellow hover:text-gray-300">Earn XP (Coming Soon!)</Link>
+                    <Link href="#" className="ml-[10px] text-yellow hover:text-gray">Earn XP (Coming Soon!)</Link>
+                    <Link href="https://t.me/ZaarTradingBot" className="ml-[10px] text-yellow hover:text-gray">Start Trading</Link>
         </nav>
         {/* Connect Button */}
         <div className="ml-auto">

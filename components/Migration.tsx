@@ -26,7 +26,6 @@ import {config} from '../config';
 import toast, { Toaster } from 'react-hot-toast';
 
 export const Migration = () => {
-  const notify = () => toast('Loading...');
 
   //current user address
   const { address } = useAccount();
@@ -35,7 +34,7 @@ export const Migration = () => {
   const { normalizedPrtcBalance, normalizedZaarBalance, refetchBalance } = useNormalizedBalance();
   //reads current approved allowance
   const { data: allowance, refetch:refetchAllowance} = useReadPrtcAllowance({
-    args: [address? address: "0x0000000000000000000000000000000000000000", zaarAddress[11155111]],
+    args: [address? address: "0x0000000000000000000000000000000000000000", zaarAddress[1]],
   });
   //stores amount to be migrated from input field
   //initialized to balance
@@ -67,12 +66,37 @@ export const Migration = () => {
   }, [allowance, payAmntUnormalized]);
   //get prepared function to approve
   const { data: approve } = useSimulatePrtcApprove({
-    args: [zaarAddress[11155111], payAmntUnormalized],
+    args: [zaarAddress[1], payAmntUnormalized],
   });
   // get prepared function to migrate
   const { data: bridge } = useSimulateZaarBridge({
     args: [payAmntUnormalized],
   });
+
+  //checks the approve function before sending request
+  //used to disable button
+  const [okToApprove, setOkToApprove] = useState(false);
+  useEffect(() => {
+    if (approve?.request || false) {
+      setOkToApprove(true);
+    }
+    else{
+      setOkToApprove(false);
+    }
+  }, [approve?.request]);
+  //checks the approve function before sending request
+  //used to disable button
+  const [okToBridge, setOkToBridge] = useState(false);
+  useEffect(() => {
+    if (bridge?.request || false) {
+      setOkToApprove(true);
+    }
+    else{
+      setOkToApprove(false);
+    }
+  }, [bridge?.request]);
+  
+
   //creating a Write contract to use our prepared functions
 
   async function approver() {
@@ -88,6 +112,7 @@ export const Migration = () => {
         toast.error("Failed to approve funds for migration. Please try again.");
       }}
     catch (error){
+      console.log(error);
       toast.dismiss(toastId);
       toast.error("Failed to approve funds for migration. Please try again.");
         }
@@ -130,7 +155,7 @@ export const Migration = () => {
       <div className="bg-black text-white w-full sm:max-w-lg mx-auto p-8 rounded-sm w-[900px] bg-black ">
         <div className="mb-4 w-[500px]">
           <Link
-            href="https://app.protectorate.xyz/stake."
+            href="https://app.protectorate.xyz/stake?blocked=1"
             className="inline-block bg-gray text-light-green py-2 px-4 uppercase text-xs rounded-sm font-bold hover:bg-gray-100 hover:text-black transition-colors duration-300 ease-in-out mb-4"
           >
             Unstake
@@ -209,7 +234,7 @@ export const Migration = () => {
             id="approve-btn"
             className={`mt-10 bg-yellow text-black uppercase font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline w-full hover:opacity-70 transition-colors duration-300 ease-in-out `}
             type="button"
-            disabled={!Boolean(approve?.request) }
+            disabled={!okToApprove || !okToBridge}
             onClick={() => {
                 !approved ? approver() : migrater()
             }}

@@ -7,7 +7,7 @@ export const HomeHeader = () => {
   return (
     <header className="fixed top-0 left-0 w-full z-30 flex justify-between items-center p-4 px-8 pl-6 sm:pl-2">
       <div className="flex items-center justify-between md:space-x-4 text-sm">
-        <Link href="index.html">
+        <Link href="/">
           <Image
             src="/images/logo-3d.png"
             alt="logo"
@@ -20,15 +20,18 @@ export const HomeHeader = () => {
         <div className="flex-grow md:hidden"></div>
       </div>
 
-      <nav className="space-x-4 uppercase relative text-lg md:ml-3 font-l">
+      <nav className="space-x-7 uppercase relative text-lg md:ml-3 font-l">
         <Link
           href="/migrationPage"
-          className="text-yellow hover:text-gray mr-4"
+          className="text-yellow hover:text-gray "
         >
           Migrate PRTC
         </Link>
-        <Link href="#" className="text-yellow hover:text-gray">
+        <Link href="#" className="text-yellow hover:text-gray ">
           Earn XP (coming Soon!)
+        </Link>
+        <Link href="https://t.me/ZaarTradingBot" className="text-yellow hover:text-gray ">
+          Start Trading
         </Link>
       </nav>
 
