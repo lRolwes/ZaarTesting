@@ -89,10 +89,10 @@ export const Migration = () => {
   const [okToBridge, setOkToBridge] = useState(false);
   useEffect(() => {
     if (bridge?.request || false) {
-      setOkToApprove(true);
+      setOkToBridge(true);
     }
     else{
-      setOkToApprove(false);
+      setOkToBridge(false);
     }
   }, [bridge?.request]);
   
@@ -105,7 +105,7 @@ export const Migration = () => {
       let myhash = await writeContract(config, approve!.request);
       let receipt = await waitForTransactionReceipt(config, { hash: myhash });
       toast.dismiss(toastId);
-      if (receipt.status){
+      if (receipt.status != "reverted"){
         toast.success("Success! Funds approved for migration");
       }
       else{
@@ -126,15 +126,15 @@ export const Migration = () => {
       let myhash = await writeContract(config, bridge!.request);
       let receipt = await waitForTransactionReceipt(config, { hash: myhash });
       toast.dismiss(toastId);
-      if (receipt.status){
+      if (receipt.status != "reverted"){
         toast.success("Success! Funds approved for migration");
       }
       else{
-        toast.error("Failed to approve funds for migration. Please try again.");
+        toast.error("Failed to migrate. Please try again.");
       }}
     catch (error){
       toast.dismiss(toastId);
-      toast.error("Failed to approve funds for migration. Please try again later.");
+      toast.error("Failed to migrate. Please try again later.");
         }
     refetchAllowance();
     refetchBalance();
@@ -156,11 +156,12 @@ export const Migration = () => {
         <div className="mb-4 md:w-[500px]">
           <Link
             href="https://app.protectorate.xyz/stake"
-            className="inline-block bg-gray text-light-green py-2 px-4 uppercase text-xs rounded-sm font-bold hover:bg-gray-100 hover:text-black transition-colors duration-300 ease-in-out mb-4"
+            className="inline-block bg-gray text-light-green py-2 px-4 uppercase text-xs rounded-sm font-bold hover:bg-gray-100 hover:text-black transition-colors duration-300 ease-in-out mb-4 cursor-pointer"
           >
             Unstake
           </Link>
-          
+
+        
           <div className="relative bg-dark-gray rounded-sm shadow-md h-30 py-[50px] w-full">
             <input
               id="you-pay"
@@ -233,7 +234,7 @@ export const Migration = () => {
           </div>
           <button
             id="approve-btn"
-            className={`mt-10 bg-yellow text-black uppercase font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline w-full hover:opacity-70 transition-colors duration-300 ease-in-out `}
+            className={`mt-10 bg-yellow text-black uppercase font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline w-full hover:opacity-70 transition-colors duration-300 ease-in-out ${okToApprove || okToBridge ? 'cursor-pointer': ''}`}
             type="button"
             disabled={!okToApprove && !okToBridge}
             onClick={() => {
