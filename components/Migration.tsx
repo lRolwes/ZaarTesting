@@ -3,7 +3,6 @@ This file displays the migration component.
 It allows users to migrate their PRTC tokens to Zaar tokens.
 */
 import Image from "next/image";
-import React, { use } from "react";
 import Link from "next/link";
 import { useState, useEffect} from "react";
 import { 
@@ -30,7 +29,7 @@ export const Migration = () => {
   //current user address
   const { address } = useAccount();
   //reads number of decimals for this currency
-  const { data: prtcDecimal, error: prtcDecimalError } = useReadPrtcDecimals();
+  const { data: prtcDecimal} = useReadPrtcDecimals();
   const { normalizedPrtcBalance, normalizedZaarBalance, refetchBalance } = useNormalizedBalance();
   //reads current approved allowance
   const { data: allowance, refetch:refetchAllowance} = useReadPrtcAllowance({
