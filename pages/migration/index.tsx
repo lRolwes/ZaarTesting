@@ -11,9 +11,6 @@ const Home: NextPage = () => {
   return (
     <div>
       <main className='bg-black'> 
-                <meta content="zaar · website" property="og:title"/>
-                {/*Favicon*/}
-                <link rel="icon" href="/favicon.png"/>
                 <Header/>
                 <TopSection/>
                 <Migration/>

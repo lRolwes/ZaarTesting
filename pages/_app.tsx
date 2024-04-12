@@ -6,6 +6,12 @@ import { WagmiProvider } from 'wagmi';
 import {config} from '../config';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import Head from 'next/head';
+import type { Metadata } from 'next'
+ 
+export const metadata: Metadata = {
+  title: 'Zaar',
+  description: 'A first-in-class NFT trading platform for traders of every caliber.',
+}
 const client = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -16,10 +22,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         <RainbowKitProvider>
         <Head>
           <title>Zaar</title>
-          <meta
-            content="zaar · website"
-            name="A first-in-class NFT trading platform for traders of every caliber."
-          />
           <link rel="icon" href="/images/favicon.png"/>
         </Head>
           <Component {...pageProps} />
