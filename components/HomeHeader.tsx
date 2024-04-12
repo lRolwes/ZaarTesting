@@ -22,7 +22,7 @@ export const HomeHeader = () => {
 
       <nav className="space-x-7 uppercase relative text-lg md:ml-3 font-l">
         <Link
-          href="/migrationPage"
+          href="/migration"
           className="text-yellow hover:text-gray "
         >
           Migrate PRTC
