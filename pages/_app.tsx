@@ -5,14 +5,23 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WagmiProvider } from 'wagmi';
 import {config} from '../config';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
-
+import Head from 'next/head';
 const client = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
+    
     <WagmiProvider config={config}>
       <QueryClientProvider client={client}>
         <RainbowKitProvider>
+        <Head>
+          <title>Zaar</title>
+          <meta
+            content="zaar · website"
+            name="A first-in-class NFT trading platform for traders of every caliber."
+          />
+          <link rel="icon" href="/images/favicon.png"/>
+        </Head>
           <Component {...pageProps} />
         </RainbowKitProvider>
       </QueryClientProvider>

@@ -10,15 +10,6 @@ import { Migration } from '../../components/Migration';
 const Home: NextPage = () => {
   return (
     <div>
-      <Head>
-        <title>Zaar</title>
-        <meta
-          content="zaar · website"
-          name="A first-in-class NFT trading platform for traders of every caliber."
-        />
-        <link rel="icon" href="/images/favicon.png"/>
-      </Head>
-
       <main className='bg-black'> 
                 <meta content="zaar · website" property="og:title"/>
                 {/*Favicon*/}

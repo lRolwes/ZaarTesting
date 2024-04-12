@@ -46,6 +46,7 @@ const HeroContent = () => {
     );
 };
 
+
 const BottomSection = () => {
     return(
         <div className="container-fluid mx-auto px-4  py-6 mt-0 sm:mt-20 mb-0 sm:mb-12">
@@ -101,18 +102,10 @@ const BottomSection = () => {
     );
 };
 
+
 const Home: NextPage = () => {
   return (
     <div>
-      <Head>
-        <title>Zaar</title>
-        <meta
-          content="zaar · website"
-          name="A first-in-class NFT trading platform for traders of every caliber."
-        />
-        <link rel="icon" href="/images/favicon.png"/>
-      </Head>
-
       <main id="landing" className = "font-secondary">
         <HomeHeader />
         <HeroContent />
