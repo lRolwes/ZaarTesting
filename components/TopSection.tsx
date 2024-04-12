@@ -35,7 +35,7 @@ export const TopSection = () => {
                             </div>
                         </div>
                         <div className="flex flex-col items-left justify-left w-1/3 max-w-20 sm:w-auto mb-2 sm:mb-0 mr-4 sm:mr-6">
-                            <div className="bg-dark-gray border border-dark-gray-all text-yellow font-bold text-2xl px-3 py-1 rounded">{prtcBalance? formatEther(prtcBalance) : '0'}</div>
+                            <div className="bg-dark-gray border border-dark-gray-all text-yellow font-bold text-2xl px-3 py-1 rounded">{prtcBalance? Number(formatEther(prtcBalance)).toFixed(0) : '0'}</div>
                             <div className="text-light-green mt-2 text-sm uppercase flex flex-row ">
                                 <Image 
                                 src="/images/prtc-token-icon.png" 
