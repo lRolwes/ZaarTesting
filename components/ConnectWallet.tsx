@@ -2,7 +2,7 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Image from 'next/image';
 import React from "react";
-export const CustomButton = () => {
+export const ConnectWallet = () => {
     return (
     
     <ConnectButton.Custom>
@@ -39,7 +39,7 @@ export const CustomButton = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <button onClick={openConnectModal} type="button" className = "bg-yellow text-black font-bold p-2 px-3 rounded-sm">
+                  <button onClick={openConnectModal} type="button" className = "bg-yellow text-black font-bold p-2 px-5 rounded-sm hover:bg-opacity-70 transition duration-500">
                     Connect Wallet
                   </button>
                 );
@@ -54,7 +54,7 @@ export const CustomButton = () => {
               }
 
               return (
-                <div style={{ display: 'flex', gap: 12 }}>
+                <div className="text-yellow font-bold uppercase gap-7 flex" >
                   <button
                     onClick={openChainModal}
                     style={{ display: 'flex', alignItems: 'center' }}
@@ -64,8 +64,8 @@ export const CustomButton = () => {
                       <div
                         style={{
                           background: chain.iconBackground,
-                          width: 12,
-                          height: 12,
+                          width: 25,
+                          height: 25,
                           borderRadius: 999,
                           overflow: 'hidden',
                           marginRight: 4,
@@ -73,10 +73,12 @@ export const CustomButton = () => {
                         }}
                       >
                         {chain.iconUrl && (
-                          <img
+                          <Image
                             alt={chain.name ?? 'Chain icon'}
                             src={chain.iconUrl}
-                            style={{ width: 12, height: 12 }}
+                            style={{ width: 25, height: 25}}
+                            width = {25}
+                            height = {25}
                           />
                         )}
                       </div>
