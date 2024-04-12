@@ -30,7 +30,7 @@ export const Migration = () => {
   const { address } = useAccount();
   //reads number of decimals for this currency
   const { data: prtcDecimal} = useReadPrtcDecimals();
-  const { normalizedPrtcBalance, normalizedZaarBalance, refetchBalance } = useNormalizedBalance();
+  const { normalizedPrtcBalance, normalizedZaarBalance, prtcBalance, zaarBalance, refetchBalance } = useNormalizedBalance();
   //reads current approved allowance
   const { data: allowance, refetch:refetchAllowance} = useReadPrtcAllowance({
     args: [address? address: "0x0000000000000000000000000000000000000000", zaarAddress[1]],
@@ -38,7 +38,7 @@ export const Migration = () => {
   //stores amount to be migrated from input field
   //initialized to balance
   const [payAmntNormalized, setYouPay] = useState(
-    normalizedPrtcBalance ? normalizedPrtcBalance.toString() : ""
+    normalizedPrtcBalance ? normalizedPrtcBalance: ""
   );
   //collects input from payment amount input box
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -144,7 +144,7 @@ export const Migration = () => {
     const normalizedAllowance = (allowance ? allowance: BigInt(0))/ BigInt(Math.pow(10, prtcDecimal ? prtcDecimal : 0));;
     return (
       "Current approved allowance: " +
-      (normalizedAllowance ? normalizedAllowance.toString() : 0)
+      (normalizedAllowance ? normalizedAllowance.toString() : '0')
     );
   }
 

@@ -23,16 +23,16 @@ const useNormalizedBalance = () => {
     refetch: refetchZaarBalance,
   } = useReadZaarBalanceOf({ args: [address ? address: "0x0000000000000000000000000000000000000000"] });
 
-  const [normalizedPrtcBalance, setNormalizedPrtcBalance] = useState(BigInt(0));
-  const [normalizedZaarBalance, setNormalizedZaarBalance] = useState(BigInt(0));
+  const [normalizedPrtcBalance, setNormalizedPrtcBalance] = useState('0');
+  const [normalizedZaarBalance, setNormalizedZaarBalance] = useState('0');
   useEffect(() => {
     if (prtcBalance ) {
-      setNormalizedPrtcBalance(BigInt(formatEther(prtcBalance)));
+      setNormalizedPrtcBalance((formatEther(prtcBalance)));
     }
   }, [prtcBalance]);
     useEffect(() => {
     if (zaarBalance) {
-      setNormalizedZaarBalance(BigInt(formatEther(zaarBalance)));
+      setNormalizedZaarBalance((formatEther(zaarBalance)));
     }
   }, [zaarBalance]);
 
@@ -44,7 +44,8 @@ const useNormalizedBalance = () => {
   return {
     normalizedPrtcBalance,
     normalizedZaarBalance,
-    error: prtcBalanceError,
+    prtcBalance,
+    zaarBalance,
     refetchBalance,
   };
 };
