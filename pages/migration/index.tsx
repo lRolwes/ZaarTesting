@@ -19,7 +19,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/images/favicon.png"/>
       </Head>
 
-      <main className='bg-black h-screen'> 
+      <main className='bg-black'> 
                 <meta content="zaar · website" property="og:title"/>
                 {/*Favicon*/}
                 <link rel="icon" href="/favicon.png"/>
