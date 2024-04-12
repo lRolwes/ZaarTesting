@@ -153,7 +153,7 @@ export const Migration = () => {
     <div className="pt-2 px-0 py-4 sm:px-8 ">
       <Toaster />
       <div className="bg-black text-white w-full sm:max-w-lg mx-auto p-8 rounded-sm w-[900px] bg-black ">
-        <div className="mb-4 w-[500px]">
+        <div className="mb-4 md:w-[500px]">
           <Link
             href="https://app.protectorate.xyz/stake?blocked=1"
             className="inline-block bg-gray text-light-green py-2 px-4 uppercase text-xs rounded-sm font-bold hover:bg-gray-100 hover:text-black transition-colors duration-300 ease-in-out mb-4"
@@ -197,7 +197,7 @@ export const Migration = () => {
           </div>
         </div>
 
-        <div className="mb-4 h-full w-[500px]">
+        <div className="mb-4 h-full md:w-[500px]">
           <div className="relative bg-dark-gray rounded-sm shadow-md h-300 py-[50px]">
             <div className="w-full h-full bg-transparent pl-4 text-3xl font-semibold outline-none">
               {payAmntNormalized
