@@ -123,25 +123,7 @@ const Home: NextPage = () => {
           name="description"
         />
         <meta content="zaar · website" property="og:title" />
-        <link rel="icon" href="assets/img/favicon.png" />
-        <link href="css/style.css" rel="stylesheet" />
-        <link
-          rel="stylesheet"
-          href="https://unpkg.com/swiper/swiper-bundle.min.css"
-        />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-        <link href="css/all.css" rel="stylesheet" />
-        <script defer src="js/all.js"></script>
-        <link
-          rel="stylesheet"
-          href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
-          integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
-        ></link>
+   
       </Head>
 
       <main id="landing" className = "font-secondary">
