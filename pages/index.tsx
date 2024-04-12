@@ -89,8 +89,8 @@ const BottomSection = () => {
                     </h3>
                   </div>
                   <Link
-                    href="/Migration"
-                    className="block sm:hidden bg-yellow btn-hover text-black hover:text-gray-600 py-2 px-4 w-40 mx-auto uppercase mt-4 mb-12">
+                    href="/migration"
+                    className="block sm:hidden bg-yellow text-black hover:opacity-70 hover:text-black font-bold py-2 px-4 w-40 mx-auto uppercase mt-4 mb-12">
                     Migrate now
                   </Link>
                 </div>
