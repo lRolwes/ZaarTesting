@@ -160,6 +160,7 @@ export const Migration = () => {
           >
             Unstake
           </Link>
+          
           <div className="relative bg-dark-gray rounded-sm shadow-md h-30 py-[50px] w-full">
             <input
               id="you-pay"
