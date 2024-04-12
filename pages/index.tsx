@@ -105,7 +105,7 @@ const BottomSection = () => {
 
 const Home: NextPage = () => {
   return (
-    <div>
+    <div className = "overflow-y-hidden">
       <main id="landing" className = "font-secondary">
         <HomeHeader />
         <HeroContent />

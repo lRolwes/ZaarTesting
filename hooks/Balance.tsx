@@ -10,31 +10,16 @@ import{
   formatEther,
 } from "viem";
 
-const useNormalizedBalance = () => {
+const useBalance = () => {
   const { address } = useAccount();
   const {
     data: prtcBalance,
-    error: prtcBalanceError,
     refetch: refetchPrtcBalance,
   } = useReadPrtcBalanceOf({ args: [address ? address: "0x0000000000000000000000000000000000000000"] });
   const {
     data: zaarBalance,
-    error: zaarBalanceError,
     refetch: refetchZaarBalance,
   } = useReadZaarBalanceOf({ args: [address ? address: "0x0000000000000000000000000000000000000000"] });
-
-  const [normalizedPrtcBalance, setNormalizedPrtcBalance] = useState('0');
-  const [normalizedZaarBalance, setNormalizedZaarBalance] = useState('0');
-  useEffect(() => {
-    if (prtcBalance ) {
-      setNormalizedPrtcBalance((formatEther(prtcBalance)));
-    }
-  }, [prtcBalance]);
-    useEffect(() => {
-    if (zaarBalance) {
-      setNormalizedZaarBalance((formatEther(zaarBalance)));
-    }
-  }, [zaarBalance]);
 
   function refetchBalance() {
     refetchPrtcBalance();
@@ -42,12 +27,10 @@ const useNormalizedBalance = () => {
   }
 
   return {
-    normalizedPrtcBalance,
-    normalizedZaarBalance,
     prtcBalance,
     zaarBalance,
     refetchBalance,
   };
 };
 
-export default useNormalizedBalance;
+export default useBalance;

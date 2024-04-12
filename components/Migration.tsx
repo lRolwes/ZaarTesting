@@ -19,10 +19,13 @@ import {
   useSimulatePrtcApprove,
   useSimulateZaarBridge,
 } from "../generated";
-import useNormalizedBalance from "../hooks/NormalizedBalance";
+import useBalance from "../hooks/Balance";
 import { writeContract } from '@wagmi/core'
 import {config} from '../config';
 import toast, { Toaster } from 'react-hot-toast';
+import{
+  formatEther,
+} from "viem";
 
 export const Migration = () => {
 
@@ -30,23 +33,20 @@ export const Migration = () => {
   const { address } = useAccount();
   //reads number of decimals for this currency
   const { data: prtcDecimal} = useReadPrtcDecimals();
-  const { normalizedPrtcBalance, normalizedZaarBalance, prtcBalance, zaarBalance, refetchBalance } = useNormalizedBalance();
+  const { prtcBalance, zaarBalance, refetchBalance } = useBalance();
   //reads current approved allowance
   const { data: allowance, refetch:refetchAllowance} = useReadPrtcAllowance({
     args: [address? address: "0x0000000000000000000000000000000000000000", zaarAddress[1]],
   });
   //stores amount to be migrated from input field
   //initialized to balance
-  const [payAmntNormalized, setYouPay] = useState(
-    normalizedPrtcBalance ? normalizedPrtcBalance: ""
+  const [payAmntUnormalized, setYouPay] = useState(
+    prtcBalance ? prtcBalance: BigInt(0)
   );
   //collects input from payment amount input box
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setYouPay(event.target.value);
+    setYouPay(parseEther(event.target.value));
   };
-  //converts payment amount to un-normalized form
-  const payAmntUnormalized =
-    parseEther(payAmntNormalized);
   //compares payment amount to current allowance
   //stores the amount remaining to be approved unormalized in variable approvalAmnt
   const approvalAmnt =
@@ -160,16 +160,14 @@ export const Migration = () => {
             Unstake
           </Link>
 
-        
           <div className="relative bg-dark-gray rounded-sm shadow-md h-30 py-[50px] w-full">
             <input
               id="you-pay"
               type="text"
               className="w-full h-full tracking-wider bg-transparent pl-4 text-3xl font-semibold outline-none"
               placeholder={
-                normalizedPrtcBalance !== null ? normalizedPrtcBalance.toString() : "0"
+                prtcBalance ? formatEther(prtcBalance) : "0"
               }
-              value={payAmntNormalized}
               onChange={handleInputChange}
             />
             <span className="absolute left-4 top-4 text-gray uppercase text-xs">
@@ -180,8 +178,8 @@ export const Migration = () => {
               id="balance"
             >
               Balance:
-              {normalizedPrtcBalance !== null
-                ? normalizedPrtcBalance.toString()
+              {prtcBalance !== null
+                ? formatEther((prtcBalance? prtcBalance: BigInt(0)))
                 : "0"}{" "}
               PRTC
             </span>
@@ -201,10 +199,10 @@ export const Migration = () => {
         <div className="mb-4 h-full md:w-[500px]">
           <div className="relative bg-dark-gray rounded-sm shadow-md h-300 py-[50px]">
             <div className="w-full h-full bg-transparent pl-4 text-3xl font-semibold outline-none">
-              {payAmntNormalized
-                ? payAmntNormalized.toString()
-                : normalizedPrtcBalance
-                  ? normalizedPrtcBalance.toString()
+              {payAmntUnormalized
+                ? formatEther(payAmntUnormalized)
+                : prtcBalance
+                  ? formatEther(prtcBalance)
                   : "0"}
             </div>
             <span className="absolute left-4 top-4 text-gray uppercase text-xs">
@@ -215,8 +213,8 @@ export const Migration = () => {
               id="balance"
             >
               Balance:
-              {normalizedZaarBalance !== null
-                ? normalizedZaarBalance.toString()
+              {zaarBalance
+                ? formatEther(zaarBalance)
                 : "0"}{" "}
               ZAAR
             </span>
