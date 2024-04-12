@@ -28,7 +28,6 @@ import{
 } from "viem";
 
 export const Migration = () => {
-
   //current user address
   const { address } = useAccount();
   //reads number of decimals for this currency
@@ -45,12 +44,20 @@ export const Migration = () => {
   );
   //collects input from payment amount input box
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setYouPay(parseEther(event.target.value));
+    let value = event.target.value;
+    let numberValue = Number(value);
+    let roundedStringValue = Number(numberValue).toFixed(4);
+    if(numberValue >= 0){
+      setYouPay(parseEther(roundedStringValue));
+    }
+    else{
+      setYouPay(BigInt(0));
+    }
   };
   //compares payment amount to current allowance
   //stores the amount remaining to be approved unormalized in variable approvalAmnt
   const approvalAmnt =
-    (payAmntUnormalized ? BigInt(payAmntUnormalized) : BigInt(0)) -
+    (payAmntUnormalized ? payAmntUnormalized : BigInt(0)) -
     (allowance ? allowance : BigInt(0));
 
   //Checks if we have funds approved before we can migrate
@@ -141,10 +148,10 @@ export const Migration = () => {
   }
 
   function approveInfo() {
-    const normalizedAllowance = (allowance ? allowance: BigInt(0))/ BigInt(Math.pow(10, prtcDecimal ? prtcDecimal : 0));;
+    const normalizedAllowance = formatEther(allowance ? allowance: BigInt(0));
     return (
       "Current approved allowance: " +
-      (normalizedAllowance ? normalizedAllowance.toString() : '0')
+      (normalizedAllowance ? normalizedAllowance : '0')
     );
   }
 

@@ -11,14 +11,13 @@ export const HomeHeader = () => {
   };
   return (
     <header className="fixed top-0 left-0 w-full z-30 flex justify-between items-center px-8 pl-6 sm:pl-2">
-      <div className="flex justify-between items-center p-4 px-0  pl-2 border-dark-gray w-full">
+      <div className="flex justify-between items-center p-3 px-0  pl-2 border-dark-gray w-full">
         {/* Logo and Navigation */}
         <div className="flex items-center justify-between md:space-x-4 text-sm">
           {isMenuOpen && (
             <div className="space-y-4 fixed top-0 right-0 bottom-0 left-0 z-50 w-full h-full bg-black flex flex-col items-center justify-center opacity-90 text-3xl font-boldS">
               {/* Your mobile navigation menu goes here */}
               <ConnectWallet />
-
               <Link href="/migration" className="text-yellow hover:text-white transform hover:-translate-y-1">
                 <div className="p-5 ">MIGRATE PRTC</div>
               </Link>

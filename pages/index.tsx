@@ -36,8 +36,7 @@ const HeroContent = () => {
               <div className="flex justify-center space-x-8 mb-"></div>
               <Link
                 href="/migration"
-                className="inline-block bg-yellow hover:bg-whitish hover:border-2 hover:border-yellow hover:text-black text-black py-2 px-4 uppercase rounded-sm font-bold mb-20 hover:text-black"
-              >
+                className="inline-block bg-yellow hover:bg-whitish hover:border-2 hover:border-yellow hover:text-black text-black py-2 px-4 uppercase rounded-sm font-bold mb-20 hover:text-black">
                 Migrate Now
               </Link>
             </div>
