@@ -36,7 +36,7 @@ const HeroContent = () => {
               </h1>
               <div className="flex justify-center space-x-8 mb-"></div>
               <Link
-                href="/migrationPage"
+                href="/migration"
                 className="inline-block bg-yellow hover:bg-opacity-70 text-black py-2 px-4 uppercase rounded-sm font-bold mb-20 hover:text-black"
               >
                 Migrate Now
@@ -74,7 +74,7 @@ const BottomSection = () => {
                     </h3>
                   </div>
                   <Link
-                    href="/migrationPage"
+                    href="/migration"
                     className="hidden sm:block bg-yellow hover:opacity-70 text-black hover:text-black py-2 px-4 w-40 mx-auto uppercase mt-4 mb-12 font-bold"
                   >
                     Migrate now
@@ -90,7 +90,7 @@ const BottomSection = () => {
                     </h3>
                   </div>
                   <Link
-                    href="/MigrationPage"
+                    href="/Migration"
                     className="block sm:hidden bg-yellow btn-hover text-black hover:text-gray-600 py-2 px-4 w-40 mx-auto uppercase mt-4 mb-12">
                     Migrate now
                   </Link>
@@ -124,7 +124,7 @@ const Home: NextPage = () => {
         />
         <meta content="zaar · website" property="og:title" />
         <link rel="icon" href="assets/img/favicon.png" />
-        
+
       </Head>
 
       <main id="landing" className = "font-secondary">

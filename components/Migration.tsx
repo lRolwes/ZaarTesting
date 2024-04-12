@@ -234,7 +234,7 @@ export const Migration = () => {
             id="approve-btn"
             className={`mt-10 bg-yellow text-black uppercase font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline w-full hover:opacity-70 transition-colors duration-300 ease-in-out `}
             type="button"
-            disabled={!okToApprove || !okToBridge}
+            disabled={!okToApprove && !okToBridge}
             onClick={() => {
                 !approved ? approver() : migrater()
             }}
