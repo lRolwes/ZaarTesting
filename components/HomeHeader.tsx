@@ -65,7 +65,7 @@ export const HomeHeader = () => {
               href="https://t.me/ZaarTradingBot"
               className="text-yellow hover:text-gray "
             >
-              Start Trading
+              Telegram Trading
             </Link>
           </nav>
         </div>
