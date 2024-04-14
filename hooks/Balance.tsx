@@ -5,6 +5,7 @@ import {
 import {
   useReadPrtcBalanceOf,
   useReadZaarBalanceOf,
+  useReadXPrtcBalanceOf,
 } from "../generated";
 import{
   formatEther,
@@ -21,14 +22,21 @@ const useBalance = () => {
     refetch: refetchZaarBalance,
   } = useReadZaarBalanceOf({ args: [address ? address: "0x0000000000000000000000000000000000000000"] });
 
+  const {
+    data: xPrtcBalance,
+    refetch: refetchXPrtcBalance,
+  } = useReadXPrtcBalanceOf({ args: [address ? address: "0x0000000000000000000000000000000000000000"] });
+
   function refetchBalance() {
     refetchPrtcBalance();
     refetchZaarBalance();
+    refetchXPrtcBalance();
   }
 
   return {
     prtcBalance,
     zaarBalance,
+    xPrtcBalance,
     refetchBalance,
   };
 };

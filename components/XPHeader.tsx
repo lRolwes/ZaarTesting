@@ -3,7 +3,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { ConnectWallet } from "./ConnectWallet";
 
-export const HomeHeader = () => {
+export const XpHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleMenuButtonClick = () => {
@@ -18,11 +18,11 @@ export const HomeHeader = () => {
             <div className="space-y-4 fixed top-0 right-0 bottom-0 left-0 z-50 w-full h-full bg-black flex flex-col items-center justify-center opacity-90 text-3xl font-boldS">
               {/* Your mobile navigation menu goes here */}
               <ConnectWallet />
+              <Link href="/" className="text-yellow hover:text-white transform hover:-translate-y-1">
+                <div className="p-5 ">HOME</div>
+              </Link>
               <Link href="/migration" className="text-yellow hover:text-white transform hover:-translate-y-1">
                 <div className="p-5 ">MIGRATE PRTC</div>
-              </Link>
-              <Link href="/xp" className="text-yellow hover:text-white transform hover:-translate-y-1 ">
-                <div className="p-5 ">EARN XP</div>
               </Link>
               <Link
                 href="https://t.me/ZaarTradingBot"
@@ -59,11 +59,7 @@ export const HomeHeader = () => {
               Migrate PRTC
               </div>
             </Link>
-            <Link href="/xp" >
-              <div className="text-yellow hover:text-white transform hover:-translate-y-1 ">  
-              Earn XP
-              </div>
-            </Link>
+            
             <Link
               href="https://t.me/ZaarTradingBot"
               className="text-yellow  contain "

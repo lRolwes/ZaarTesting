@@ -37,6 +37,7 @@ export const Migration = () => {
   const { data: allowance, refetch:refetchAllowance} = useReadPrtcAllowance({
     args: [address? address: "0x0000000000000000000000000000000000000000", zaarAddress[1]],
   });
+  
   //stores amount to be migrated from input field
   //initialized to balance
   const [payAmntUnormalized, setYouPay] = useState(

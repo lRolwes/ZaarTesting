@@ -5,7 +5,7 @@ import useBalance from "../hooks/Balance";
 import { formatEther } from 'viem';
 
 export const TopSection = () => {
-    const { prtcBalance, zaarBalance } = useBalance();
+    const { prtcBalance, zaarBalance, xPrtcBalance } = useBalance();
 
     return(
         <div className="w-full z-50 h-[140px]">
@@ -20,7 +20,7 @@ export const TopSection = () => {
                     <div className="text-sm font-bold text-gray uppercase mr-6 mb-2">Your Wallet Balance</div> {/* Title added here */}
                     <div className="flex flex-row text-xs ">
                         <div className="flex flex-col items-left justify-left w-1/3 max-w-20 sm:w-auto mb-2 sm:mb-0 mr-4 sm:mr-6">
-                            <div className="bg-dark-gray border border-dark-gray-all text-yellow font-bold text-2xl px-3 py-1 rounded">0</div>
+                            <div className="bg-dark-gray border border-dark-gray-all text-yellow font-bold text-2xl px-3 py-1 rounded">{xPrtcBalance? Number(formatEther(xPrtcBalance)).toFixed(0) : '0'}</div>
                             <div className="text-light-green mt-2 text-sm uppercase flex  flex-row">
                                 <Image 
                                 src="/images/xprtc-token-icon.png" 
@@ -48,7 +48,7 @@ export const TopSection = () => {
                             </div>
                         </div>
                         <div className="flex flex-col items-left justify-left w-1/3 max-w-20 sm:w-auto mb-2 sm:mb-0 mr-0 sm:mr-6">
-                            <div className="bg-dark-gray border border-dark-gray-all text-yellow font-bold text-2xl px-3 py-1 rounded">{zaarBalance ? formatEther(zaarBalance) : '0'}</div>
+                            <div className="bg-dark-gray border border-dark-gray-all text-yellow font-bold text-2xl px-3 py-1 rounded">{zaarBalance ? Number(formatEther(zaarBalance)).toFixed(0) : '0'}</div>
                             <div className="text-light-green mt-2 text-sm uppercase flex flex-row">
                                 <div><Image 
                                 src="/images/zaar-token-icon.png" 
