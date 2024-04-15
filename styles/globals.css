@@ -27,6 +27,12 @@ body {
        url(/fonts/W95FA.woff) format('woff');
 }
 
+.gradient-yellow-orange {
+  background: linear-gradient(to right, #E3BF00, #FF8E33);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 body {
   font-family: 'W95FA';
   letter-spacing: 1px;

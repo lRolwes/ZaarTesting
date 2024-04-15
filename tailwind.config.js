@@ -20,6 +20,12 @@ module.exports = {
         'whitish':'#ededed',
         'disabled-gray': '#5a5a5a',
       },
+      filter: { // extending the filter utility
+        'blur': 'blur(2px)', // custom blur class
+      },
+      blur: {
+        'tiny': '1px',
+      },
       fontFamily: {
         primary: ['PrimaryFont', 'sans-serif'],
         secondary: ['SecondaryFont', 'W95FA'],

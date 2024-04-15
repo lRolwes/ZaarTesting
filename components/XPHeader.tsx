@@ -10,7 +10,7 @@ export const XpHeader = () => {
     setIsMenuOpen(!isMenuOpen);
   };
   return (
-    <header className="fixed top-0 left-0 w-full z-30 flex justify-between items-center px-8 pl-6 sm:pl-2">
+    <header className={`fixed top-0 left-0 w-full z-30 flex justify-between items-center px-8 pl-6 sm:pl-2 bg-black bg-opacity-20 filter  ${isMenuOpen? " " : " backdrop-blur-md"}`}>
       <div className="flex justify-between items-center p-3 px-0  pl-2 border-dark-gray w-full">
         {/* Logo and Navigation */}
         <div className="flex items-center justify-between md:space-x-4 text-sm">

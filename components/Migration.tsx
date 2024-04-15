@@ -112,11 +112,12 @@ export const Migration = () => {
       let myhash = await writeContract(config, approve!.request);
       let receipt = await waitForTransactionReceipt(config, { hash: myhash });
       toast.dismiss(toastId);
-      if (receipt.status != "reverted"){
+      if ((allowance ? allowance : 0 )< payAmntUnormalized ){
         toast.success("Success! Funds approved for migration");
       }
-      else{
+      else if (receipt.status == "reverted"){
         toast.error("Failed to approve funds for migration. Please try again.");
+        console.log(receipt.status.toString())
       }}
     catch (error){
       console.log(error);
@@ -133,10 +134,10 @@ export const Migration = () => {
       let myhash = await writeContract(config, bridge!.request);
       let receipt = await waitForTransactionReceipt(config, { hash: myhash });
       toast.dismiss(toastId);
-      if (receipt.status != "reverted"){
-        toast.success("Success! Funds approved for migration");
+      if (receipt.status == "success"){
+        toast.success("Success! Funds migrated");
       }
-      else{
+      else if (receipt.status === "reverted"){
         toast.error("Failed to migrate. Please try again.");
       }}
     catch (error){

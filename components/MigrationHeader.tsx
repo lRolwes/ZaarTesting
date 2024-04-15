@@ -11,7 +11,7 @@ export const MigrationHeader = () => {
   };
     return (
     
-        <div className="flex justify-between items-center p-4 px-8 pl-2 border-dark-gray">
+        <header className={`flex justify-between items-center p-4 px-8 pl-2 border-dark-gray bg-black bg-opacity-20 filter  ${isMenuOpen? " " : " backdrop-blur-md"}`}>
         {/* Logo and Navigation */}
         <div className="flex items-center justify-between md:space-x-4 text-sm">
         
@@ -40,12 +40,12 @@ export const MigrationHeader = () => {
             </button>
           </div>
         )}
-        <div className="ml-4 lg:ml-0">
+        <div className=" ml-0">
         <Link href="/" className=" ">
           <Image
             src="/images/logo-3d.png"
             alt="logo"
-            className="rounded-sm h-8 mr-4 "
+            className="rounded-sm h-8 mr-4 ml-4 "
             width={30}
             height={100}
           />
@@ -72,8 +72,8 @@ export const MigrationHeader = () => {
         </nav>
       </div>
         {/* Connect Button */}
-        <div className="ml-auto">
-            <div className="flex items-center text-gray -mr-5">
+        <div className="ml-auto z-10">
+            <div className="flex items-center text-gray -mr-5 ">
                 <div className="group relative  z-20 flex flex-row space-x-4">
                     <ConnectWallet/>
                     <button
@@ -101,6 +101,6 @@ export const MigrationHeader = () => {
             </div>
         </div>
         
-        </div>
+        </header>
     );
 }

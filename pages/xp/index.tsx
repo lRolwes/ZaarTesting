@@ -21,7 +21,7 @@ const HeroContent = () => {
 
   return (
     <div className="pb-0 flex content-center items-center justify-center bg-hero min-h-screen">
-      <div className="absolute w-full h-full bg-center bg-cover z-10">
+      <div className="fixed absolute w-full h-full bg-center bg-cover z-10">
         <Image src="/images/bg-xp.jpg" alt="" layout="fill" objectFit="cover" />
       </div>
       {/* Hero Content */}
@@ -41,26 +41,26 @@ const HeroContent = () => {
           <section className="bg-black text-white py-3 bg-opacity-60 rounded-sm pb-0">
             <div className="max-w-2xl mx-auto text-center">
               {/* Stats Section */}
-              <div className="flex justify-around items-center text-center mb-4">
+              <div className="flex flex-col justify-around items-center text-center mb-4">
                 <div className="flex items-baseline text-sm sm:text-xl">
                   <span className="text-white font-medium uppercase mr-2">
                     My XP
                   </span>
                   <span className="text-yellow gradient-yellow-orange font-bold">
-                    {rewards}
+                    {rewards?Math.round(rewards):0}
                   </span>
                 </div>
-                <div className="flex items-baseline text-sm sm:text-xl">
-                  <span className="text-white font-medium uppercase mr-2">
+                <div className="flex items-baseline text-sm sm:text-xl ">
+                  <span className="text-white font-medium uppercase mr-2 ">
                     My Rank
                   </span>
-                  <span className="text-yellow font-bold">COMING SOON</span>
+                  <span className="text-yellow font-bold gradient-yellow-orange filter blur">COMING SOON</span>
                 </div>
                 <div className="flex items-baseline text-sm sm:text-xl">
                   <span className="text-white font-medium uppercase mr-2">
                     Global XP
                   </span>
-                  <span className="text-yellow font-bold">COMING SOON</span>
+                  <span className="text-yellow font-bold gradient-yellow-orange filter blur">COMING SOON</span>
                 </div>
               </div>
               {/* Card Section */}
@@ -97,7 +97,7 @@ const HeroContent = () => {
 
                 {/*{/* Titles 3 and 4 */}
                 <div className="mb-6">
-                  <h4 className="text-lg text-yellow font-bold uppercase mb-2 gradient-yellow-orange blur-tiny">
+                  <h4 className="text-lg text-yellow font-bold uppercase mb-2 gradient-yellow-orange filter blur-tiny">
                     Coming soon
                   </h4>
                 </div>
