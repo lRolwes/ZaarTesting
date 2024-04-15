@@ -30,9 +30,7 @@ import{
 export const Migration = () => {
   //current user address
   const { address } = useAccount();
-  //reads number of decimals for this currency
-  const { data: prtcDecimal} = useReadPrtcDecimals();
-  const { prtcBalance, zaarBalance, refetchBalance } = useBalance();
+  const { prtcBalance, zaarBalance, xPrtcBalance, refetchBalance } = useBalance();
   //reads current approved allowance
   const { data: allowance, refetch:refetchAllowance} = useReadPrtcAllowance({
     args: [address? address: "0x0000000000000000000000000000000000000000", zaarAddress[1]],
@@ -41,19 +39,30 @@ export const Migration = () => {
   //stores amount to be migrated from input field
   //initialized to balance
   const [payAmntUnormalized, setYouPay] = useState(
-    prtcBalance ? prtcBalance: BigInt(0)
+    prtcBalance? prtcBalance : BigInt(2)
   );
+  const [inputValue, setInputValue] = useState("");
+  useEffect(() => {
+    if (inputValue == ""){
+      setYouPay(prtcBalance? prtcBalance : BigInt(0));
+    }
+  }, [inputValue,prtcBalance,  setYouPay]);
   //collects input from payment amount input box
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let value = event.target.value;
     let numberValue = Number(value);
-    let roundedStringValue = Number(numberValue).toFixed(4);
+    let roundedStringValue = Number(numberValue).toFixed(6);
+    setInputValue(value);
     if(numberValue >= 0){
       setYouPay(parseEther(roundedStringValue));
     }
-    else{
+    else if (numberValue < 0){
       setYouPay(BigInt(0));
     }
+    else{
+      setYouPay(prtcBalance!=null ? prtcBalance : BigInt(0));
+    }
+    
   };
   //compares payment amount to current allowance
   //stores the amount remaining to be approved unormalized in variable approvalAmnt
@@ -72,11 +81,11 @@ export const Migration = () => {
     }
   }, [allowance, payAmntUnormalized]);
   //get prepared function to approve
-  const { data: approve } = useSimulatePrtcApprove({
+  const { data: approve }: {data: any} = useSimulatePrtcApprove({
     args: [zaarAddress[1], payAmntUnormalized],
   });
   // get prepared function to migrate
-  const { data: bridge } = useSimulateZaarBridge({
+  const { data: bridge }: {data: any}= useSimulateZaarBridge({
     args: [payAmntUnormalized],
   });
 
@@ -111,19 +120,23 @@ export const Migration = () => {
     try{
       let myhash = await writeContract(config, approve!.request);
       let receipt = await waitForTransactionReceipt(config, { hash: myhash });
+      refetchAllowance();
       toast.dismiss(toastId);
-      if ((allowance ? allowance : 0 )< payAmntUnormalized ){
+      if ((allowance ? allowance : 0 )>= (payAmntUnormalized ? payAmntUnormalized : 0) || receipt.status == "success" ){
         toast.success("Success! Funds approved for migration");
       }
       else if (receipt.status == "reverted"){
-        toast.error("Failed to approve funds for migration. Please try again.");
+        toast.error(`Failed to approve funds for migration. Please try again. `);
         console.log(receipt.status.toString())
       }}
     catch (error){
       console.log(error);
       toast.dismiss(toastId);
-      toast.error("Failed to approve funds for migration. Please try again.");
-        }
+      refetchAllowance();
+      if((allowance ? allowance : 0 )>= (payAmntUnormalized ? payAmntUnormalized : 0)){
+        toast.success("Success! Funds approved for migration");
+      }
+      }
     refetchAllowance();
     return;
   }
@@ -142,7 +155,8 @@ export const Migration = () => {
       }}
     catch (error){
       toast.dismiss(toastId);
-      toast.error("Failed to migrate. Please try again later.");
+      refetchAllowance();
+      toast.error("Failed to migrate. Please try again.");
         }
     refetchAllowance();
     refetchBalance();
@@ -164,23 +178,25 @@ export const Migration = () => {
         <div className="mb-4 md:w-[500px]">
           <Link
             href="https://app.protectorate.xyz/stake"
-            className=""
+            className={`${xPrtcBalance ? (xPrtcBalance>0? " ":"hidden") : "hidden"}`}
           >
             <div className="text-center bg-yellow text-black uppercase font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline w-full transition-colors duration-300 ease-in-out border-2 hover:bg-whitish cursor-pointer border-yellow mb-2">
             Unstake
             </div>
           </Link>
-
-          <div className="relative bg-dark-gray rounded-sm shadow-md h-30 py-[50px] w-full">
+          <div className={`relative bg-dark-gray rounded-sm shadow-md h-30 py-[50px] w-full border-2 ${payAmntUnormalized>(prtcBalance||0)? "border-red" : "border-dark-gray"}`}>
             <input
               id="you-pay"
               type="text"
               className="w-full h-full tracking-wider bg-transparent pl-4 text-3xl font-semibold outline-none"
               placeholder={
-                prtcBalance ? formatEther(prtcBalance) : "0"
+                prtcBalance ? Number(formatEther(prtcBalance)).toFixed(6) : "0"
               }
               onChange={handleInputChange}
             />
+            <span className={`absolute left-4 bottom-4 text-red uppercase text-xs ${((payAmntUnormalized)>(prtcBalance||0))? " " : "hidden"}`}>
+              Error: Insufficient PRTC balance.
+            </span>
             <span className="absolute left-4 top-4 text-gray uppercase text-xs">
               You migrate
             </span>
@@ -190,7 +206,7 @@ export const Migration = () => {
             >
               Balance:
               {prtcBalance !== null
-                ? formatEther((prtcBalance? prtcBalance: BigInt(0)))
+                ? Number(formatEther((prtcBalance? prtcBalance: BigInt(0)))).toFixed(6)
                 : "0"}{" "}
               PRTC
             </span>
@@ -210,11 +226,9 @@ export const Migration = () => {
         <div className="mb-4 h-full md:w-[500px]">
           <div className="relative bg-dark-gray rounded-sm shadow-md h-300 py-[50px]">
             <div className="w-full h-full bg-transparent pl-4 text-3xl font-semibold outline-none">
-              {payAmntUnormalized
-                ? formatEther(payAmntUnormalized)
-                : prtcBalance
-                  ? formatEther(prtcBalance)
-                  : "0"}
+              {payAmntUnormalized>=0
+                ? Number(formatEther(payAmntUnormalized)).toFixed(6)
+                : prtcBalance? Number(formatEther(prtcBalance)).toFixed(6): "0"}
             </div>
             <span className="absolute left-4 top-4 text-gray uppercase text-xs">
               You receive
@@ -225,7 +239,7 @@ export const Migration = () => {
             >
               Balance:
               {zaarBalance
-                ? formatEther(zaarBalance)
+                ? Number(formatEther(zaarBalance)).toFixed(6)
                 : "0"}{" "}
               ZAAR
             </span>
@@ -251,7 +265,6 @@ export const Migration = () => {
           >
             {!approved ? 'Approve' : 'Migrate'}
           </button>
-          <div> {approveInfo()} </div>
         </div>
       </div>
     </div>
