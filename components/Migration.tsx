@@ -116,12 +116,14 @@ export const Migration = () => {
   //creating a Write contract to use our prepared functions
 
   async function approver() {
-    const toastId = toast.loading("Waiting from confirmation from your wallet");
+    const toastId = toast.loading("Waiting on confirmation from your wallet.");
     try{
       let myhash = await writeContract(config, approve!.request);
+      toast.dismiss(toastId);
+      toast.loading("Transaction Processing");
       let receipt = await waitForTransactionReceipt(config, { hash: myhash });
       refetchAllowance();
-      toast.dismiss(toastId);
+      toast.dismiss();
       if ((allowance ? allowance : 0 )>= (payAmntUnormalized ? payAmntUnormalized : 0) || receipt.status == "success" ){
         toast.success("Success! Funds approved for migration");
       }
@@ -130,7 +132,7 @@ export const Migration = () => {
       }}
     catch (error){
       console.log(error);
-      toast.dismiss(toastId);
+      toast.dismiss();
       refetchAllowance();
       if((allowance ? allowance : 0 )>= (payAmntUnormalized ? payAmntUnormalized : 0)){
         toast.success("Success! Funds approved for migration");
@@ -144,8 +146,10 @@ export const Migration = () => {
     const toastId = toast.loading("Waiting from confirmation from your wallet");
     try{
       let myhash = await writeContract(config, bridge!.request);
+      toast.dismiss();
+      toast.loading("Transaction Processing");
       let receipt = await waitForTransactionReceipt(config, { hash: myhash });
-      toast.dismiss(toastId);
+      toast.dismiss();
       if (receipt.status == "success"){
         toast.success("Success! Funds migrated");
       }
@@ -153,7 +157,7 @@ export const Migration = () => {
         toast.error("Failed to migrate. Please try again.");
       }}
     catch (error){
-      toast.dismiss(toastId);
+      toast.dismiss();
       refetchAllowance();
       toast.error("Failed to migrate. Please try again.");
         }
