@@ -46,8 +46,8 @@ const HeroContent = () => {
                   <span className="text-white font-medium uppercase mr-2">
                     My XP
                   </span>
-                  <span className="text-yellow gradient-yellow-orange font-bold">
-                    {rewards?Math.round(rewards):0}
+                <span className="text-yellow font-bold gradient-yellow-orange filter blur">COMING SOON
+                    {/*{rewards?Math.round(rewards):0}*/}
                   </span>
                 </div>
                 <div className="flex flex-col items-center text-sm sm:text-xl ">
