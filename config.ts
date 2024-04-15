@@ -6,7 +6,6 @@ export const config = getDefaultConfig({
     projectId: 'ZAAR_PROJECT',
     chains: [
       mainnet,
-      sepolia,
     ],
     ssr: true,
   });
