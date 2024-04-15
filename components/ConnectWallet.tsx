@@ -59,6 +59,7 @@ export const ConnectWallet = () => {
                     onClick={openChainModal}
                     style={{ display: 'flex', alignItems: 'center' }}
                     type="button"
+                    className="hover:text-whitish transition-colors duration-150"
                   >
                     {chain.hasIcon && (
                       <div
@@ -86,7 +87,7 @@ export const ConnectWallet = () => {
                     {chain.name}
                   </button>
 
-                  <button onClick={openAccountModal} type="button">
+                  <button onClick={openAccountModal} type="button" className="hover:text-whitish transition-colors duration-150">
                     {account.displayName}
                     {account.displayBalance
                       ? ` (${account.displayBalance})`

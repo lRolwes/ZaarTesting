@@ -4,7 +4,7 @@ import type { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WagmiProvider } from 'wagmi';
 import {config} from '../config';
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { RainbowKitProvider, darkTheme} from '@rainbow-me/rainbowkit';
 import Head from 'next/head';
 import type { Metadata } from 'next'
  
@@ -19,7 +19,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     
     <WagmiProvider config={config}>
       <QueryClientProvider client={client}>
-        <RainbowKitProvider>
+        <RainbowKitProvider theme={darkTheme({accentColor:'#e3bf00', accentColorForeground:'black', overlayBlur:'small'})}>
         <Head>
           <title>Zaar</title>
           <link rel="icon" href="/images/favicon.png"/>

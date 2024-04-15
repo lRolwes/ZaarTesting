@@ -18,15 +18,18 @@ export const HomeHeader = () => {
             <div className="space-y-4 fixed top-0 right-0 bottom-0 left-0 z-1000 w-full h-full bg-black flex flex-col items-center justify-center opacity-90 text-3xl font-bold z-1000">
               {/* Your mobile navigation menu goes here */}
               <ConnectWallet />
-              <Link href="/migration" className="text-yellow hover:text-white transform hover:-translate-y-1">
+              <Link href="/migration" className="text-white hover:text-white">
+                <div className="p-5 ">HOME</div>
+              </Link>
+              <Link href="/migration" className="text-yellow hover:text-hoveryellow transform hover:-translate-y-1">
                 <div className="p-5 ">MIGRATE PRTC</div>
               </Link>
-              <Link href="/xp" className="text-yellow hover:text-white transform hover:-translate-y-1 ">
+              <Link href="/xp" className="text-yellow hover:text-hoveryellow transform hover:-translate-y-1 ">
                 <div className="p-5 ">EARN XP</div>
               </Link>
               <Link
                 href="https://t.me/ZaarTradingBot"
-                className="text-yellow hover:text-white transform hover:-translate-y-1 "
+                className="text-yellow hover:text-hoveryellow transform hover:-translate-y-1 "
               >
                 <div className="p-5 ">TELEGRAM TRADING</div>
               </Link>
@@ -55,12 +58,12 @@ export const HomeHeader = () => {
         <div className="lg:block hidden">
           <nav className="space-x-7 uppercase relative text-md md:ml-3 font-l flex flex-row">
             <Link href="/migration" className="contain ">
-            <div className="text-yellow  hover:text-white transform hover:-translate-y-1 ">
+            <div className="text-yellow  hover:text-hoveryellow transform hover:-translate-y-1 ">
               Migrate PRTC
               </div>
             </Link>
             <Link href="/xp" >
-              <div className="text-yellow hover:text-white transform hover:-translate-y-1 ">  
+              <div className="text-yellow hover:text-hoveryellow transform hover:-translate-y-1 ">  
               Earn XP
               </div>
             </Link>
@@ -68,7 +71,7 @@ export const HomeHeader = () => {
               href="https://t.me/ZaarTradingBot"
               className="text-yellow  contain "
             >
-              <div className="text-yellow  hover:text-white transform hover:-translate-y-1 ">
+              <div className="text-yellow  hover:text-hoveryellow transform hover:-translate-y-1 ">
               Telegram Trading
               </div>
             </Link>

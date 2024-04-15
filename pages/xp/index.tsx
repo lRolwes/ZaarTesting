@@ -41,8 +41,8 @@ const HeroContent = () => {
           <section className="bg-black text-white py-3 bg-opacity-60 rounded-sm pb-0">
             <div className="max-w-2xl mx-auto text-center">
               {/* Stats Section */}
-              <div className="flex flex-col justify-around items-center text-center mb-4">
-                <div className="flex items-baseline text-sm sm:text-xl">
+              <div className="flex flex-row justify-around items-center text-center mb-4">
+                <div className="flex flex-col items-center text-sm sm:text-xl">
                   <span className="text-white font-medium uppercase mr-2">
                     My XP
                   </span>
@@ -50,13 +50,13 @@ const HeroContent = () => {
                     {rewards?Math.round(rewards):0}
                   </span>
                 </div>
-                <div className="flex items-baseline text-sm sm:text-xl ">
+                <div className="flex flex-col items-center text-sm sm:text-xl ">
                   <span className="text-white font-medium uppercase mr-2 ">
                     My Rank
                   </span>
                   <span className="text-yellow font-bold gradient-yellow-orange filter blur">COMING SOON</span>
                 </div>
-                <div className="flex items-baseline text-sm sm:text-xl">
+                <div className="flex flex-col items-center text-sm sm:text-xl">
                   <span className="text-white font-medium uppercase mr-2">
                     Global XP
                   </span>

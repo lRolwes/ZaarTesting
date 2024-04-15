@@ -164,9 +164,11 @@ export const Migration = () => {
         <div className="mb-4 md:w-[500px]">
           <Link
             href="https://app.protectorate.xyz/stake"
-            className="inline-block bg-gray text-light-green py-2 px-4 uppercase text-xs rounded-sm font-bold hover:bg-gray-100 hover:text-black transition-colors duration-300 ease-in-out mb-4 cursor-pointer"
+            className=""
           >
+            <div className="text-center bg-yellow text-black uppercase font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline w-full transition-colors duration-300 ease-in-out border-2 hover:bg-whitish cursor-pointer border-yellow mb-2">
             Unstake
+            </div>
           </Link>
 
           <div className="relative bg-dark-gray rounded-sm shadow-md h-30 py-[50px] w-full">
@@ -240,7 +242,7 @@ export const Migration = () => {
           </div>
           <button
             id="approve-btn"
-            className={`mt-10 bg-yellow text-black uppercase font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline w-full transition-colors duration-300 ease-in-out ${(okToApprove || okToBridge) ? 'cursor-pointer hover:bg-whitish hover:border-2 hover:border-yellow hover:text-black': 'opacity-50'}`}
+            className={`mt-10 bg-yellow text-black uppercase font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline w-full transition-colors duration-300 ease-in-out border-2 ${(okToApprove || okToBridge) ? 'cursor-pointer hover:bg-whitish hover:border-yellow hover:text-black': 'opacity-50'}`}
             type="button"
             disabled={!okToApprove && !okToBridge}
             onClick={() => {
