@@ -126,7 +126,6 @@ export const Migration = () => {
         toast.success("Success! Funds approved for migration");
       }
       else if (receipt.status == "reverted"){
-        toast.error(`Failed to approve funds for migration. Please try again. `);
         console.log(receipt.status.toString())
       }}
     catch (error){
