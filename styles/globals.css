@@ -86,3 +86,10 @@ a:hover {
   border-top: 1px solid #303030;
   border-right: 1px solid #303030;
 }
+.hide-scroll-bar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scroll-bar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

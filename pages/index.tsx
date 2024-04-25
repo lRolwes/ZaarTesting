@@ -2,10 +2,10 @@ import type { NextPage } from "next";
 import Image from "next/image";
 import React from "react";
 import Link from "next/link";
-import Head from "next/head";
 import { Footer } from "../components/Footer";
 import { HomeHeader } from "../components/HomeHeader";
 const HeroContent = () => {
+  
   return (
     <div className="pt-24 sm:pt-52 pb-32 flex content-center items-center justify-center bg-hero min-h-screen">
       <div

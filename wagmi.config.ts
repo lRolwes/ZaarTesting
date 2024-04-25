@@ -3,6 +3,7 @@ import { etherscan, react } from "@wagmi/cli/plugins";
 import { erc20Abi } from "viem";
 import { sepolia, mainnet } from "wagmi/chains";
 
+
 export default defineConfig({
     out: "generated.ts",
     contracts: [
