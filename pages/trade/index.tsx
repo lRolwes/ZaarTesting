@@ -58,19 +58,19 @@ const HeroContent = () => {
   ]);
 
   useEffect(() => {
-    if (collections != null) {
+    if (collections) {
       let images = [];
       let names = [];
       let volumes = [];
       let floorPrices = [];
       for (let x = 0; x < 10; x++) {
         images.push(
-          "url('" + collections?.[x].image.toString() + "')" || " "
+          "url('" + collections?.[x].image?.toString() + "')" || " "
         );
-        names.push(collections?.[x].name.toString() || " ");
-        volumes.push(collections?.[x].volume.toString() || " ");
+        names.push(collections?.[x].name?.toString() || " ");
+        volumes.push(collections?.[x].volume?.toString() || " ");
         floorPrices.push(
-          collections?.[x].floorAsk.price?.amount.decimal.toString() || " "
+          collections?.[x].floorAsk?.price?.amount?.decimal?.toString() || " "
         );
       }
       setImage(images);
@@ -373,12 +373,12 @@ const TableSection = () => {
 
       for (let x = 0; x < 10; x++) {
         images.push("url('" + collections?.[x].image + "')" || " ");
-        names.push(collections?.[x].name.toString() || " ");
-        volumes.push(collections?.[x].volume.toString() || " ");
-        floorPrices.push(collections?.[x].floorAsk.price?.amount.usd.toString() || " ");
-        topBids.push(collections?.[x].topBid.price?.toString() || "0");
-        percentChanges.push(collections?.[x].floorAskPercentChange.toString()+"%" || "0");
-        owners.push(collections?.[x].ownerCount.toString() || "0");
+        names.push(collections?.[x].name?.toString() || " ");
+        volumes.push(collections?.[x].volume?.toString() || " ");
+        floorPrices.push(collections?.[x].floorAsk?.price?.amount?.usd?.toString() || " ");
+        topBids.push(collections?.[x].topBid?.price?.toString() || "0");
+        percentChanges.push(collections?.[x].floorAskPercentChange?.toString()+"%" || "0");
+        owners.push(collections?.[x].ownerCount?.toString() || "0");
       }
       setImage(images);
       setName(names);
