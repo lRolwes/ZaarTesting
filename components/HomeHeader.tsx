@@ -1,11 +1,67 @@
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { use, useRef, useState, useEffect } from "react";
 import { ConnectWallet } from "./ConnectWallet";
-
+import axios from 'axios';
 export const HomeHeader = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searching, setSearching] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    function handleClickOutside(event: { target: any; }) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        setSearching(false);
+      }
+    }
 
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+  const [search, setSearch] = useState(" ");
+  const [nftData, setNftData] = useState([{name: "", image:"", id:""}, {name: "", image:"", id:""}, {name: "", image:"", id:""}, {name: "", image:"", id:""}, {name: "", image:"", id:""}]);
+
+  async function nftLookup(target: string) {
+    const options = {
+      method: 'GET',
+      url: 'https://api.reservoir.tools/collections/search/v1?prefix=' + target,
+      headers: {accept: '*/*', 'x-api-key': 'demo-api-key'}
+    };
+
+    try {
+      const response = await axios.request(options);
+      console.log(response.data.collections);
+      return response.data.collections;
+    } catch (error) {
+      console.error(error);
+      return " ";
+    }
+  }
+
+  useEffect(() => {
+    if (search.length > 2) {
+      setSearching(true);
+    } else {
+      setSearching(false);
+    }
+  }, [search, setSearching]);
+
+  useEffect(() => {
+    if (searching) {
+      const fetchNftData = async () => {
+        const nftData = await nftLookup(search);
+        setNftData(nftData);
+      };
+      fetchNftData();
+    }
+  }, [searching, search, setNftData]);
+  
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let value = event.target.value;
+    setSearch(value);
+  }
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const handleMenuButtonClick = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -77,11 +133,77 @@ export const HomeHeader = () => {
             </Link>
           </nav>
         </div>
+        <div className="w-full md:w-[760px]">
+        <div className="flex flex-col w-[200px] md:w-[360px] mx-auto text-base relative z-10 align-center" ref={wrapperRef}>
+          <input type="text" placeholder="Search" onChange={handleInputChange} className=" border-2 border-white border-l border-r border-t bg-black w-full px-4 py-2 rounded-sm bg-black text-white placeholder-gray-50 focus:outline-none ml-2" id="search-bar"/>
+          <div className="relative">
+          <div className="absolute ">
+
+            {searching && <Link href={`/${nftData[0].id}`} className="hover:text-white text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-white bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+                      <a><div
+                        className="h-10 w-10 rounded-sm mr-4 "
+                        style={{ 
+                          backgroundImage: nftData[0].image? `url(${nftData[0].image})` : "url(/images/logo-3d.png)",
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          backgroundRepeat: 'no-repeat',
+                        }}
+                      /></a>
+                       {nftData[0].name? nftData[0].name: " "} </Link>}
+                       {searching && <Link href={`/${nftData[1].id}`} className="hover:text-white text-yellow w-[200px] md:w-[360px]  flex flex-row  items-center hover:bg-gray border-l border-r border-t border-white bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+                      <div
+                        className="h-10 w-10 rounded-sm mr-4 "
+                        style={{ 
+                          backgroundImage: nftData[1].image? `url(${nftData[1].image})` : "url(/images/logo-3d.png)",
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          backgroundRepeat: 'no-repeat',
+                        }}
+                      />
+                       {nftData[1].name? nftData[1].name: " "} </Link>}
+                       {searching && <Link href={`/${nftData[2].id}`} className="hover:text-white text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-white bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+                      <div
+                        className="h-10 w-10 rounded-sm mr-4"
+                        style={{ 
+                          backgroundImage: nftData[2].image? `url(${nftData[2].image})` : "url(/images/logo-3d.png)",
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          backgroundRepeat: 'no-repeat',
+                        }}
+                      />
+                       {nftData[2].name? nftData[2].name: " "} </Link>}
+                       {searching && <Link href={`/${nftData[3].id}`} className="hover:text-white text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-white bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+                      <div
+                        className="h-10 w-10 rounded-sm mr-4 "
+                        style={{ 
+                          backgroundImage: nftData[3].image? `url(${nftData[3].image})` : "url(/images/logo-3d.png)",
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          backgroundRepeat: 'no-repeat',
+                        }}
+                      />
+                       {nftData[3].name? nftData[3].name: " "} </Link>}
+                       {searching && <Link href={`/${nftData[4].id}`} className="hover:text-white text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-1 border-l border-r border-t border-b border-white bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+                      <div
+                        className="h-10 w-10 rounded-sm mr-4 "
+                        style={{ 
+                          backgroundImage: nftData[4].image? `url(${nftData[4].image})` : "url(/images/logo-3d.png)",
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          backgroundRepeat: 'no-repeat',
+                        }}
+                      />
+                       {nftData[4].name? nftData[4].name: " "} </Link>}
+            
+            </div>
+            </div>
+            </div>
+        </div>
         {/* Connect Button */}
         <div className="ml-auto z-2">
           <div className="flex items-center text-gray mr-0">
             <div className="group flex flex-row space-x-4 z-2">
-              <ConnectWallet />
+              <div className="hidden lg:block"><ConnectWallet /></div>
               <button
                 id="menu-btn"
                 onClick={handleMenuButtonClick}

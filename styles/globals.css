@@ -93,3 +93,10 @@ a:hover {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  background-color: inherit; /* This is to ensure the background of the header doesn't become transparent when scrolling */
+  z-index: 1; /* This is to ensure the header stays on top of the other elements when scrolling */
+}

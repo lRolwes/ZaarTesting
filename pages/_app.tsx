@@ -13,7 +13,6 @@ import {
 } from '@reservoir0x/reservoir-kit-ui';
 import { createClient, reservoirChains } from "@reservoir0x/reservoir-sdk"
 
-
 const theme = lightTheme({
   headlineFont: "Sans Serif",
   font: "Serif",
