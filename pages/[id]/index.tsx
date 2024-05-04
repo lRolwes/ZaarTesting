@@ -8,7 +8,6 @@ import { HomeHeader } from "../../components/HomeHeader";
 import { useTrendingCollections } from "@reservoir0x/reservoir-kit-ui";
 import useTopCollections from "../../hooks/TopCollections";
 import { useRouter } from "next/router";
-import sdk from "@api/reservoirprotocol";
 import axios from "axios";
 
 const ComponentOne = ({
