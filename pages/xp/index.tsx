@@ -3,7 +3,7 @@ import Image from "next/image";
 import React from "react";
 import { useState, useEffect } from "react";
 import { Footer } from "../../components/Footer";
-import { XpHeader } from "../../components/XPHeader";
+import { HomeHeader } from "../../components/HomeHeader";
 import useBalance from "../../hooks/Balance";
 import { useAccount } from "wagmi";
 const HeroContent = () => {
@@ -114,7 +114,7 @@ const Home: NextPage = () => {
   return (
     <div className="overflow-y-hidden">
       <main id="landing" className="font-secondary">
-        <XpHeader />
+        <HomeHeader />
         <HeroContent />
         <Footer />
       </main>

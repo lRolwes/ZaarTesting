@@ -1,35 +1,50 @@
-import type { NextPage } from "next";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import Link from "next/link";
-import Head from "next/head";
 import { Footer } from "../../components/Footer";
 import { HomeHeader } from "../../components/HomeHeader";
-import { useTrendingCollections } from "@reservoir0x/reservoir-kit-ui";
-import useTopCollections from "../../hooks/TopCollections";
 import { useRouter } from "next/router";
 import axios from "axios";
-
-const ComponentOne = ({
-  collectionData,
-}: {
-  collectionData: {
+import { BuyModal } from "@reservoir0x/reservoir-kit-ui";
+import { getClient, Execute } from "@reservoir0x/reservoir-sdk";
+import { createWalletClient, http } from 'viem'
+import { useAccount } from "wagmi";
+type CollectionData = {
+    createdAt: string;
     name: string;
     image: string;
     id: string;
     description: string;
-  };
+    tokenCount: string;
+    contractKind: string;
+    royalties: {bps: string};
+    floorAsk:{price:{amount:{decimal:number}}};
+    topBid:{price:{amount:{decimal:number}}};
+    floorSaleChange: {"1day": number};
+    volume:{"1day":number};
+    volumeChange:{"1day":number};
+};
+const TopSection = ({
+  collectionData,
+}: {
+  collectionData: CollectionData
 }) => {
+  const givenDate = new Date(collectionData?.createdAt? collectionData.createdAt:"");
+  const currentDate = new Date();
+  const differenceInMilliseconds = Number(currentDate) - Number(givenDate);
+  const age = Math.floor(differenceInMilliseconds / 1000 / 60 / 60 / 24 / 365.25);
+
   return (
-    <div className="container-fluid mx-auto px-4 py-3">
-      <div className="bg-black text-white">
+    <div className=" container-fluid mx-auto px-4 py-3">
+      <div className=" text-white">
         <div className="flex items-center justify-between px-2 py-2">
           <div className="flex items-center space-x-4">
             <div
               className="object-cover w-16 h-16"
               style={{
                 backgroundImage:
-                  "url('" + collectionData.image?.toString() + "')",
+                  "url('" + collectionData?.image?.toString() + "')",
                 backgroundSize: "cover",
                 height: "16", // Set a fixed height
                 width: "16", // Set a fixed width
@@ -38,7 +53,7 @@ const ComponentOne = ({
             <div>
               <div className="flex items-center space-x-2">
                 <h1 className="text-2xl font-bold text-light-green">
-                  {collectionData.name}
+                  {collectionData?.name}
                 </h1>
                 <div className="flex items-center space-x-1">
                   <button
@@ -71,43 +86,21 @@ const ComponentOne = ({
                   >
                     <i className="fab fa-twitter text-gray"></i>
                   </button>
-                  <a href="nft-capsule.html" className="cursor-pointer">
-                    <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
-                      <div className="inline-flex items-center ml-0 mr-1 opacity-80">
-                        <span className="relative inline-flex items-center justify-center">
-                          {" "}
-                          {/* Adjust the angle here */}
-                          <span className="h-3 w-6 rounded-full shadow-lg flex items-center justify-center overflow-hidden">
-                            <span className="text-xs font-semibold text-black z-10">
-                              z
-                            </span>
-                            <span
-                              className="absolute inset-0 bg-gradient-to-r from-red-500 via-red-400 to-yellow-500 rounded-full"
-                              style={{
-                                backgroundImage:
-                                  "linear-gradient(to right, #ef4444 30%, #facc15 70%)",
-                              }}
-                            ></span>
-                          </span>
-                        </span>
-                      </div>{" "}
-                      APY: 14.00%
-                    </span>
-                  </a>
+                  
                 </div>
               </div>
               <p className="text-sm text-gray-400 mt-1 uppercase">
                 <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
-                  Ethereum
+                {collectionData?.contractKind?.substring(0,3)=="erc" ? "Ethereum" : "Polygon"}
                 </span>
                 <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
-                  10K ITEMS
+                  {collectionData?.tokenCount} ITEMS
                 </span>
                 <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
-                  MINTED 2Y AGO
+                  MINTED {age}Y AGO
                 </span>
                 <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
-                  5% CREATOR FEE
+                  {(Number(collectionData?.royalties.bps)/100)}% CREATOR FEE
                 </span>
               </p>
             </div>
@@ -118,38 +111,43 @@ const ComponentOne = ({
   );
 };
 
-const CompTwo = () => {
+const NavSection = ({
+  collectionData,
+}: {
+  collectionData: CollectionData
+}) => {
+  const [activeTab, setActiveTab] = useState("items");
+  function toggleTab(t: string){
+    setActiveTab(t);
+  }
   return (
-    <div className="flex-1 flex justify-between gap-x-3 flex-wrap-reverse md:flex-nowrap uppercase px-6 md:px-0">
+    <div>
+      <div className="flex-1 flex justify-between gap-x-3 flex-wrap-reverse md:flex-nowrap uppercase px-6 md:px-0">
       <nav className="inline-flex overflow-x-auto max-w-screen hidescroll md:px-6 h-[35px]">
-        <a
-          className="tab-button cursor-pointer shrink-0 text-sm font-medium font-dm-sans text-yellow whitespace-nowrap leading-3 flex items-center hover:text-gray-600 py-3 md:py-4 px-3 border-b-2 active:bg-gray-200 mr-2.5 last:mr-0 text-yellow border-yellow"
-          href="#"
-          data-target="items"
+        <button
+          className={`uppercase tab-button cursor-pointer shrink-0 text-sm font-medium font-dm-sans whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3  ${activeTab=="items"?"bg-gray-200 text-yellow border-b-2":"text-gray hover:text-white"} mr-2.5 last:mr-0 text-yellow border-yellow`}
+          onClick={()=>toggleTab("items")}
         >
           Items
-        </a>
-        <a
-          className="tab-button cursor-pointer shrink-0 text-sm font-medium font-dm-sans text-gray whitespace-nowrap leading-3 flex items-center hover:text-gray-600 py-3 md:py-4 px-3 border-b-2 active:bg-gray-200 mr-2.5 last:mr-0 border-transparent inline-block sm:hidden"
-          href="#"
-          data-target="info"
+        </button>
+        <button
+          className={`uppercase tab-button cursor-pointer shrink-0 text-sm font-medium font-dm-sans whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3 sm:hidden ${activeTab=="info"?"bg-gray-200 text-yellow border-b-2":"text-gray hover:text-white"} mr-2.5 last:mr-0 text-yellow border-yellow`}
+          onClick={()=>toggleTab("info")}
         >
           Info
-        </a>
-        <a
-          className="tab-button cursor-pointer shrink-0 text-sm font-medium font-dm-sans text-gray whitespace-nowrap leading-3 flex items-center hover:text-gray-600 py-3 md:py-4 px-3 border-b-2 active:bg-gray-200 mr-2.5 last:mr-0 border-transparent"
-          href="#"
-          data-target="activity"
+        </button>
+        <button
+          className={`uppercase tab-button cursor-pointer shrink-0 text-sm font-medium font-dm-sans whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3  ${activeTab=="activity"?"bg-gray-200 text-yellow border-b-2":"text-gray hover:text-white"} mr-2.5 last:mr-0 text-yellow border-yellow`}
+          onClick={()=>toggleTab("activity")}
         >
           Activity
-        </a>
-        <a
-          className="tab-button cursor-pointer shrink-0 text-sm font-medium font-dm-sans text-gray whitespace-nowrap leading-3 flex items-center hover:text-gray-600 py-3 md:py-4 px-3 border-b-2 active:bg-gray-200 mr-2.5 last:mr-0 border-transparent"
-          href="#"
-          data-target="traits"
+        </button>
+        <button
+          className={`uppercase tab-button cursor-pointer shrink-0 text-sm font-medium font-dm-sans whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3  ${activeTab=="traits"?"bg-gray-200 text-yellow border-b-2":"text-gray hover:text-white"} mr-2.5 last:mr-0 text-yellow border-yellow`}
+          onClick={()=>toggleTab("traits")}
         >
           Traits
-        </a>
+        </button>
       </nav>
       <div className="pb-4 <sm:px-2 sm:pb-0 sm:px-6 text-sm font-normal max-w-[calc(100vw_-_16px)] overflow-y-auto hidescroll flex text-gray divide-x-1 divide-gray-300 inline-flex items-center">
         <div className="flex pr-1.5 last:pr-0 gap-1 whitespace-nowrap">
@@ -157,12 +155,12 @@ const CompTwo = () => {
             <div className="dashed-underline">Floor</div>
             <span className="w-full max-w-[200px]">
               <div className="text-light-green font-medium inline-flex items-center max-w-full">
-                <div className="truncate">3.6448</div>
+                <div className="truncate">{collectionData?.floorAsk?.price?.amount?.decimal? collectionData.floorAsk.price.amount.decimal:""}</div>
               </div>
             </span>
           </div>
           <span className="w-full flex-1 mr-3">
-            <span className="text-green-500">+7.26%</span>
+            <span className={`${Number(collectionData.floorSaleChange["1day"])>=0.0? "text-green-500":"text-red"}`}>{Number(Number(collectionData.floorSaleChange["1day"]).toFixed(2))}%</span>
           </span>
         </div>
         <div className="flex px-1.5 last:pr-0 gap-1 whitespace-nowrap mr-3">
@@ -176,56 +174,363 @@ const CompTwo = () => {
           <span className="w-full">
             <div className="flex items-center">
               <div className="text-light-green font-medium inline-flex items-center max-w-full">
-                <div className="truncate">3.54</div>
+                <div className="truncate">{collectionData?.topBid?.price?.amount?.decimal? collectionData.topBid.price.amount.decimal:""}</div>
               </div>
             </div>
           </span>
         </div>
         <div className="flex px-1.5 last:pr-0 gap-1 whitespace-nowrap mr-3">
           24h Vol
-          <span className="w-full">
+          <span className="w-full mr-3">
             <div className="text-light-green font-medium inline-flex items-center max-w-full">
-              <div className="truncate">162.31</div>
+              <div className="truncate">{Number(collectionData.volume["1day"]).toFixed(2)}</div>
             </div>
           </span>
           <span className="w-full">
-            <span className="text-green-500">+116%</span>
-          </span>
-        </div>
-        <div className="flex px-1.5 last:pr-0 gap-1 whitespace-nowrap">
-          <button type="button" className="dashed-underline uppercase">
-            Farmers
-          </button>
-          <span className="w-full">
-            <span className="text-light-green font-medium">0.2%</span>
+            <span className={`${collectionData.volumeChange["1day"]>=0.0? "text-green-500":"text-red"}`}>{Number(collectionData.volumeChange["1day"]).toFixed(2)}%</span>
           </span>
         </div>
       </div>
     </div>
+    {activeTab=="items"? <ItemsSection collectionData={collectionData}/>
+      :activeTab=="activity"? <ActivitySection/>
+  :activeTab=="traits"? <div></div> : <div></div>}
+    </div>
   );
 };
-const CompThree = () => {
+const ItemsSection = ({
+  collectionData,
+}: {
+  collectionData: CollectionData
+}) => {
   return (
-    <div id="items" className="tab-content">
-      <div className="flex-1 pt-3 pb-2 md:pt-3 md:pb-3 flex gap-2 border-gray-200 md:mx-6 z-3 px-6 md:px-0">
-        <div className="flex-col-reverse sm:flex-row-reverse lg:flex-row flex w-full gap-1.5 items-center lg:justify-between">
-          <div className="flex w-full sm:w-auto items-center gap-2">
-            <label className="sr-only" htmlFor="sort-by">
-              Sort by
-            </label>
-            <div className="relative w-full sm:w-auto">
-              <div
-                className="flex group items-center justify-between text-sm text-gray rounded-sm pl-3 pr-2 cursor-pointer border border-dark-gray-all h-10"
-                id="sort-by"
-                tabIndex={0}
-              >
-                <div className="truncate">Lowest Price</div>
-                <div className="flex items-center justify-center h-7.5 w-7.5">
-                  {/* Font Awesome icon for chevron or arrow */}
-                  <i className="fas fa-chevron-up transform rotate-180 text-gray ml-1"></i>
+    <div>
+      <div className="mx-auto p-2 pl-6 pr-6 md:flex md:items-center md:justify-between hidden sm:inline-block">
+            {/* Description */}
+            <p className="md:flex-1 md:mr-4 text-gray">{collectionData.description}</p>
+            {/* See More/Less Button */}
+            <div className="text-right mt-2">
+              <button
+                className="text-blue-500"
+                x-text="expanded ? 'See less' : 'See more'"
+              ></button>
+            </div>
+      </div>
+          <NFTCards id={collectionData.id} />
+    </div>
+  );
+}
+
+const ActivitySection = () => {
+  return(
+    <div className="">
+            <div className="container-fluid mx-auto">
+              <div className="bg-black text-light-green">
+                {/* Activity Header */}
+                <div className="flex items-center justify-between">
+                  <div className="flex-1 pt-3 pb-2 md:pt-3 md:pb-2 flex gap-2 border-gray-200 md:mx-6 z-3 px-6 md:px-0">
+                    <div className="flex-col-reverse sm:flex-row-reverse lg:flex-row flex w-full gap-1.5 items-center lg:justify-between">
+                      <div className="relative w-full sm:max-w-90">
+                        <div className="relative max-w-[350px]">
+                          <div className="flex items-center rounded-sm border border-dark-gray-all h-10 w-full">
+                            <span className="font-medium text-xs pl-2 text-gray-400">
+                              {/* Font Awesome icon for search */}
+                              <i className="fas fa-search"></i>
+                            </span>
+                            <input
+                              placeholder="Search for items"
+                              type="text"
+                              className="bg-transparent text-sm w-full outline-none px-2.5 text-gray placeholder-gray-500"
+                              id="search-input"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Additional filters for larger screens */}
+                    <div className="hidden lg:flex gap-1.5 items-center mt-2">
+                      {/* Event filter */}
+                      <div className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1">
+                        Event
+                        <i className="fas fa-chevron-up transform rotate-180 text-gray mr-1"></i>
+                      </div>
+                      {/* Market filter */}
+                      <div className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1">
+                        Market
+                        <i className="fas fa-chevron-up transform rotate-180 text-gray mr-1"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap ml-6 sm:ml-4 md:pl-2">
+                <button
+                  type="button"
+                  className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
+                >
+                  <span className="text-gray capitalize">Event</span>
+                  <span className="capitalize text-light-green mr-1 ml-1">
+                    Sale
+                  </span>
+                  <i className="fas fa-times cursor-pointer h-14 w-14"></i>
+                </button>
+                <div className="flex items-center gap-2 flex-wrap md:ml-0 md:pl-0">
+                  <button
+                    type="button"
+                    className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
+                  >
+                    <span className="text-gray capitalize">Event</span>
+                    <span className="capitalize text-light-green mr-1 ml-1">
+                      Listing
+                    </span>
+                    <i className="fas fa-times cursor-pointer h-14 w-14"></i>
+                  </button>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap md:ml-0 md:pl-0">
+                  <button
+                    type="button"
+                    className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
+                  >
+                    <span className="text-gray capitalize">Event</span>
+                    <span className="capitalize text-light-green mr-1 ml-1">
+                      Transfer
+                    </span>
+                    <i className="fas fa-times cursor-pointer h-14 w-14"></i>
+                  </button>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap md:ml-0 md:pl-0">
+                  <button
+                    type="button"
+                    className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
+                  >
+                    <span className="text-gray capitalize">Event</span>
+                    <span className="capitalize text-light-green mr-1 ml-1">
+                      Mint
+                    </span>
+                    <i className="fas fa-times cursor-pointer h-14 w-14"></i>
+                  </button>
+                </div>
+                <a
+                  className="inline-block text-xs cursor-pointer text-blue my-1"
+                  role="button"
+                >
+                  Clear
+                </a>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap ml-2 mr-2 md:ml-6 md:pl-1 md:mr-8 mt-3">
+                {/*Table*/}
+                <div className="overflow-x-auto rounded-lg w-full">
+                  <Table />
                 </div>
               </div>
             </div>
+          </div>
+  );
+}
+
+function TokenCard({
+  token,
+}: {
+  token: { tokenId: string; rarity: string; image: string; name: string };
+}) {
+  const { address } = useAccount();
+
+  const buyToken = async (tokenId: string) => {
+    console.log("Buying Token", tokenId);
+  
+  const wallet = createWalletClient({
+    account: address,
+    transport: http()
+  })
+  getClient()?.actions.buyToken({
+    items: [{ token: tokenId, quantity: 1 }],
+    wallet,
+    onProgress: (steps: Execute['steps']) => {
+      console.log(steps)
+    }
+  })
+  
+  };
+  return (
+    <div className="bg-dark-gray text-white rounded-xl flex flex-col border border-transparent hover:border-gray-700 group relative overflow-hidden">
+      <div className="px-3 py-1.5">
+        <span className="text-light-green text-xs font-medium">
+          Rarity #{token.rarity}
+        </span>
+      </div>
+      <div className="flex-1 relative">
+        <div
+          className="object-cover w-[300px] h-[300px]"
+          style={{
+            backgroundImage: "url('" + token.image?.toString() + "')",
+            backgroundSize: "cover",
+            height: "16", // Set a fixed height
+            width: "16", // Set a fixed width
+          }}
+        ></div>
+      </div>
+      <div className="flex flex-col p-2">
+        <a className="mb-1.5 flex items-center gap-1 hover:text-blue" href="#">
+          {token.name}
+        </a>
+        <div className="flex justify-between items-center pb-1.5">
+          <button
+            type="button"
+            className="flex items-center justify-center px-2 py-1.5 text-xs font-medium text-light-green border border-dark-gray-all gray hover:border-gray-400 rounded"
+          >
+            2.6548 ETH
+          </button>
+          <a
+            id="btn"
+            className="border font-medium text-xs text-light-green border-dark-gray-all rounded hover:bg-gray-700 hover:text-white hover:border-gray-400 px-1.5 h-6 flex items-center cursor-pointer"
+          >
+            Details
+          </a>
+        </div>
+        <div className="flex justify-between">
+          <div className="text-xs -mx-3 -mb-2 px-3 py-1 text-light-green flex items-center">
+            Last 6.65 ETH
+            <i className="fas fa-history ml-1"></i>
+          </div>
+        </div>
+      </div>
+      {/* Buy Now Button */}
+      <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform">
+        <BuyModal trigger={
+            <button 
+            className="w-full py-2 bg-yellow text-black uppercase text-sm font-bold rounded-b-xl hover:bg-yellow-600"
+            onClick = {()=>{buyToken(token.tokenId)}}
+            >
+              Buy Now
+            </button>
+          }
+          token={token.tokenId?.toString()}
+          onConnectWallet={()=>{console.log("Connected")}}
+          onPurchaseComplete={(data) => console.log("Purchase Complete")}
+          onPurchaseError={(error, data) =>
+            console.log("Transaction Error", error, data)
+          }
+          onClose={(data, stepData, currentStep) => console.log("Modal Closed")}
+        />
+      </div>
+    </div>
+  );
+}
+
+function NFTCards({ id }: { id: string }) {
+  const [tokenData, setTokenData] = useState([
+    { token: { tokenId: "0", rarity: "0", image: " ", name: " " } },
+  ]);
+  const [sortOpen, setSortOpen] = useState(false);
+  const [sort, setSort] = useState("floorAskPrice");
+  const [sortDirection, setSortDirection] = useState("asc");
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState(false);
+  const [priceFloor, setPriceFloor] = useState(0);
+  const [priceCeiling, setPriceCeiling] = useState(1000000);
+  const [rarityFloor, setRarityFloor] = useState(0);
+  const [rarityCeiling, setRarityCeiling] = useState(1000000);
+  const [markets, setMarkets] = useState({
+    "OpenSea": false,
+    "Rarible": false,
+    "Foundation": false
+  });
+  const [traits, setTraits] = useState({
+    "Trait 1": false,
+    "Trait 2": false,
+    "Trait 3": false
+  });
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let value = event.target.value;
+    value = encodeURIComponent(value);
+    setSearch(value);
+  }
+  useEffect(() => {
+    async function nftLookup() {
+
+      let lookupString = `https://api.reservoir.tools/tokens/v7?collection=${id}&sortBy=${sort}&sortDirection=${sortDirection}`
+      if(search!="" && search!=null){
+        lookupString = lookupString + `&tokenName=${search}`
+      }
+      const options = {
+        method: "GET",
+        url: `${lookupString}`,
+        headers: { accept: "*/*", "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9" },
+      };
+      try {
+        const response = await axios.request(options);
+        //console.log(response.data);
+        return response.data.tokens;
+      } catch (error) {
+        console.error(error);
+        return " ";
+      }
+    }
+
+    if (id) {
+      const fetchNftData = async () => {
+        const nftData = await nftLookup();
+        setTokenData(nftData);
+      };
+      fetchNftData();
+    }
+  }, [id, search, setTokenData, sort, sortDirection]);
+
+  return (
+    <div>
+      <div className="flex-1 pt-3 pb-2 md:pt-3 md:pb-3 flex gap-2 border-gray-200 md:mx-6 z-3 px-6 md:px-0">
+        <div className="flex-col-reverse sm:flex-row-reverse lg:flex-row flex w-full gap-1.5 items-center lg:justify-between">
+          <div className="flex w-full sm:w-auto items-center gap-2">
+            <div className="relative w-full sm:w-auto">
+                  
+                  {/* Lowest Price Filter Dropdown Container */}
+                  <div className="relative">
+                    <button
+                    onClick={()=>{setSortOpen(!sortOpen)}}>
+                    {/* Trigger */}
+                    <div className="text-white cursor-pointer truncate border border-dark-gray-all rounded-sm flex justify-between items-center text-sm px-4 h-10 bg-black text-gray outline-none focus:outline-none h-[50px] text-white" >
+                      {sort=="floorAskPrice"? (sortDirection=="asc"? "Lowest Price": "Highest Price"): sort=="listedAt"? "Recently Listed": sort=="rarity"? (sortDirection=="asc"? "Common to Rarest": "Rarest to Common"): "NA"}
+                      {sortOpen?
+                        <FaChevronUp className="text-gray-400 ml-2" />:
+                        <FaChevronDown className="text-gray-400 ml-2" />
+                      }
+                    </div>
+                    </button>
+
+                    {/* Dropdown Content */}
+                    <div  className={` ${sortOpen? " " : "hidden "} absolute w-50 mt-1 z-10`}>
+                      <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
+                        {/* Dropdown Options */}
+                        <button
+                          onClick= {()=>{setSort("floorAskPrice"); setSortDirection("asc"); setSortOpen(false)}}
+                         className="w-full block cursor-pointer px-4 py-2 hover:bg-gray text-left" >
+                          Lowest Priced
+                        </button>
+                        <button 
+                        onClick={()=>{setSort("floorAskPrice");setSortDirection("desc"); setSortOpen(false)}}
+                        className="w-full block cursor-pointer px-4 py-2 hover:bg-gray text-left">
+                          Highest Price
+                        </button>
+                        <button 
+                        onClick = {()=>{setSort("listedAt"); setSortDirection("asc"); setSortOpen(false)}}
+                        className="block cursor-pointer px-4 py-2 hover:bg-gray text-left" >
+                          Recently Listed
+                        </button>
+                        <button 
+                        onClick={()=>{setSort("rarity"); setSortDirection("asc"); setSortOpen(false)}}
+                        className="block cursor-pointer px-4 py-2 hover:bg-gray text-left" >
+                          Common to Rarest
+                        </button>
+                        <button
+                        onClick={()=>{setSort("rarity"); setSortDirection("desc"); setSortOpen(false)}}
+                        className="block cursor-pointer px-4 py-2 hover:bg-gray text-left" >
+                          Rarest to Common
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             <button
               type="button"
               className="hover:border-gray-400 flex items-center justify-center rounded-sm cursor-pointer px-2 text-xs py-1.5 font-medium text-gray border border-dark-gray-all  h-10 w-full lg:hidden rounded-sm text-sm text-gray"
@@ -236,17 +541,12 @@ const CompThree = () => {
           </div>
           <div className="relative w-full sm:max-w-90">
             <div className="relative max-w-[350px]">
-              <div className="flex items-center rounded-sm border border-dark-gray-all h-10 w-full">
+              <div className="flex items-center ">
                 <span className="font-medium text-xs pl-2 text-gray-400">
                   {/* Font Awesome icon for search */}
                   <i className="fas fa-search"></i>
                 </span>
-                <input
-                  placeholder="Search for items or traits"
-                  type="text"
-                  className="bg-transparent text-sm w-full outline-none px-2.5 text-gray placeholder-gray-500"
-                  id="search-input"
-                />
+                  <input type="text" placeholder="Search for tokens" onChange={handleInputChange} className=" border-2 border-dark-gray border-l border-r border-t bg-black w-full px-4 py-2 rounded-sm bg-black text-white placeholder-gray-50 focus:outline-none ml-2" autoComplete="off"/>
               </div>
             </div>
           </div>
@@ -254,13 +554,22 @@ const CompThree = () => {
         {/* Additional filters for larger screens */}
         <div className="hidden lg:flex gap-1.5 items-center">
           {/* Status filter */}
-          <div
-            className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1"
-            tabIndex={0}
-          >
-            Status
-            <i className="fas fa-chevron-up transform rotate-180 text-gray mr-1"></i>
-          </div>
+          <div className="relative mb-4">
+                        <div onClick={()=>{setStatus(!status)}} className="cursor-pointer bg-black text-white border hover:bg-slate-800 border-gray-600 rounded py-2 px-4 flex justify-between items-center h-[50px]" >
+                            Status
+                            <i className="fas fa-chevron-down text-gray-400"></i>
+                        </div>
+                        <div className={`absolute dropdown-content w-[150px] bg-light-gray z-10 mt-1 ${status?"":"hidden"} z-10`}>
+                            <div className="bg-gray text-light-green rounded-sm">
+                                <label className="block cursor-pointer px-4 py-2 pl-0">
+                                    <input type="radio" name="status" value="buy_now" className=" ml-2 form-radio accent-yellow mr-2"/>Buy Now
+                                </label>
+                                <label className="bg-gray block cursor-pointer px-4 py-2 pl-0">
+                                    <input type="radio" name="status" value="show_all" className="ml-2 form-radio accent-yellow mr-2"/>Show All
+                                </label>
+                            </div>
+                        </div>
+                      </div>
           {/* Price filter */}
           <div
             className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1"
@@ -350,100 +659,6 @@ const CompThree = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
-};
-function TokenCard({
-  token,
-}: {
-  token: { tokenId: string; rarity: string; image: string; name: string };
-}) {
-  return (
-    <div className="bg-dark-gray text-white rounded-xl flex flex-col border border-transparent hover:border-gray-700 group relative overflow-hidden">
-      <div className="px-3 py-1.5">
-        <span className="text-light-green text-xs font-medium">
-          Rarity #{token.rarity}
-        </span>
-      </div>
-      <div className="flex-1 relative">
-        <div
-          className="object-cover w-[300px] h-[300px]"
-          style={{
-            backgroundImage: "url('" + token.image?.toString() + "')",
-            backgroundSize: "cover",
-            height: "16", // Set a fixed height
-            width: "16", // Set a fixed width
-          }}
-        ></div>
-      </div>
-      <div className="flex flex-col p-2">
-        <a className="mb-1.5 flex items-center gap-1 hover:text-blue" href="#">
-          {token.name}
-        </a>
-        <div className="flex justify-between items-center pb-1.5">
-          <button
-            type="button"
-            className="flex items-center justify-center px-2 py-1.5 text-xs font-medium text-light-green border border-dark-gray-all gray hover:border-gray-400 rounded"
-          >
-            2.6548 ETH
-          </button>
-          <a
-            id="btn"
-            className="border font-medium text-xs text-light-green border-dark-gray-all rounded hover:bg-gray-700 hover:text-white hover:border-gray-400 px-1.5 h-6 flex items-center cursor-pointer"
-          >
-            Details
-          </a>
-        </div>
-        <div className="flex justify-between">
-          <div className="text-xs -mx-3 -mb-2 px-3 py-1 text-light-green flex items-center">
-            Last 6.65 ETH
-            <i className="fas fa-history ml-1"></i>
-          </div>
-        </div>
-      </div>
-      {/* Buy Now Button */}
-      <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform">
-        <button className="w-full py-2 bg-yellow-500 text-black uppercase text-sm font-bold rounded-b-xl hover:bg-yellow-600">
-          Buy Now
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function NFTCards({ id }: { id: string }) {
-  const [tokenData, setTokenData] = useState([
-    { token: { tokenId: "0", rarity: "0", image: " ", name: " " } },
-  ]);
-
-  useEffect(() => {
-    async function nftLookup() {
-      const options = {
-        method: "GET",
-        url: `https://api.reservoir.tools/tokens/v7?collection=${id}`,
-        headers: { accept: "*/*", "x-api-key": "demo-api-key" },
-      };
-
-      try {
-        const response = await axios.request(options);
-        console.log(response.data);
-        return response.data.tokens;
-      } catch (error) {
-        console.error(error);
-        return " ";
-      }
-    }
-
-    if (id) {
-      const fetchNftData = async () => {
-        const nftData = await nftLookup();
-        setTokenData(nftData);
-      };
-      fetchNftData();
-    }
-  }, [id, setTokenData]);
-  return (
-    <div id="items-cards">
       <div className="mx-auto px-4 py-0">
         {/* NFT Cards Section */}
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4 px-2 py-4">
@@ -1000,7 +1215,7 @@ const LuckyBuy = () => {
                         max="6"
                         value="2"
                         step="1"
-                        className="slider w-full h-2 rounded-sm cursor-pointer accent-yellow-500"
+                        className="slider w-full h-2 rounded-sm cursor-pointer accent-yellow"
                         id="odds-slider"
                       />
                       <div className="flex justify-between text-sm px-2 text-gray">
@@ -1055,7 +1270,7 @@ const LuckyBuy = () => {
                               <input
                                 id="termsCheckbox"
                                 type="checkbox"
-                                className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 accent-yellow-500"
+                                className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 accent-yellow"
                                 required
                               />
                               <label className="text-sm text-gray">
@@ -1247,7 +1462,7 @@ const DetailsModal = () => {
                             </span>{" "}
                             <span className="text-gray ml-1">($55,171)</span>
                           </div>
-                          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full">
+                          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-[100px]">
                             <button
                               type="button"
                               className="text-black uppercase bg-yellow hover:bg-yellow-300 focus:ring-4 focus:outline-none focus:ring-purple-300 font-bold rounded-sm text-sm px-5 py-2.5 text-center flex-grow"
@@ -1417,17 +1632,29 @@ export default function Home() {
   const id = router.query.id;
   nftLookup();
   const [nftData, setNftData] = useState({
+    contractKind: "",
+    createdAt: "",
     name: "",
     image: "",
     id: "",
     description: "",
+    tokenCount: "",
+    royalties: {bps: ""},
+    floorAsk:{price:{amount:{decimal:0}}},
+    topBid:{price:{amount:{decimal:0}}},
+    floorSaleChange: {"1day": 0},
+    volume:{"1day":0},
+    volumeChange:{"1day":0},
   });
 
   async function nftLookup() {
     const options = {
       method: "GET",
       url: `https://api.reservoir.tools/collections/v7?id=${id}`,
-      headers: { accept: "*/*", "x-api-key": "demo-api-key" },
+      headers: {
+        accept: "*/*",
+        "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
+      },
     };
 
     try {
@@ -1442,27 +1669,11 @@ export default function Home() {
   }
   return (
     <div className="overflow-y-hidden">
-      <main id="landing" className="font-secondary mt-[50px]">
+      <main id="landing" className="font-secondary mt-[70px]">
         <HomeHeader />
         <div>
-          <ComponentOne collectionData={nftData} />
-          <CompTwo />
-
-          <div className="mx-auto p-2 pl-6 pr-6 md:flex md:items-center md:justify-between hidden sm:inline-block">
-            {/* Description */}
-            <p className="md:flex-1 md:mr-4 text-gray">{nftData.description}</p>
-            {/* See More/Less Button */}
-            <div className="text-right mt-2">
-              <button
-                className="text-blue-500"
-                x-text="expanded ? 'See less' : 'See more'"
-              ></button>
-            </div>
-          </div>
-
-          <CompThree />
-
-          <NFTCards id={nftData.id} />
+          <TopSection collectionData={nftData} />
+          {nftData? <NavSection collectionData={nftData}/>: <div></div>}
 
           <div id="info" className="tab-content hidden">
             <div className="container-fluid mx-auto px-4 py-3">
@@ -1480,7 +1691,7 @@ export default function Home() {
                   <a
                     href="https://miladymaker.net/"
                     target="_blank"
-                    className="text-light-green uppercase bg-gray hover:bg-yellow-300 hover:text-gray-700 focus:ring-1 focus:outline-none focus:ring-yellow-500 font-bold rounded-sm text-sm px-5 py-2.5 text-center flex-grow"
+                    className="text-light-green uppercase bg-gray hover:bg-yellow-300 hover:text-gray-700 focus:ring-1 focus:outline-none focus:ring-yellow font-bold rounded-sm text-sm px-5 py-2.5 text-center flex-grow"
                   >
                     Website <i className="fas fa-globe"></i>
                   </a>
@@ -1489,7 +1700,7 @@ export default function Home() {
                   <a
                     href="https://twitter.com/MiladyMaker333"
                     target="_blank"
-                    className="text-light-green uppercase bg-gray hover:bg-yellow-300 hover:text-gray-700 focus:ring-1 focus:outline-none focus:ring-yellow-500 font-bold rounded-sm text-sm px-5 py-2.5 text-center flex-grow"
+                    className="text-light-green uppercase bg-gray hover:bg-yellow-300 hover:text-gray-700 focus:ring-1 focus:outline-none focus:ring-yellow font-bold rounded-sm text-sm px-5 py-2.5 text-center flex-grow"
                   >
                     Twitter <i className="fab fa-twitter"></i>
                   </a>
@@ -1498,7 +1709,7 @@ export default function Home() {
                   <a
                     href="https://etherscan.io/address/0x5af0d9827e0c53e4799bb226655a1de152a425a5"
                     target="_blank"
-                    className="text-light-green uppercase bg-gray hover:bg-yellow-300 hover:text-gray-700 focus:ring-1 focus:outline-none focus:ring-yellow-500 font-bold rounded-sm text-sm px-5 py-2.5 text-center flex-grow"
+                    className="text-light-green uppercase bg-gray hover:bg-yellow-300 hover:text-gray-700 focus:ring-1 focus:outline-none focus:ring-yellow font-bold rounded-sm text-sm px-5 py-2.5 text-center flex-grow"
                   >
                     Etherscan <i className="fas fa-globe"></i>
                   </a>
@@ -1507,123 +1718,6 @@ export default function Home() {
             </div>
           </div>
 
-          <div id="activity" className="tab-content hidden">
-            <div className="container-fluid mx-auto">
-              <div className="bg-black text-light-green">
-                {/* Activity Header */}
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 pt-3 pb-2 md:pt-3 md:pb-2 flex gap-2 border-gray-200 md:mx-6 z-3 px-6 md:px-0">
-                    <div className="flex-col-reverse sm:flex-row-reverse lg:flex-row flex w-full gap-1.5 items-center lg:justify-between">
-                      <div className="relative w-full sm:max-w-90">
-                        <div className="relative max-w-[350px]">
-                          <div className="flex items-center rounded-sm border border-dark-gray-all h-10 w-full">
-                            <span className="font-medium text-xs pl-2 text-gray-400">
-                              {/* Font Awesome icon for search */}
-                              <i className="fas fa-search"></i>
-                            </span>
-                            <input
-                              placeholder="Search for items"
-                              type="text"
-                              className="bg-transparent text-sm w-full outline-none px-2.5 text-gray placeholder-gray-500"
-                              id="search-input"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    {/* Additional filters for larger screens */}
-                    <div className="hidden lg:flex gap-1.5 items-center mt-2">
-                      {/* Event filter */}
-                      <div className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1">
-                        Event
-                        <i className="fas fa-chevron-up transform rotate-180 text-gray mr-1"></i>
-                      </div>
-                      {/* Market filter */}
-                      <div className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1">
-                        Market
-                        <i className="fas fa-chevron-up transform rotate-180 text-gray mr-1"></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 flex-wrap ml-6 sm:ml-4 md:pl-2">
-                <button
-                  type="button"
-                  className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
-                >
-                  <span className="text-gray capitalize">Event</span>
-                  <span className="capitalize text-light-green mr-1 ml-1">
-                    Sale
-                  </span>
-                  <i className="fas fa-times cursor-pointer h-14 w-14"></i>
-                </button>
-                <div className="flex items-center gap-2 flex-wrap md:ml-0 md:pl-0">
-                  <button
-                    type="button"
-                    className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
-                  >
-                    <span className="text-gray capitalize">Event</span>
-                    <span className="capitalize text-light-green mr-1 ml-1">
-                      Listing
-                    </span>
-                    <i className="fas fa-times cursor-pointer h-14 w-14"></i>
-                  </button>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap md:ml-0 md:pl-0">
-                  <button
-                    type="button"
-                    className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
-                  >
-                    <span className="text-gray capitalize">Event</span>
-                    <span className="capitalize text-light-green mr-1 ml-1">
-                      Transfer
-                    </span>
-                    <i className="fas fa-times cursor-pointer h-14 w-14"></i>
-                  </button>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap md:ml-0 md:pl-0">
-                  <button
-                    type="button"
-                    className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
-                  >
-                    <span className="text-gray capitalize">Event</span>
-                    <span className="capitalize text-light-green mr-1 ml-1">
-                      Mint
-                    </span>
-                    <i className="fas fa-times cursor-pointer h-14 w-14"></i>
-                  </button>
-                </div>
-                <a
-                  className="inline-block text-xs cursor-pointer text-blue my-1"
-                  role="button"
-                >
-                  Clear
-                </a>
-              </div>
-
-              <div className="flex items-center gap-2 flex-wrap ml-2 mr-2 md:ml-6 md:pl-1 md:mr-8 mt-3">
-                {/*Table*/}
-                <div className="overflow-x-auto rounded-lg w-full">
-                  <Table />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div id="traits" className="tab-content hidden">
-            <div className="container-fluid mx-auto px-4 py-3">
-              <div className="bg-black text-light-green">
-                {/* Collection Header */}
-                <div className="flex items-center justify-between px-2 py-2">
-                  <p>Traits content here</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/*</DetailsModal>*/}
-          {/*<LuckyBuy/>*/}
         </div>
         <Footer />
       </main>
