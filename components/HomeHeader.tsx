@@ -146,13 +146,12 @@ export const HomeHeader = () => {
             </Link>
           </nav>
         </div>
-        <div className="w-full md:w-[760px]">
-        <div className="flex flex-col w-[200px] md:w-[360px] mx-auto text-base relative z-10 align-center" ref={wrapperRef}>
+        <div className="flex flex-col w-[250px] md:w-[360px] mx-auto text-base relative z-10 align-center item-center self-center" ref={wrapperRef}>
           <input type="text" placeholder="Search" onChange={handleInputChange} className=" border-2 border-white border-l border-r border-t bg-black w-full px-4 py-2 rounded-sm bg-black text-white placeholder-gray-50 focus:outline-none ml-2" id="search-bar" autoComplete="off"/>
           <div className="relative">
           <div className="absolute ">
 
-            {searching && <Link href={`/${searchData[0].id}`} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-white bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+            {searching && <Link href={`/${searchData[0]?.id? searchData[0].id:""}`} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-white bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
                       <a><div
                         className="h-10 w-10 rounded-sm mr-4 "
                         style={{ 
@@ -211,7 +210,6 @@ export const HomeHeader = () => {
             </div>
             </div>
             </div>
-        </div>
         {/* Connect Button */}
         <div className="ml-auto z-2">
           <div className="flex items-center text-gray mr-0">

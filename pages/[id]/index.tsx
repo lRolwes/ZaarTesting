@@ -1,39 +1,40 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { SiEthereum } from "react-icons/si";
 import Link from "next/link";
 import { Footer } from "../../components/Footer";
 import { HomeHeader } from "../../components/HomeHeader";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { BuyModal } from "@reservoir0x/reservoir-kit-ui";
+import { BuyModal, Trait } from "@reservoir0x/reservoir-kit-ui";
 import { getClient, Execute } from "@reservoir0x/reservoir-sdk";
-import { createWalletClient, http } from 'viem'
+import { createWalletClient, http } from "viem";
 import { useAccount } from "wagmi";
 type CollectionData = {
-    createdAt: string;
-    name: string;
-    image: string;
-    id: string;
-    description: string;
-    tokenCount: string;
-    contractKind: string;
-    royalties: {bps: string};
-    floorAsk:{price:{amount:{decimal:number}}};
-    topBid:{price:{amount:{decimal:number}}};
-    floorSaleChange: {"1day": number};
-    volume:{"1day":number};
-    volumeChange:{"1day":number};
+  createdAt: string;
+  name: string;
+  image: string;
+  id: string;
+  description: string;
+  tokenCount: string;
+  contractKind: string;
+  royalties: { bps: string };
+  floorAsk: { price: { amount: { decimal: number } } };
+  topBid: { price: { amount: { decimal: number } } };
+  floorSaleChange: { "1day": number };
+  volume: { "1day": number };
+  volumeChange: { "1day": number };
 };
-const TopSection = ({
-  collectionData,
-}: {
-  collectionData: CollectionData
-}) => {
-  const givenDate = new Date(collectionData?.createdAt? collectionData.createdAt:"");
+const TopSection = ({ collectionData }: { collectionData: CollectionData }) => {
+  const givenDate = new Date(
+    collectionData?.createdAt ? collectionData.createdAt : ""
+  );
   const currentDate = new Date();
   const differenceInMilliseconds = Number(currentDate) - Number(givenDate);
-  const age = Math.floor(differenceInMilliseconds / 1000 / 60 / 60 / 24 / 365.25);
+  const age = Math.floor(
+    differenceInMilliseconds / 1000 / 60 / 60 / 24 / 365.25
+  );
 
   return (
     <div className=" container-fluid mx-auto px-4 py-3">
@@ -86,12 +87,13 @@ const TopSection = ({
                   >
                     <i className="fab fa-twitter text-gray"></i>
                   </button>
-                  
                 </div>
               </div>
               <p className="text-sm text-gray-400 mt-1 uppercase">
                 <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
-                {collectionData?.contractKind?.substring(0,3)=="erc" ? "Ethereum" : "Polygon"}
+                  {collectionData?.contractKind?.substring(0, 3) == "erc"
+                    ? "Ethereum"
+                    : "Polygon"}
                 </span>
                 <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
                   {collectionData?.tokenCount} ITEMS
@@ -100,7 +102,7 @@ const TopSection = ({
                   MINTED {age}Y AGO
                 </span>
                 <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
-                  {(Number(collectionData?.royalties.bps)/100)}% CREATOR FEE
+                  {Number(collectionData?.royalties.bps) / 100}% CREATOR FEE
                 </span>
               </p>
             </div>
@@ -111,247 +113,257 @@ const TopSection = ({
   );
 };
 
-const NavSection = ({
-  collectionData,
-}: {
-  collectionData: CollectionData
-}) => {
+const NavSection = ({ collectionData }: { collectionData: CollectionData }) => {
   const [activeTab, setActiveTab] = useState("items");
-  function toggleTab(t: string){
+  function toggleTab(t: string) {
     setActiveTab(t);
   }
   return (
     <div>
       <div className="flex-1 flex justify-between gap-x-3 flex-wrap-reverse md:flex-nowrap uppercase px-6 md:px-0">
-      <nav className="inline-flex overflow-x-auto max-w-screen hidescroll md:px-6 h-[35px]">
-        <button
-          className={`uppercase tab-button cursor-pointer shrink-0 text-sm font-medium font-dm-sans whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3  ${activeTab=="items"?"bg-gray-200 text-yellow border-b-2":"text-gray hover:text-white"} mr-2.5 last:mr-0 text-yellow border-yellow`}
-          onClick={()=>toggleTab("items")}
-        >
-          Items
-        </button>
-        <button
-          className={`uppercase tab-button cursor-pointer shrink-0 text-sm font-medium font-dm-sans whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3 sm:hidden ${activeTab=="info"?"bg-gray-200 text-yellow border-b-2":"text-gray hover:text-white"} mr-2.5 last:mr-0 text-yellow border-yellow`}
-          onClick={()=>toggleTab("info")}
-        >
-          Info
-        </button>
-        <button
-          className={`uppercase tab-button cursor-pointer shrink-0 text-sm font-medium font-dm-sans whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3  ${activeTab=="activity"?"bg-gray-200 text-yellow border-b-2":"text-gray hover:text-white"} mr-2.5 last:mr-0 text-yellow border-yellow`}
-          onClick={()=>toggleTab("activity")}
-        >
-          Activity
-        </button>
-        <button
-          className={`uppercase tab-button cursor-pointer shrink-0 text-sm font-medium font-dm-sans whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3  ${activeTab=="traits"?"bg-gray-200 text-yellow border-b-2":"text-gray hover:text-white"} mr-2.5 last:mr-0 text-yellow border-yellow`}
-          onClick={()=>toggleTab("traits")}
-        >
-          Traits
-        </button>
-      </nav>
-      <div className="pb-4 <sm:px-2 sm:pb-0 sm:px-6 text-sm font-normal max-w-[calc(100vw_-_16px)] overflow-y-auto hidescroll flex text-gray divide-x-1 divide-gray-300 inline-flex items-center">
-        <div className="flex pr-1.5 last:pr-0 gap-1 whitespace-nowrap">
-          <div className="flex gap-1 mr-3">
-            <div className="dashed-underline">Floor</div>
-            <span className="w-full max-w-[200px]">
-              <div className="text-light-green font-medium inline-flex items-center max-w-full">
-                <div className="truncate">{collectionData?.floorAsk?.price?.amount?.decimal? collectionData.floorAsk.price.amount.decimal:""}</div>
+        <nav className="inline-flex overflow-x-auto max-w-screen hidescroll md:px-6 h-[35px]">
+          <button
+            className={`uppercase tab-button cursor-pointer shrink-0 text-sm font-medium font-dm-sans whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3  ${activeTab == "items" ? "bg-gray-200 text-yellow border-b-2" : "text-gray hover:text-white"} mr-2.5 last:mr-0 text-yellow border-yellow`}
+            onClick={() => toggleTab("items")}
+          >
+            Items
+          </button>
+          <button
+            className={`uppercase tab-button cursor-pointer shrink-0 text-sm font-medium font-dm-sans whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3 sm:hidden ${activeTab == "info" ? "bg-gray-200 text-yellow border-b-2" : "text-gray hover:text-white"} mr-2.5 last:mr-0 text-yellow border-yellow`}
+            onClick={() => toggleTab("info")}
+          >
+            Info
+          </button>
+          <button
+            className={`uppercase tab-button cursor-pointer shrink-0 text-sm font-medium font-dm-sans whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3  ${activeTab == "activity" ? "bg-gray-200 text-yellow border-b-2" : "text-gray hover:text-white"} mr-2.5 last:mr-0 text-yellow border-yellow`}
+            onClick={() => toggleTab("activity")}
+          >
+            Activity
+          </button>
+          <button
+            className={`uppercase tab-button cursor-pointer shrink-0 text-sm font-medium font-dm-sans whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3  ${activeTab == "traits" ? "bg-gray-200 text-yellow border-b-2" : "text-gray hover:text-white"} mr-2.5 last:mr-0 text-yellow border-yellow`}
+            onClick={() => toggleTab("traits")}
+          >
+            Traits
+          </button>
+        </nav>
+        <div className="pb-4 <sm:px-2 sm:pb-0 sm:px-6 text-sm font-normal max-w-[calc(100vw_-_16px)] overflow-y-auto hidescroll flex text-gray divide-x-1 divide-gray-300 inline-flex items-center">
+          <div className="flex pr-1.5 last:pr-0 gap-1 whitespace-nowrap">
+            <div className="flex gap-1 mr-3">
+              <div className="dashed-underline">Floor</div>
+              <span className="w-full max-w-[200px]">
+                <div className="text-light-green font-medium inline-flex items-center max-w-full">
+                  <div className="truncate">
+                    {collectionData?.floorAsk?.price?.amount?.decimal
+                      ? collectionData.floorAsk.price.amount.decimal
+                      : ""}
+                  </div>
+                </div>
+              </span>
+            </div>
+            <span className="w-full flex-1 mr-3">
+              <span
+                className={`${Number(collectionData.floorSaleChange["1day"]) >= 0.0 ? "text-green-500" : "text-red"}`}
+              >
+                {Number(
+                  Number(collectionData.floorSaleChange["1day"]).toFixed(2)
+                )}
+                %
+              </span>
+            </span>
+          </div>
+          <div className="flex px-1.5 last:pr-0 gap-1 whitespace-nowrap mr-3">
+            <button
+              type="button"
+              className="dashed-underline cursor-pointer uppercase"
+              aria-expanded="false"
+            >
+              Offer
+            </button>
+            <span className="w-full">
+              <div className="flex items-center">
+                <div className="text-light-green font-medium inline-flex items-center max-w-full">
+                  <div className="truncate">
+                    {collectionData?.topBid?.price?.amount?.decimal
+                      ? collectionData.topBid.price.amount.decimal
+                      : ""}
+                  </div>
+                </div>
               </div>
             </span>
           </div>
-          <span className="w-full flex-1 mr-3">
-            <span className={`${Number(collectionData.floorSaleChange["1day"])>=0.0? "text-green-500":"text-red"}`}>{Number(Number(collectionData.floorSaleChange["1day"]).toFixed(2))}%</span>
-          </span>
-        </div>
-        <div className="flex px-1.5 last:pr-0 gap-1 whitespace-nowrap mr-3">
-          <button
-            type="button"
-            className="dashed-underline cursor-pointer uppercase"
-            aria-expanded="false"
-          >
-            Offer
-          </button>
-          <span className="w-full">
-            <div className="flex items-center">
+          <div className="flex px-1.5 last:pr-0 gap-1 whitespace-nowrap mr-3">
+            24h Vol
+            <span className="w-full mr-3">
               <div className="text-light-green font-medium inline-flex items-center max-w-full">
-                <div className="truncate">{collectionData?.topBid?.price?.amount?.decimal? collectionData.topBid.price.amount.decimal:""}</div>
+                <div className="truncate">
+                  {Number(collectionData.volume["1day"]).toFixed(2)}
+                </div>
               </div>
-            </div>
-          </span>
-        </div>
-        <div className="flex px-1.5 last:pr-0 gap-1 whitespace-nowrap mr-3">
-          24h Vol
-          <span className="w-full mr-3">
-            <div className="text-light-green font-medium inline-flex items-center max-w-full">
-              <div className="truncate">{Number(collectionData.volume["1day"]).toFixed(2)}</div>
-            </div>
-          </span>
-          <span className="w-full">
-            <span className={`${collectionData.volumeChange["1day"]>=0.0? "text-green-500":"text-red"}`}>{Number(collectionData.volumeChange["1day"]).toFixed(2)}%</span>
-          </span>
+            </span>
+            <span className="w-full">
+              <span
+                className={`${collectionData.volumeChange["1day"] >= 0.0 ? "text-green-500" : "text-red"}`}
+              >
+                {Number(collectionData.volumeChange["1day"]).toFixed(2)}%
+              </span>
+            </span>
+          </div>
         </div>
       </div>
-    </div>
-    {activeTab=="items"? <ItemsSection collectionData={collectionData}/>
-      :activeTab=="activity"? <ActivitySection/>
-  :activeTab=="traits"? <div></div> : <div></div>}
+      {activeTab == "items" ? (
+        <ItemsSection collectionData={collectionData} />
+      ) : activeTab == "activity" ? (
+        <ActivitySection />
+      ) : activeTab == "traits" ? (
+        <div></div>
+      ) : (
+        <div></div>
+      )}
     </div>
   );
 };
 const ItemsSection = ({
   collectionData,
 }: {
-  collectionData: CollectionData
+  collectionData: CollectionData;
 }) => {
   return (
     <div>
       <div className="mx-auto p-2 pl-6 pr-6 md:flex md:items-center md:justify-between hidden sm:inline-block">
-            {/* Description */}
-            <p className="md:flex-1 md:mr-4 text-gray">{collectionData.description}</p>
-            {/* See More/Less Button */}
-            <div className="text-right mt-2">
-              <button
-                className="text-blue-500"
-                x-text="expanded ? 'See less' : 'See more'"
-              ></button>
-            </div>
+        {/* Description */}
+        <p className="md:flex-1 md:mr-4 text-gray">
+          {collectionData.description}
+        </p>
+        {/* See More/Less Button */}
+        <div className="text-right mt-2">
+          <button
+            className="text-blue-500"
+            x-text="expanded ? 'See less' : 'See more'"
+          ></button>
+        </div>
       </div>
-          <NFTCards id={collectionData.id} />
+      <NFTCards id={collectionData.id} />
     </div>
   );
-}
+};
 
 const ActivitySection = () => {
-  return(
+  return (
     <div className="">
-            <div className="container-fluid mx-auto">
-              <div className="bg-black text-light-green">
-                {/* Activity Header */}
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 pt-3 pb-2 md:pt-3 md:pb-2 flex gap-2 border-gray-200 md:mx-6 z-3 px-6 md:px-0">
-                    <div className="flex-col-reverse sm:flex-row-reverse lg:flex-row flex w-full gap-1.5 items-center lg:justify-between">
-                      <div className="relative w-full sm:max-w-90">
-                        <div className="relative max-w-[350px]">
-                          <div className="flex items-center rounded-sm border border-dark-gray-all h-10 w-full">
-                            <span className="font-medium text-xs pl-2 text-gray-400">
-                              {/* Font Awesome icon for search */}
-                              <i className="fas fa-search"></i>
-                            </span>
-                            <input
-                              placeholder="Search for items"
-                              type="text"
-                              className="bg-transparent text-sm w-full outline-none px-2.5 text-gray placeholder-gray-500"
-                              id="search-input"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    {/* Additional filters for larger screens */}
-                    <div className="hidden lg:flex gap-1.5 items-center mt-2">
-                      {/* Event filter */}
-                      <div className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1">
-                        Event
-                        <i className="fas fa-chevron-up transform rotate-180 text-gray mr-1"></i>
-                      </div>
-                      {/* Market filter */}
-                      <div className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1">
-                        Market
-                        <i className="fas fa-chevron-up transform rotate-180 text-gray mr-1"></i>
-                      </div>
+      <div className="container-fluid mx-auto">
+        <div className="bg-black text-light-green">
+          {/* Activity Header */}
+          <div className="flex items-center justify-between">
+            <div className="flex-1 pt-3 pb-2 md:pt-3 md:pb-2 flex gap-2 border-gray-200 md:mx-6 z-3 px-6 md:px-0">
+              <div className="flex-col-reverse sm:flex-row-reverse lg:flex-row flex w-full gap-1.5 items-center lg:justify-between">
+                <div className="relative w-full sm:max-w-90">
+                  <div className="relative max-w-[350px]">
+                    <div className="flex items-center rounded-sm border border-dark-gray-all h-10 w-full">
+                      <span className="font-medium text-xs pl-2 text-gray-400">
+                        {/* Font Awesome icon for search */}
+                        <i className="fas fa-search"></i>
+                      </span>
+                      <input
+                        placeholder="Search for items"
+                        type="text"
+                        className="bg-transparent text-sm w-full outline-none px-2.5 text-gray placeholder-gray-500"
+                        id="search-input"
+                      />
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 flex-wrap ml-6 sm:ml-4 md:pl-2">
-                <button
-                  type="button"
-                  className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
-                >
-                  <span className="text-gray capitalize">Event</span>
-                  <span className="capitalize text-light-green mr-1 ml-1">
-                    Sale
-                  </span>
-                  <i className="fas fa-times cursor-pointer h-14 w-14"></i>
-                </button>
-                <div className="flex items-center gap-2 flex-wrap md:ml-0 md:pl-0">
-                  <button
-                    type="button"
-                    className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
-                  >
-                    <span className="text-gray capitalize">Event</span>
-                    <span className="capitalize text-light-green mr-1 ml-1">
-                      Listing
-                    </span>
-                    <i className="fas fa-times cursor-pointer h-14 w-14"></i>
-                  </button>
+              {/* Additional filters for larger screens */}
+              <div className="hidden lg:flex gap-1.5 items-center mt-2">
+                {/* Event filter */}
+                <div className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1">
+                  Event
+                  <i className="fas fa-chevron-up transform rotate-180 text-gray mr-1"></i>
                 </div>
-                <div className="flex items-center gap-2 flex-wrap md:ml-0 md:pl-0">
-                  <button
-                    type="button"
-                    className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
-                  >
-                    <span className="text-gray capitalize">Event</span>
-                    <span className="capitalize text-light-green mr-1 ml-1">
-                      Transfer
-                    </span>
-                    <i className="fas fa-times cursor-pointer h-14 w-14"></i>
-                  </button>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap md:ml-0 md:pl-0">
-                  <button
-                    type="button"
-                    className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
-                  >
-                    <span className="text-gray capitalize">Event</span>
-                    <span className="capitalize text-light-green mr-1 ml-1">
-                      Mint
-                    </span>
-                    <i className="fas fa-times cursor-pointer h-14 w-14"></i>
-                  </button>
-                </div>
-                <a
-                  className="inline-block text-xs cursor-pointer text-blue my-1"
-                  role="button"
-                >
-                  Clear
-                </a>
-              </div>
-
-              <div className="flex items-center gap-2 flex-wrap ml-2 mr-2 md:ml-6 md:pl-1 md:mr-8 mt-3">
-                {/*Table*/}
-                <div className="overflow-x-auto rounded-lg w-full">
-                  <Table />
+                {/* Market filter */}
+                <div className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1">
+                  Market
+                  <i className="fas fa-chevron-up transform rotate-180 text-gray mr-1"></i>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap ml-6 sm:ml-4 md:pl-2">
+          <button
+            type="button"
+            className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
+          >
+            <span className="text-gray capitalize">Event</span>
+            <span className="capitalize text-light-green mr-1 ml-1">Sale</span>
+            <i className="fas fa-times cursor-pointer h-14 w-14"></i>
+          </button>
+          <div className="flex items-center gap-2 flex-wrap md:ml-0 md:pl-0">
+            <button
+              type="button"
+              className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
+            >
+              <span className="text-gray capitalize">Event</span>
+              <span className="capitalize text-light-green mr-1 ml-1">
+                Listing
+              </span>
+              <i className="fas fa-times cursor-pointer h-14 w-14"></i>
+            </button>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap md:ml-0 md:pl-0">
+            <button
+              type="button"
+              className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
+            >
+              <span className="text-gray capitalize">Event</span>
+              <span className="capitalize text-light-green mr-1 ml-1">
+                Transfer
+              </span>
+              <i className="fas fa-times cursor-pointer h-14 w-14"></i>
+            </button>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap md:ml-0 md:pl-0">
+            <button
+              type="button"
+              className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
+            >
+              <span className="text-gray capitalize">Event</span>
+              <span className="capitalize text-light-green mr-1 ml-1">
+                Mint
+              </span>
+              <i className="fas fa-times cursor-pointer h-14 w-14"></i>
+            </button>
+          </div>
+          <a
+            className="inline-block text-xs cursor-pointer text-blue my-1"
+            role="button"
+          >
+            Clear
+          </a>
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap ml-2 mr-2 md:ml-6 md:pl-1 md:mr-8 mt-3">
+          {/*Table*/}
+          <div className="overflow-x-auto rounded-lg w-full">
+            <Table />
+          </div>
+        </div>
+      </div>
+    </div>
   );
-}
+};
 
 function TokenCard({
+  collectionId,
+  market,
   token,
 }: {
+  collectionId: string;
+  market: { floorAsk: { price: { amount: { decimal: number } } } };
   token: { tokenId: string; rarity: string; image: string; name: string };
 }) {
-  const { address } = useAccount();
-
-  const buyToken = async (tokenId: string) => {
-    console.log("Buying Token", tokenId);
-  
-  const wallet = createWalletClient({
-    account: address,
-    transport: http()
-  })
-  getClient()?.actions.buyToken({
-    items: [{ token: tokenId, quantity: 1 }],
-    wallet,
-    onProgress: (steps: Execute['steps']) => {
-      console.log(steps)
-    }
-  })
-  
-  };
+  const buyToken = async (tokenId: string) => {};
   return (
     <div className="bg-dark-gray text-white rounded-xl flex flex-col border border-transparent hover:border-gray-700 group relative overflow-hidden">
       <div className="px-3 py-1.5">
@@ -359,16 +371,18 @@ function TokenCard({
           Rarity #{token.rarity}
         </span>
       </div>
-      <div className="flex-1 relative">
-        <div
-          className="object-cover w-[300px] h-[300px]"
-          style={{
-            backgroundImage: "url('" + token.image?.toString() + "')",
-            backgroundSize: "cover",
-            height: "16", // Set a fixed height
-            width: "16", // Set a fixed width
-          }}
-        ></div>
+      <div className="flex-1 relative flex justify-center items-center">
+        <div className="object-cover">
+          {token.image != " " ? (
+            <img
+              src={token.image?.toString()}
+              alt="Token"
+              style={{ objectFit: "cover" }}
+            />
+          ) : (
+            <div className="object-cover w-[350px] h-[260px] bg-gray-200"></div>
+          )}
+        </div>
       </div>
       <div className="flex flex-col p-2">
         <a className="mb-1.5 flex items-center gap-1 hover:text-blue" href="#">
@@ -379,7 +393,7 @@ function TokenCard({
             type="button"
             className="flex items-center justify-center px-2 py-1.5 text-xs font-medium text-light-green border border-dark-gray-all gray hover:border-gray-400 rounded"
           >
-            2.6548 ETH
+            {market?.floorAsk?.price?.amount?.decimal?.toString()} ETH
           </button>
           <a
             id="btn"
@@ -390,81 +404,244 @@ function TokenCard({
         </div>
         <div className="flex justify-between">
           <div className="text-xs -mx-3 -mb-2 px-3 py-1 text-light-green flex items-center">
-            Last 6.65 ETH
+            Last -- ETH
             <i className="fas fa-history ml-1"></i>
           </div>
         </div>
       </div>
       {/* Buy Now Button */}
       <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform">
-        <BuyModal trigger={
-            <button 
-            className="w-full py-2 bg-yellow text-black uppercase text-sm font-bold rounded-b-xl hover:bg-yellow-600"
-            onClick = {()=>{buyToken(token.tokenId)}}
-            >
-              Buy Now
-            </button>
-          }
-          token={token.tokenId?.toString()}
-          onConnectWallet={()=>{console.log("Connected")}}
-          onPurchaseComplete={(data) => console.log("Purchase Complete")}
-          onPurchaseError={(error, data) =>
-            console.log("Transaction Error", error, data)
-          }
-          onClose={(data, stepData, currentStep) => console.log("Modal Closed")}
-        />
+        {market?.floorAsk ? (
+          <BuyModal
+            trigger={
+              <button className="w-full py-2 bg-yellow text-black uppercase text-sm font-bold rounded-b-xl hover:bg-yellow-600">
+                Buy Now
+              </button>
+            }
+            token={collectionId + ":" + token.tokenId}
+            onConnectWallet={() => {
+              console.log("Connected");
+            }}
+            onPurchaseComplete={(data) => console.log("Purchase Complete")}
+            onPurchaseError={(error, data) =>
+              console.log("Transaction Error", error, data)
+            }
+            onClose={(data, stepData, currentStep) =>
+              console.log("Modal Closed")
+            }
+          />
+        ) : (
+          <div />
+        )}
       </div>
     </div>
   );
 }
 
 function NFTCards({ id }: { id: string }) {
+  type TraitType = {
+    key: string;
+    value: string;
+  };
+  type TraitCategoryType = {
+    key: string;
+    values: [TraitType];
+  };
   const [tokenData, setTokenData] = useState([
-    { token: { tokenId: "0", rarity: "0", image: " ", name: " " } },
+    {
+      market: { floorAsk: { price: { amount: { decimal: 0 } } } },
+      token: { tokenId: "0", rarity: "0", image: " ", name: " " },
+    },
   ]);
+
+  /*State Variables for traits and Trait Filters*/
+  //Raw Trait data from ReservoirKit, an array of objects
+  const [traitData, setTraitData] = useState<TraitCategoryType[]>([]);
+  //state variable to store whether or not the traits dropdown is open
+  const [traitsOpen, setTraitsOpen] = useState(false);
+  //State variable for the selected trait category in Trait Filter Dropdown
+  const [selectedTraitCategory, setSelectedTraitCategory] = useState<string>("all");
+  //State varaiable to store whether each individual Trait Category dropdown in the section is open
+  const [traitCategoryDropdown, setTraitCategoryDropdown] = useState<Record<string, boolean>>({});
+  //store whether any trait filters are applied
+  const [traitFilterApplied, setTraitFilterApplied] = useState(false);
+  //store selected filters
+  const [traitFilterSelection, setTraitFilterSelection] = useState<Record<string, boolean>>({});
+
   const [sortOpen, setSortOpen] = useState(false);
   const [sort, setSort] = useState("floorAskPrice");
   const [sortDirection, setSortDirection] = useState("asc");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState(false);
+  const [activeStatus, setActiveStatus] = useState("");
+  const [price, setPrice] = useState(false);
   const [priceFloor, setPriceFloor] = useState(0);
   const [priceCeiling, setPriceCeiling] = useState(1000000);
-  const [rarityFloor, setRarityFloor] = useState(0);
-  const [rarityCeiling, setRarityCeiling] = useState(1000000);
+  const [activePriceFloor, setActivePriceFloor] = useState(0);
+  const [activePriceCeiling, setActivePriceCeiling] = useState(10000);
+  const [rarity, setRarity] = useState(false);
+  const [activeRarityFloor, setActiveRarityFloor] = useState(0);
+  const [activeRarityCeiling, setActiveRarityCeiling] = useState(10000);
+  const [rarityFloor, setRarityFloor] = useState(1);
+  const [rarityCeiling, setRarityCeiling] = useState(10000);
+  const [market, setMarket] = useState(false);
   const [markets, setMarkets] = useState({
-    "OpenSea": false,
-    "Rarible": false,
-    "Foundation": false
+    OpenSea: true,
+    LooksRare: true,
+    Blur: true,
+    NFTX: true,
+    SudoSwap: true,
   });
-  const [traits, setTraits] = useState({
-    "Trait 1": false,
-    "Trait 2": false,
-    "Trait 3": false
-  });
+  const [myItems, setMyItems] = useState(false);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let value = event.target.value;
     value = encodeURIComponent(value);
     setSearch(value);
+  };
+  const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setActiveStatus(event.target.value);
+  };
+  const handlePriceFloorChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    let value = event.target.value;
+    let numVal = Number(value);
+    setPriceFloor(numVal);
+  };
+  const handlePriceCeilingChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    let value = event.target.value;
+    let numVal = Number(value);
+    setPriceCeiling(numVal);
+  };
+  const handleActivePriceChange = () => {
+    setActivePriceCeiling(priceCeiling);
+    setActivePriceFloor(priceFloor);
+  };
+  const handleRarityFloorChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    let value = event.target.value;
+    let numVal = Number(value);
+    setRarityFloor(numVal);
+  };
+  const handleRarityCeilingChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    let value = event.target.value;
+    let numVal = Number(value);
+    setRarityCeiling(numVal);
+  };
+  const handleActiveRarityChange = () => {
+    setActiveRarityCeiling(rarityCeiling);
+    setActiveRarityFloor(rarityFloor);
+  };
+  const handleOpenseaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let value = event.target.checked;
+    setMarkets((prevMarkets) => ({ ...prevMarkets, OpenSea: value }));
+  };
+  const handleLooksRareChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    let value = event.target.checked;
+    setMarkets((prevMarkets) => ({ ...prevMarkets, LooksRare: value }));
+  };
+  const handleBlurChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let value = event.target.checked;
+    setMarkets((prevMarkets) => ({ ...prevMarkets, Blur: value }));
+  };
+  const handleNFTXChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let value = event.target.checked;
+    setMarkets((prevMarkets) => ({ ...prevMarkets, NFTX: value }));
+  };
+  const handleSudoSwapChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let value = event.target.checked;
+    setMarkets((prevMarkets) => ({ ...prevMarkets, SudoSwap: value }));
+  };
+  const handleMyItemsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let value = event.target.checked;
+    setMyItems(!myItems);
+  };
+  /*
+  This function:
+  - reverses the value of the changed trait filter
+  - if it is now applied it makes sure that the trait filter is applied
+  - if not, it checks if any filters are selected
+  - if no filters are selected, it sets the trait filter to not applied
+  */
+  function handleTraitFilterSelectionChange(value: string) {
+    setTraitFilterSelection((prevState) => ({
+      ...prevState,
+      [value]: !traitFilterSelection[value],
+    }));
+    if(traitFilterSelection[value] !== true){
+      setTraitFilterApplied(true);
+    }
+    else{
+      let applied = false;
+      for (let key in traitFilterSelection) {
+        if(key != value && traitFilterSelection[key] == true){
+          applied = true;
+        }
+      }
+      if(!applied){
+        setTraitFilterApplied(false);
+      }
+    }
+  };
+  /*function to reset all trait filters to false and turn off the trait filter*/
+  function resetTraitFilters(){
+    for (let key in traitFilterSelection){
+      setTraitFilterSelection((prevState) => ({
+        ...prevState,
+        [key]: false,
+      }));
+    };
+    setTraitFilterApplied(false);
   }
   useEffect(() => {
     async function nftLookup() {
+      /*let lookupString = `https://api.reservoir.tools/tokens/v7?collection=${id}&sortBy=${sort}&sortDirection=${sortDirection}`;
+      if (search != "" && search != null) {
+        lookupString = lookupString + `&tokenName=${search}`;
+      }*/
+      let lookupString = `https://api.reservoir.tools/tokens/v7?collection=${id}&limit=100`;
 
-      let lookupString = `https://api.reservoir.tools/tokens/v7?collection=${id}&sortBy=${sort}&sortDirection=${sortDirection}`
-      if(search!="" && search!=null){
-        lookupString = lookupString + `&tokenName=${search}`
+      /*if (activePriceFloor >= 0) {
+        lookupString = lookupString + `&minFloorAskPrice=${activePriceFloor}`;
       }
+      if (activePriceCeiling >= 0) {
+        lookupString = lookupString + `&maxFloorAskPrice=${activePriceCeiling}`;
+      }*/
+      /*if (activeRarityFloor >= 1) {
+        lookupString = lookupString + `&minRarityRank=${activeRarityFloor}`;
+      }
+      if (activeRarityCeiling >= 1) {
+        lookupString = lookupString + `&maxRarityRank=${activeRarityCeiling.toString()}`;
+      }
+      if (markets.OpenSea) {
+        lookupString = lookupString + `&source=opensea.io`;
+      }*/
+      //lookupString = lookupString + `&source=opensea.io`;
+      //lookupString = lookupString + `&source=blur.io`;
+
+      console.log(lookupString);
       const options = {
         method: "GET",
         url: `${lookupString}`,
-        headers: { accept: "*/*", "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9" },
+        headers: {
+          accept: "*/*",
+          "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
+        },
       };
       try {
         const response = await axios.request(options);
-        //console.log(response.data);
+        console.log(response.data.tokens);
         return response.data.tokens;
       } catch (error) {
         console.error(error);
-        return " ";
+        return {};
       }
     }
 
@@ -475,7 +652,61 @@ function NFTCards({ id }: { id: string }) {
       };
       fetchNftData();
     }
-  }, [id, search, setTokenData, sort, sortDirection]);
+  }, [
+    id,
+    search,
+    setTokenData,
+    sort,
+    sortDirection,
+    activePriceFloor,
+    activePriceCeiling,
+    activeRarityFloor,
+    activeRarityCeiling,
+    markets,
+  ]);
+  useEffect(() => {
+    async function traitLookup<TraitCategoryType>(): Promise<TraitCategoryType[]>{
+      let lookupString = `https://api.reservoir.tools/collections/${id}/attributes/all/v4`;
+      console.log(lookupString);
+      const options = {
+        method: "GET",
+        url: `${lookupString}`,
+        headers: {
+          accept: "*/*",
+          "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
+        },
+      };
+      try {
+        const response = await axios.request(options);
+        console.log(response.data);
+        return response.data.attributes;
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+    }
+
+    if (id) {
+      const fetchTraitData = async () => {
+        const traits = await traitLookup<TraitCategoryType>();
+        setTraitData(traits);
+        //initialize trait categories
+        for (let attribute in traits) {
+          setTraitCategoryDropdown(prevState => ({
+            ...prevState,
+            [attribute]: false
+          }));
+          for (let value in traits[attribute].values) {
+            setTraitFilterSelection(prevState => ({
+              ...prevState,
+              [value]: false
+            }));
+        }
+      };
+      };
+      fetchTraitData();
+    }
+  }, [id, setTraitData, setTraitCategoryDropdown]);
 
   return (
     <div>
@@ -483,54 +714,94 @@ function NFTCards({ id }: { id: string }) {
         <div className="flex-col-reverse sm:flex-row-reverse lg:flex-row flex w-full gap-1.5 items-center lg:justify-between">
           <div className="flex w-full sm:w-auto items-center gap-2">
             <div className="relative w-full sm:w-auto">
-                  
-                  {/* Lowest Price Filter Dropdown Container */}
-                  <div className="relative">
-                    <button
-                    onClick={()=>{setSortOpen(!sortOpen)}}>
-                    {/* Trigger */}
-                    <div className="text-white cursor-pointer truncate border border-dark-gray-all rounded-sm flex justify-between items-center text-sm px-4 h-10 bg-black text-gray outline-none focus:outline-none h-[50px] text-white" >
-                      {sort=="floorAskPrice"? (sortDirection=="asc"? "Lowest Price": "Highest Price"): sort=="listedAt"? "Recently Listed": sort=="rarity"? (sortDirection=="asc"? "Common to Rarest": "Rarest to Common"): "NA"}
-                      {sortOpen?
-                        <FaChevronUp className="text-gray-400 ml-2" />:
-                        <FaChevronDown className="text-gray-400 ml-2" />
-                      }
-                    </div>
-                    </button>
+              {/* Lowest Price Filter Dropdown Container */}
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    setSortOpen(!sortOpen);
+                  }}
+                >
+                  {/* Trigger */}
+                  <div className="text-white cursor-pointer truncate border border-dark-gray-all rounded-sm flex justify-between items-center text-sm px-4 h-10 bg-black text-gray outline-none focus:outline-none h-[50px] text-white">
+                    {sort == "floorAskPrice"
+                      ? sortDirection == "asc"
+                        ? "Lowest Price"
+                        : "Highest Price"
+                      : sort == "listedAt"
+                        ? "Recently Listed"
+                        : sort == "rarity"
+                          ? sortDirection == "desc"
+                            ? "Common to Rarest"
+                            : "Rarest to Common"
+                          : "NA"}
+                    {sortOpen ? (
+                      <FaChevronUp className="text-gray-400 ml-2" />
+                    ) : (
+                      <FaChevronDown className="text-gray-400 ml-2" />
+                    )}
+                  </div>
+                </button>
 
-                    {/* Dropdown Content */}
-                    <div  className={` ${sortOpen? " " : "hidden "} absolute w-50 mt-1 z-10`}>
-                      <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
-                        {/* Dropdown Options */}
-                        <button
-                          onClick= {()=>{setSort("floorAskPrice"); setSortDirection("asc"); setSortOpen(false)}}
-                         className="w-full block cursor-pointer px-4 py-2 hover:bg-gray text-left" >
-                          Lowest Priced
-                        </button>
-                        <button 
-                        onClick={()=>{setSort("floorAskPrice");setSortDirection("desc"); setSortOpen(false)}}
-                        className="w-full block cursor-pointer px-4 py-2 hover:bg-gray text-left">
-                          Highest Price
-                        </button>
-                        <button 
-                        onClick = {()=>{setSort("listedAt"); setSortDirection("asc"); setSortOpen(false)}}
-                        className="block cursor-pointer px-4 py-2 hover:bg-gray text-left" >
-                          Recently Listed
-                        </button>
-                        <button 
-                        onClick={()=>{setSort("rarity"); setSortDirection("asc"); setSortOpen(false)}}
-                        className="block cursor-pointer px-4 py-2 hover:bg-gray text-left" >
-                          Common to Rarest
-                        </button>
-                        <button
-                        onClick={()=>{setSort("rarity"); setSortDirection("desc"); setSortOpen(false)}}
-                        className="block cursor-pointer px-4 py-2 hover:bg-gray text-left" >
-                          Rarest to Common
-                        </button>
-                      </div>
-                    </div>
+                {/* Dropdown Content */}
+                <div
+                  className={` ${sortOpen ? " " : "hidden "} absolute w-50 mt-1 z-10`}
+                >
+                  <div className="bg-dark-gray mt-2 text-white rounded-sm shadow-lg">
+                    {/* Dropdown Options */}
+                    <button
+                      onClick={() => {
+                        setSort("floorAskPrice");
+                        setSortDirection("asc");
+                        setSortOpen(false);
+                      }}
+                      className={`w-full block cursor-pointer px-4 py-2 hover:bg-gray text-left ${sort == "floorAskPrice" && sortDirection == "asc" ? "text-yellow" : ""}`}
+                    >
+                      Lowest Priced
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSort("floorAskPrice");
+                        setSortDirection("desc");
+                        setSortOpen(false);
+                      }}
+                      className={`w-full block cursor-pointer px-4 py-2 hover:bg-gray text-left ${sort == "floorAskPrice" && sortDirection == "desc" ? "text-yellow" : ""}`}
+                    >
+                      Highest Price
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSort("listedAt");
+                        setSortDirection("asc");
+                        setSortOpen(false);
+                      }}
+                      className={`w-full block cursor-pointer px-4 py-2 hover:bg-gray text-left ${sort == "listedAt" && sortDirection == "asc" ? "text-yellow" : ""}`}
+                    >
+                      Recently Listed
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSort("rarity");
+                        setSortDirection("desc");
+                        setSortOpen(false);
+                      }}
+                      className={`block cursor-pointer px-4 py-2 hover:bg-gray text-left ${sort == "rarity" && sortDirection == "desc" ? "text-yellow" : ""}`}
+                    >
+                      Common to Rarest
+                    </button>
+                    <button
+                      className={`w-full block cursor-pointer px-4 py-2 hover:bg-gray text-left ${sort == "rarity" && sortDirection == "asc" ? "text-yellow" : ""}`}
+                      onClick={() => {
+                        setSort("rarity");
+                        setSortDirection("asc");
+                        setSortOpen(false);
+                      }}
+                    >
+                      Rarest to Common
+                    </button>
                   </div>
                 </div>
+              </div>
+            </div>
             <button
               type="button"
               className="hover:border-gray-400 flex items-center justify-center rounded-sm cursor-pointer px-2 text-xs py-1.5 font-medium text-gray border border-dark-gray-all  h-10 w-full lg:hidden rounded-sm text-sm text-gray"
@@ -546,7 +817,13 @@ function NFTCards({ id }: { id: string }) {
                   {/* Font Awesome icon for search */}
                   <i className="fas fa-search"></i>
                 </span>
-                  <input type="text" placeholder="Search for tokens" onChange={handleInputChange} className=" border-2 border-dark-gray border-l border-r border-t bg-black w-full px-4 py-2 rounded-sm bg-black text-white placeholder-gray-50 focus:outline-none ml-2" autoComplete="off"/>
+                <input
+                  type="text"
+                  placeholder="Search for tokens"
+                  onChange={handleInputChange}
+                  className=" border-2 border-dark-gray border-l border-r border-t bg-black w-full px-4 py-2 rounded-sm bg-black text-white placeholder-gray-50 focus:outline-none ml-2 h-[50px]"
+                  autoComplete="off"
+                />
               </div>
             </div>
           </div>
@@ -555,78 +832,599 @@ function NFTCards({ id }: { id: string }) {
         <div className="hidden lg:flex gap-1.5 items-center">
           {/* Status filter */}
           <div className="relative mb-4">
-                        <div onClick={()=>{setStatus(!status)}} className="cursor-pointer bg-black text-white border hover:bg-slate-800 border-gray-600 rounded py-2 px-4 flex justify-between items-center h-[50px]" >
-                            Status
-                            <i className="fas fa-chevron-down text-gray-400"></i>
-                        </div>
-                        <div className={`absolute dropdown-content w-[150px] bg-light-gray z-10 mt-1 ${status?"":"hidden"} z-10`}>
-                            <div className="bg-gray text-light-green rounded-sm">
-                                <label className="block cursor-pointer px-4 py-2 pl-0">
-                                    <input type="radio" name="status" value="buy_now" className=" ml-2 form-radio accent-yellow mr-2"/>Buy Now
-                                </label>
-                                <label className="bg-gray block cursor-pointer px-4 py-2 pl-0">
-                                    <input type="radio" name="status" value="show_all" className="ml-2 form-radio accent-yellow mr-2"/>Show All
-                                </label>
-                            </div>
-                        </div>
-                      </div>
-          {/* Price filter */}
-          <div
-            className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1"
-            tabIndex={0}
-          >
-            Price
-            <i className="fas fa-chevron-up transform rotate-180 text-gray mr-1"></i>
+            <div
+              onClick={() => {
+                setStatus(!status);
+              }}
+              className="cursor-pointer bg-black text-white border hover:bg-slate-800 border-gray rounded px-4 flex justify-between items-center h-[50px]"
+            >
+              Status
+              {status ? (
+                <FaChevronUp className="text-gray-400 ml-2" />
+              ) : (
+                <FaChevronDown className="text-gray-400 ml-2" />
+              )}
+            </div>
+            <div
+              className={`absolute dropdown-content w-[150px] bg-light-gray z-10 mt-1 ${status ? "" : "hidden"} z-10`}
+            >
+              <div className="bg-gray text-light-green rounded-sm">
+                <label className="block cursor-pointer px-4 py-2 pl-0">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="buy_now"
+                    className=" ml-2 form-radio accent-yellow mr-2"
+                    onChange={handleStatusChange}
+                    checked={activeStatus === "buy_now"}
+                  />
+                  Buy Now
+                </label>
+                <label className="bg-gray block cursor-pointer px-4 py-2 pl-0">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="show_all"
+                    className="ml-2 form-radio accent-yellow mr-2"
+                    onChange={handleStatusChange}
+                    checked={activeStatus === "show_all"}
+                  />
+                  Show All
+                </label>
+              </div>
+            </div>
           </div>
+
+          {/* Price filter */}
+          <div className="relative mb-4">
+            <div
+              onClick={() => {
+                setPrice(!price);
+              }}
+              className="cursor-pointer hover:bg-slate-800 bg-black text-white border border-gray rounded py-2 px-4 flex justify-between items-center h-[50px] "
+            >
+              Price
+              {price ? (
+                <FaChevronUp className="text-gray-400 ml-2" />
+              ) : (
+                <FaChevronDown className="text-gray-400 ml-2" />
+              )}
+            </div>
+            <div
+              className={`absolute bg-gray dropdown-content w-[200px] z-10 mt-1 ${price ? "  " : "hidden"}`}
+            >
+              <div className="w-full flex items-center justify-center space-x-2 px-4 py-2 pl-0 pr-0">
+                {/* Min Input */}
+                <input
+                  type="text"
+                  placeholder="Min"
+                  onChange={handlePriceFloorChange}
+                  className="w-[75px] bg-black text-white border border-gray rounded px-4 py-2 focus:outline-none"
+                />
+
+                {/* Max Input */}
+                <input
+                  type="text"
+                  placeholder="Max"
+                  onChange={handlePriceCeilingChange}
+                  className="w-[75px] bg-black text-white border border-gray rounded px-4 py-2 focus:outline-none"
+                />
+
+                {/* Currency Dropdown */}
+                <SiEthereum className="text-white" />
+              </div>
+              <div className="flex justify-end mt-2">
+                <button
+                  onClick={() => {
+                    handleActivePriceChange();
+                  }}
+                  className="px-2 py-2 bg-yellow text-black font-bold rounded-sm text-xs uppercase mr-2 mb-2"
+                >
+                  <span className="inline-block whitespace-nowrap">Apply</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
           {/* Rarity filter */}
-          <div
-            className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1"
-            tabIndex={0}
-          >
-            Rarity
-            <i className="fas fa-chevron-up transform rotate-180 text-gray mr-1"></i>
+          <div className="relative mb-4">
+            <div
+              onClick={() => {
+                setRarity(!rarity);
+              }}
+              className="cursor-pointer hover:bg-slate-800 bg-black text-white border border-gray rounded py-2 px-4 flex justify-between items-center h-[50px] "
+            >
+              Rarity
+              {rarity ? (
+                <FaChevronUp className="text-gray-400 ml-2" />
+              ) : (
+                <FaChevronDown className="text-gray-400 ml-2" />
+              )}
+            </div>
+            <div
+              className={`absolute bg-gray dropdown-content w-[200px] z-10 mt-1 ${rarity ? "  " : "hidden"}`}
+            >
+              <div className="w-full flex items-center justify-center space-x-2 px-4 py-2 pl-0 pr-0">
+                {/* Min Input */}
+                <input
+                  type="text"
+                  placeholder="Min"
+                  onChange={handleRarityFloorChange}
+                  className="w-[75px] bg-black text-white border border-gray rounded px-4 py-2 focus:outline-none"
+                />
+
+                {/* Max Input */}
+                <input
+                  type="text"
+                  placeholder="Max"
+                  onChange={handleRarityCeilingChange}
+                  className="w-[75px] bg-black text-white border border-gray rounded px-4 py-2 focus:outline-none"
+                />
+
+                {/* Currency Dropdown */}
+                <SiEthereum className="text-white" />
+              </div>
+              <div className="flex justify-end mt-2">
+                <button
+                  onClick={() => {
+                    handleActiveRarityChange();
+                  }}
+                  className="px-2 py-2 bg-yellow text-black font-bold rounded-sm text-xs uppercase mr-2 mb-2"
+                >
+                  <span className="inline-block whitespace-nowrap">Apply</span>
+                </button>
+              </div>
+            </div>
           </div>
           {/* Market filter */}
-          <div
-            className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1"
-            tabIndex={0}
-          >
-            Market
-            <i className="fas fa-chevron-up transform rotate-180 text-gray mr-1"></i>
+          <div className="relative mb-4">
+            {/* Trigger */}
+            <div
+              onClick={() => {
+                setMarket(!market);
+              }}
+              className="cursor-pointer hover:bg-slate-800 bg-black text-white border border-gray rounded py-2 px-4 flex justify-between items-center h-[50px] "
+            >
+              Markets
+              {market ? (
+                <FaChevronUp className="text-gray-400 ml-2" />
+              ) : (
+                <FaChevronDown className="text-gray-400 ml-2" />
+              )}
+            </div>
+            {/* Dropdown Content */}
+            <div
+              className={`absolute bg-gray dropdown-content w-[200px] z-10 mt-1 ${market ? "block" : "hidden"}`}
+            >
+              <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
+                {/* Market Options with additional data */}
+                <label className="block cursor-pointer px-4 py-2">
+                  <input
+                    type="checkbox"
+                    className="form-checkbox accent-yellow mr-2"
+                    checked={markets.OpenSea}
+                    onChange={handleOpenseaChange}
+                  />
+                  OpenSea{" "}
+                  <span className="text-xs text-gray ml-1">239 (2.46%)</span>
+                </label>
+                <label className="block cursor-pointer px-4 py-2">
+                  <input
+                    type="checkbox"
+                    className="form-checkbox accent-yellow mr-2"
+                    checked={markets.LooksRare}
+                    onChange={handleLooksRareChange}
+                  />
+                  LooksRare{" "}
+                  <span className="text-xs text-gray ml-1">182 (2.1.78%)</span>
+                </label>
+                <label className="block cursor-pointer px-4 py-2">
+                  <input
+                    type="checkbox"
+                    className="form-checkbox accent-yellow mr-2"
+                    checked={markets.Blur}
+                    onChange={handleBlurChange}
+                  />
+                  Blur{" "}
+                  <span className="text-xs text-gray ml-1">79 (0.81%)</span>
+                </label>
+                <label className="block cursor-pointer px-4 py-2">
+                  <input
+                    type="checkbox"
+                    className="form-checkbox accent-yellow mr-2"
+                    checked={markets.NFTX}
+                    onChange={handleNFTXChange}
+                  />
+                  NFTX{" "}
+                  <span className="text-xs text-gray ml-1">21 (0.21%)</span>
+                </label>
+                <label className="block cursor-pointer px-4 py-2">
+                  <input
+                    type="checkbox"
+                    className="form-checkbox accent-yellow mr-2"
+                    checked={markets.SudoSwap}
+                    onChange={handleSudoSwapChange}
+                  />
+                  Sudoswap{" "}
+                  <span className="text-xs text-gray ml-1">21 (0.21%)</span>
+                </label>
+                {/* Add other options similarly */}
+              </div>
+            </div>
           </div>
+
           {/* Traits filter */}
-          <div
-            className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-2"
-            tabIndex={0}
-          >
-            <i className="fas fa-tag"></i>&nbsp;Traits
+          <div className="relative mb-4">
+            {/* Trigger */}
+            <div
+              onClick={() => {
+                setTraitsOpen(!traitsOpen);
+              }}
+              className="cursor-pointer hover:bg-slate-800 bg-black text-white border border-gray rounded py-2 px-4 flex justify-between items-center h-[50px] "
+            >
+              Traits
+              {traitsOpen ? (
+                <FaChevronUp className="text-gray-400 ml-2" />
+              ) : (
+                <FaChevronDown className="text-gray-400 ml-2" />
+              )}
+            </div>
+            {/* Dropdown Content */}
+            <div
+              id="traits-dropdown"
+              className={`z-10 ${traitsOpen ? "block" : "hidden"} absolute mt-3 right-0 mt-1  bg-dark-gray border-gray-all rounded-sm shadow-lg w-[500px] h-[330px]`}
+            >
+              <div className="p-4">
+                {/* Search and Rarity Filter */}
+                <div className="flex justify-between pb-3 border-dark-gray">
+                  <div className="flex-1 mr-2">
+                    <input
+                      type="text"
+                      placeholder="Search for Traits"
+                      className="w-full px-3 py-2 bg-black focus:none text-white rounded-sm"
+                    ></input>
+                  </div>
+                  <div className="w-30">
+                    <select className="w-full px-3 py-2 bg-dark-gray border-dark-gray-all text-gray h-10 rounded-sm">
+                      <option>Most Rare</option>
+                      <option>Least Rare</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Tabbed Content with Scrollable Sections */}
+                <div className="absolute flex h-full">
+                  <div className="w-[100px] bg-dark-gray p-0 pt-2 pr-2 overflow-y-auto max-h-[260px] no-scrollbar">
+                    <ul className="text-sm text-light-gray ">
+                      <li
+                        className={`p-2 hover:bg-gray cursor-pointer ${selectedTraitCategory == "all" ? "bg-gray text-yellow" : ""}`}
+                        onClick={() => {
+                          setSelectedTraitCategory("all");
+                        }}
+                      >
+                        All
+                      </li>
+                      {traitData.map((traitCategory) => (
+                        <li
+                          key={traitCategory.key}
+                          onClick={() => {
+                            setSelectedTraitCategory(traitCategory.key);
+                          }}
+                          className={`p-2 hover:bg-gray cursor-pointer ${selectedTraitCategory == traitCategory.key ? " bg-gray text-yellow" : ""}`}
+                        >
+                          {traitCategory.key}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="w-[400px] h-[250px] p-2 overflow-y-auto text-sm text-light-gray border-dark-gray-l no-scrollbar">
+                    {traitData.map((thisTraitCategory) => (
+                      <div key={thisTraitCategory.key} className="text-white">
+                        {selectedTraitCategory == "all" ||
+                        selectedTraitCategory == thisTraitCategory.key ? (
+                          <div>
+                            <span
+                              onClick={() =>
+                                {setTraitCategoryDropdown(prevState=> ({
+                                  ...prevState,
+                                  [thisTraitCategory.key] : !traitCategoryDropdown[thisTraitCategory.key]}))
+                              }}
+                              className="text-white py-4 text-lg flex flex-row justify-between"
+                            >
+                              {thisTraitCategory.key}
+
+                              {traitCategoryDropdown[
+                                thisTraitCategory.key
+                              ] ? (
+                                <FaChevronUp className="text-gray-400 mr-4 align-right" />
+                              ) : (
+                                <FaChevronDown className="text-gray-400 mr-4 align-right" />
+                              )}
+                            </span>
+                            {traitCategoryDropdown[
+                                thisTraitCategory.key
+                              ] ? (
+                            <ul className="text-md text-white bg-black w-full py-2">
+                              {thisTraitCategory.values?.map(
+                                (traitval: { value: string }) => (
+                                  <li
+                                    key={traitval.value}
+                                    className="p-2 hover:bg-gray-700 cursor-pointer traits-list-item"
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      className="form-checkbox accent-yellow mr-2 h-[20px] w-[20px]"
+                                      checked={traitFilterSelection[traitval.value]}
+                                      onChange={() => {
+                                        handleTraitFilterSelectionChange(traitval.value);
+                                      }}
+                                    />
+                                    {traitval.value}
+                                  </li>
+                                )
+                              )}
+                            </ul>):
+                            <div></div>}
+                          </div>
+                        ) : (
+                          <div></div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <button
+                  id="resetButton"
+                  className="hidden absolute bottom-4 left-4 bg-dark-gray text-yellow py-2 px-4 pl-2 rounded-sm text-sm"
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
       <div className="flex items-center pb-2 z-3">
         <div className="pl-6">
           <div className="flex items-center">
-            <div className="pr-1 inline-flex items-center justify-center">
-              {/* Live indicator can be represented with a dot icon or similar */}
-              <i className="fas fa-circle text-yellow"></i>
-            </div>
-            <span className="text-xs text-gray dark:text-gray mr-2">
-              7 results
+            <div className="pr-1 inline-flex items-center justify-center rounded-full w-[10px] h-[10px] bg-yellow" />
+
+            <span className="text-xs text-gray dark:text-gray mr-2 ml-2">
+              {tokenData.length} results
             </span>
           </div>
         </div>
         <div className="flex-1">
-          <div className="flex items-center gap-2 flex-wrap md:ml-2 md:pl-2">
-            <button
-              type="button"
-              className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 hidden sm:block"
+          <div className="flex flex-row items-center  gap-2 flex-wrap md:ml-2 md:pl-2">
+            <div
+              className={`${activeStatus == "buy_now" ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center justify-center text-xs`}
             >
               <span className="text-gray capitalize">Status</span>
               <span className="capitalize text-light-green mr-1 ml-1">
                 Buy Now
               </span>
-              <i className="fas fa-times cursor-pointer h-14 w-14"></i>
-            </button>
+              <i
+                className="cursor-pointer font-bold"
+                onClick={() => {
+                  setActiveStatus("show_all");
+                }}
+              >
+                X
+              </i>
+            </div>
+
+            <div
+              className={`${activePriceFloor > 0 ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 `}
+            >
+              <span className="text-gray capitalize">Price</span>
+              <span className="capitalize text-light-green mr-1 ml-1">
+                {">"} {activePriceFloor} ETH
+              </span>
+              <i
+                onClick={() => {
+                  setActivePriceFloor(0);
+                }}
+                className=" cursor-pointer font-bold"
+              >
+                X
+              </i>
+            </div>
+
+            <div
+              className={`${activePriceCeiling < 10000 ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 `}
+            >
+              <span className="text-gray capitalize">Price</span>
+              <span className="capitalize text-light-green mr-1 ml-1">
+                {"<"} {activePriceCeiling} ETH
+              </span>
+              <i
+                onClick={() => {
+                  setActivePriceCeiling(10000);
+                }}
+                className=" cursor-pointer font-bold"
+              >
+                X
+              </i>
+            </div>
+
+            <div
+              className={`${activeRarityFloor > 1 ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 `}
+            >
+              <span className="text-gray capitalize">Rarity</span>
+              <span className="capitalize text-light-green mr-1 ml-1">
+                {">"} {activeRarityFloor}
+              </span>
+              <i
+                onClick={() => {
+                  setActiveRarityFloor(1);
+                }}
+                className=" cursor-pointer font-bold"
+              >
+                X
+              </i>
+            </div>
+
+            <div
+              className={`${activeRarityCeiling < 10000 ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 `}
+            >
+              <span className="text-gray capitalize">Rarity</span>
+              <span className="capitalize text-light-green mr-1 ml-1">
+                {"<"} {activeRarityCeiling}
+              </span>
+              <i
+                onClick={() => {
+                  setActiveRarityCeiling(10000);
+                }}
+                className=" cursor-pointer font-bold"
+              >
+                X
+              </i>
+            </div>
+
+            <div
+              className={`${activeRarityCeiling < 10000 ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 `}
+            >
+              <span className="text-gray capitalize">Market</span>
+              <span className="capitalize text-light-green mr-1 ml-1">
+                {activeRarityCeiling}
+              </span>
+              <i
+                onClick={() => {
+                  setActiveRarityCeiling(10000);
+                }}
+                className=" cursor-pointer font-bold"
+              >
+                X
+              </i>
+            </div>
+
+            {markets.OpenSea == true &&
+            markets.LooksRare == true &&
+            markets.Blur == true &&
+            markets.NFTX == true &&
+            markets.SudoSwap == true ? (
+              <div />
+            ) : (
+              <div className="flex flex-row space-x-2">
+                <div
+                  className={` ${markets.OpenSea ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600`}
+                >
+                  <span className="text-gray capitalize">Market</span>
+                  <span className="capitalize text-light-green mr-1 ml-1">
+                    OpenSea
+                  </span>
+                  <i
+                    onClick={() =>
+                      setMarkets((prevMarkets) => ({
+                        ...prevMarkets,
+                        OpenSea: false,
+                      }))
+                    }
+                    className=" cursor-pointer font-bold"
+                  >
+                    X
+                  </i>
+                </div>
+
+                <div
+                  className={` ${markets.LooksRare ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600`}
+                >
+                  <span className="text-gray capitalize">Market</span>
+                  <span className="capitalize text-light-green mr-1 ml-1">
+                    LooksRare
+                  </span>
+                  <i
+                    onClick={() =>
+                      setMarkets((prevMarkets) => ({
+                        ...prevMarkets,
+                        LooksRare: false,
+                      }))
+                    }
+                    className=" cursor-pointer font-bold"
+                  >
+                    X
+                  </i>
+                </div>
+
+                <div
+                  className={` ${markets.Blur ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600`}
+                >
+                  <span className="text-gray capitalize">Market</span>
+                  <span className="capitalize text-light-green mr-1 ml-1">
+                    Blur
+                  </span>
+                  <i
+                    onClick={() =>
+                      setMarkets((prevMarkets) => ({
+                        ...prevMarkets,
+                        Blur: false,
+                      }))
+                    }
+                    className=" cursor-pointer font-bold"
+                  >
+                    X
+                  </i>
+                </div>
+
+                <div
+                  className={` ${markets.NFTX ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600`}
+                >
+                  <span className="text-gray capitalize">Market</span>
+                  <span className="capitalize text-light-green mr-1 ml-1">
+                    NFTX
+                  </span>
+                  <i
+                    onClick={() =>
+                      setMarkets((prevMarkets) => ({
+                        ...prevMarkets,
+                        NFTX: false,
+                      }))
+                    }
+                    className=" cursor-pointer font-bold"
+                  >
+                    X
+                  </i>
+                </div>
+
+                <div
+                  className={` ${markets.SudoSwap ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600`}
+                >
+                  <span className="text-gray capitalize">Market</span>
+                  <span className="capitalize text-light-green mr-1 ml-1">
+                    SudoSwap
+                  </span>
+                  <i
+                    onClick={() =>
+                      setMarkets((prevMarkets) => ({
+                        ...prevMarkets,
+                        SudoSwap: false,
+                      }))
+                    }
+                    className=" cursor-pointer font-bold"
+                  >
+                    X
+                  </i>
+                </div>
+              </div>
+            )}
+            {traitFilterApplied ? 
+            <div className="flex flex-row">
+            {Object.keys(traitFilterSelection).map((value) => (
+            <div className="flex flex-row flex-start" key={value}>
+            {traitFilterSelection[value]?
+              <div className="ml-2 text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 hidden sm:block">
+              <span className="text-gray capitalize">Traits</span>
+              <span className="capitalize text-light-green mr-1 ml-1">
+                {value}
+              </span>
+              <i onClick={()=>{handleTraitFilterSelectionChange(value)}}className=" cursor-pointer h-14 w-14 font-bold">X</i>
+            </div>
+            :<div/>}
+            </div>
+            ))}
+            </div>
+            :<div/>}
           </div>
         </div>
         <div className="pr-6 flex items-center gap-4">
@@ -637,25 +1435,12 @@ function NFTCards({ id }: { id: string }) {
                 type="checkbox"
                 value=""
                 className="sr-only peer"
-                defaultChecked
+                onChange={() => {
+                  handleMyItemsChange;
+                }}
               />
-              <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-yellow-300 dark:peer-focus:ring-yellow-800 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-yellow-400"></div>
+              <div className="w-11 h-6 bg-gray rounded-full peer peer-focus:ring-4 peer-focus:ring-yellow dark:peer-focus:ring-yellow peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-yellow"></div>
             </label>
-          </div>
-          <div className="flex items-center rounded-sm border-dark-gray-all border">
-            <button
-              type="button"
-              className="flex items-center justify-center h-8 w-9 text-gray hover:text-gray-600 hover:bg-white rounded-sm"
-            >
-              <i className="fas fa-bars"></i>
-            </button>
-            <div className="h-8 w-[1px] bg-dark-gray"></div>
-            <button
-              type="button"
-              className="flex items-center justify-center h-8 w-9 text-light-gray bg-gray-700 rounded-sm"
-            >
-              <i className="fas fa-th"></i>
-            </button>
           </div>
         </div>
       </div>
@@ -664,7 +1449,12 @@ function NFTCards({ id }: { id: string }) {
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4 px-2 py-4">
           {tokenData ? (
             tokenData.map((nft) => (
-              <TokenCard key={nft.token.tokenId} token={nft.token} />
+              <TokenCard
+                key={nft.token.tokenId}
+                collectionId={id}
+                market={nft.market}
+                token={nft.token}
+              />
             ))
           ) : (
             <div>Loading...</div>
@@ -1018,7 +1808,7 @@ const LuckyBuy = () => {
                     <br /> XP can be redeemed for Zaar.
                   </p>
 
-                  <div className="flex justify-center items-center sticky top-5 z-10 bg-black">
+                  <div className="flex justify-center items-center sticky top-5 z-9 bg-black">
                     {/* Container for the cards */}
                     <div className="inline-flex gap-1">
                       {/* Cards to the left with XP */}
@@ -1639,12 +2429,12 @@ export default function Home() {
     id: "",
     description: "",
     tokenCount: "",
-    royalties: {bps: ""},
-    floorAsk:{price:{amount:{decimal:0}}},
-    topBid:{price:{amount:{decimal:0}}},
-    floorSaleChange: {"1day": 0},
-    volume:{"1day":0},
-    volumeChange:{"1day":0},
+    royalties: { bps: "" },
+    floorAsk: { price: { amount: { decimal: 0 } } },
+    topBid: { price: { amount: { decimal: 0 } } },
+    floorSaleChange: { "1day": 0 },
+    volume: { "1day": 0 },
+    volumeChange: { "1day": 0 },
   });
 
   async function nftLookup() {
@@ -1673,7 +2463,7 @@ export default function Home() {
         <HomeHeader />
         <div>
           <TopSection collectionData={nftData} />
-          {nftData? <NavSection collectionData={nftData}/>: <div></div>}
+          {nftData ? <NavSection collectionData={nftData} /> : <div></div>}
 
           <div id="info" className="tab-content hidden">
             <div className="container-fluid mx-auto px-4 py-3">
@@ -1717,7 +2507,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-
         </div>
         <Footer />
       </main>

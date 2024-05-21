@@ -56,18 +56,19 @@ const HeroContent = () => {
       {/* Gradient Overlay */}
 
       {/* Hero Content */}
-      <div className="container fixed relative mx-auto z-20 mt-0 w-full">
+      <div className="container fixed relative z-20 mt-0 w-full">
         <div className="text-center text-white flex flex-col justify-center items-center">
           <span className="inline-block text-yellow bg-yellow bg-opacity-20 tracking-widest mb-3 px-6 py-1 rounded-full text-lg z-20">
             <i className="fad fa-stars "></i> LAUNCHING SOON™
           </span>
-          <div className="flex relative w-screen justify-center items-center h-auto z-20 ">
+          <div className="flex relative w-[400px] md:w-[45%] justify-center items-center h-auto z-20 ">
             <Image
               src="/images/logo-white.png"
               alt="logo"
               className="fixed rounded-sm z-20 item-center relative"
-              width={700}
-              height={700}
+              layout="responsive"
+              width={600}
+              height={600}
             />
           </div>
           <h1 className="text-3xl font-bold mb-3 text-white uppercase mt-5 z-20">
@@ -90,7 +91,7 @@ const HeroContent = () => {
         {/* Boxes within Hero Image */}
         <div className="absolute bottom-0 w-full z-20 pb-6 pr-2">
           <div className="flex justify-center px-4">
-            <div className="flex overflow-x-scroll pb-0 hide-scroll-bar snap-x snap-mandatory">
+            <div className="flex overflow-x-scroll pb-0 hide-scroll-bar no-scrollbar snap-x snap-mandatory">
               <div className="flex flex-nowrap lg:mx-0">
                 {/* Each Box */}
                 {/* Apply the hover effect to this div to ensure the entire box moves */}
@@ -150,12 +151,12 @@ const HeroContent = () => {
                   </div>
                 </div>
                 {/* Repeat boxes as needed */}
-                <div className="inline-block px-3 snap-start hover:-translate-y-2 transform transition duration-300 hero-box">
-                  <div className="w-64 h-48 max-w-xs overflow-hidden rounded-lg shadow-md bg-white hover:shadow-lg transition-shadow duration-300 ease-in-out relative">
+                <div className="inline-block px-3 snap-start hover:-translate-y-2 transform transition duration-300 hero-box ">
+                  <div className="w-64 h-48 max-w-xs overflow-hidden rounded-lg shadow-md bg-white hover:shadow-lg transition-shadow duration-300 ease-in-out relative no-scrollbar">
                     {/* Clickable area */}
-                    <a href="#" className="block w-full h-full">
+                    <a href="#" className="block w-full h-full ">
                       <div
-                        className="w-full h-full bg-cover bg-center"
+                        className="w-full h-full bg-cover bg-center "
                         style={{
                           backgroundImage: collectionImage[2],
                         }}
@@ -961,7 +962,7 @@ const BottomSection = () => {
 
 const Home: NextPage = () => {
   return (
-    <div className="overflow-y-hidden">
+    <div className="overflow-y-hidden overflow-x-hidden">
       <main id="landing" className="font-secondary">
         <HomeHeader />
         <HeroContent />

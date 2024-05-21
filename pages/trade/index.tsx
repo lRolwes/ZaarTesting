@@ -37,6 +37,8 @@ const TableSection: React.FC<{WatchlistItems:WatchList[]}> = ({WatchlistItems}) 
   const [collectionOwners, setOwners] = useState([0]);
   const [collectionSales, setSales] = useState([0]);
   const [collectionPercentListed, setPercentListed] = useState([0]);
+  const [collectionOnSaleCount, setOnSaleCount] = useState(["0"]);
+  const [collectionTokenCount, setTokenCount] = useState(["0"]);
   useEffect(() => {
     if (collections != null) {
       let ids = [];
@@ -50,7 +52,8 @@ const TableSection: React.FC<{WatchlistItems:WatchList[]}> = ({WatchlistItems}) 
       let owners = [];
       let sales = [];
       let percentListed = [];
-
+      let tokenCount = [];
+      let onSaleCount = [];
       for (let x = 0; x < 1000; x++) {
         ids.push(collections?.[x].id || " ");
         images.push("url('" + collections?.[x].image + "')" || " ");
@@ -72,11 +75,12 @@ const TableSection: React.FC<{WatchlistItems:WatchList[]}> = ({WatchlistItems}) 
         percentListed.push(
           Number(
             (
-              (Number(collections?.[x].onSaleCount) * 100) /
-              Number(collections?.[x].count)
+              (Number(collections?.[x].onSaleCount)/Number(collections?.[x].tokenCount))
             ).toFixed(2)
           ) || 0
         );
+        tokenCount.push(collections?.[x].tokenCount?.toString() || "0");
+        onSaleCount.push(collections?.[x].onSaleCount?.toString() || "0");
       }
       setId(ids);
       setImage(images);
@@ -89,6 +93,8 @@ const TableSection: React.FC<{WatchlistItems:WatchList[]}> = ({WatchlistItems}) 
       setSales(sales);
       set24HourRawChange(rawChanges);
       setPercentListed(percentListed);
+      setTokenCount(tokenCount);
+      setOnSaleCount(onSaleCount);
     }
   }, [collections]);
 
@@ -212,7 +218,7 @@ const TableSection: React.FC<{WatchlistItems:WatchList[]}> = ({WatchlistItems}) 
                         </td>
                         <td className="px-6 py-4 text-right text-green-500">
                           <span className="text-white">
-                            {collection24HourRawChange[index]}
+                            {collection24HourRawChange[index]?.toFixed(2)}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
@@ -221,12 +227,12 @@ const TableSection: React.FC<{WatchlistItems:WatchList[]}> = ({WatchlistItems}) 
                         <td className="px-6 py-4 text-right text-white">
                           {collectionSales[index]}
                         </td>
-                        <td className="px-6 py-4 text-right text-green-500"></td>
+                        <td className="px-6 py-4 text-right text-green-500"> --</td>
                         <td className="px-6 py-4 text-right">
                           {collectionOwners[index]}
                         </td>
                         <td className="px-6 py-4 text-right">
-                          {collectionPercentListed[index]}%
+                          {collectionOnSaleCount[index]}{"/"}{collectionTokenCount[index]}{"  ("}{collectionPercentListed[index]}%{")"}
                         </td>
                       </tr>
                     ))}
