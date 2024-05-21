@@ -13,7 +13,6 @@ import {
 } from '@reservoir0x/reservoir-kit-ui';
 import { createClient, reservoirChains } from "@reservoir0x/reservoir-sdk"
 
-
 const theme = lightTheme({
   headlineFont: "Sans Serif",
   font: "Serif",
@@ -33,11 +32,12 @@ function MyApp({ Component, pageProps }: AppProps) {
       options={{
         chains: [{
           ...reservoirChains.mainnet,
+          /*...reservoirChains.sepolia,*/
           active: true,
           },
         ],
         apiKey: "f1bc813b-97f8-5808-83de-1238af13d6f9", // Get started with an api key here: https://docs.reservoir.tools/reference/rate-limits
-        source: "YOUR_SOURCE",
+        source: "localhost",
       }}
     >
     <WagmiProvider config={config}>

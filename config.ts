@@ -6,6 +6,7 @@ export const config = getDefaultConfig({
     projectId: '07a5775d26541dd4c353432b24a75b30',
     chains: [
       mainnet,
+      sepolia,
     ],
     ssr: true,
   });

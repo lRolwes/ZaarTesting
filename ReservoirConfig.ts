@@ -11,4 +11,5 @@ getClient()?.addEventListener((event, chainId) => {
       console.log(event.data);
       break;
     }
-}});
+  }
+});

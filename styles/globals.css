@@ -30,6 +30,7 @@ body {
 .gradient-yellow-orange {
   background: linear-gradient(to right, #E3BF00, #FF8E33);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -86,10 +87,22 @@ a:hover {
   border-top: 1px solid #303030;
   border-right: 1px solid #303030;
 }
-.hide-scroll-bar::-webkit-scrollbar {
-  display: none;
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  background-color: inherit; /* This is to ensure the background of the header doesn't become transparent when scrolling */
+  z-index: 1; /* This is to ensure the header stays on top of the other elements when scrolling */
 }
-.hide-scroll-bar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+      display: none;
+  }
+ /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+}
 }

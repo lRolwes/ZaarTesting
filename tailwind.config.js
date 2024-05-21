@@ -21,6 +21,8 @@ module.exports = {
         'disabled-gray': '#5a5a5a',
         'hoveryellow':'#e4d26f',
         'red': '#ff0000',
+        'light-green':'#d7e0cc',
+        
       },
       filter: { // extending the filter utility
         'blur': 'blur(2px)', // custom blur class
