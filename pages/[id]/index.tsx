@@ -8,14 +8,20 @@ import { HomeHeader } from "../../components/HomeHeader";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { BuyModal, Trait } from "@reservoir0x/reservoir-kit-ui";
-import { getClient, Execute } from "@reservoir0x/reservoir-sdk";
-import { createWalletClient, http } from "viem";
-import { useAccount } from "wagmi";
+import { getAccount } from '@wagmi/core';
+import { config } from './../../config';
+import {FavStar} from './../../components/FavStar';
+import Watchlist, { WatchlistProps } from "../../components/Watchlist"
+
+
 type CollectionData = {
   createdAt: string;
   name: string;
   image: string;
   id: string;
+  twitterUrl: string;
+  discordUrl: string;
+  externalUrl: string;
   description: string;
   tokenCount: string;
   contractKind: string;
@@ -56,45 +62,52 @@ const TopSection = ({ collectionData }: { collectionData: CollectionData }) => {
                 <h1 className="text-2xl font-bold text-light-green">
                   {collectionData?.name}
                 </h1>
-                <div className="flex items-center space-x-1">
-                  <button
-                    type="button"
-                    className="flex items-center justify-center rounded-sm cursor-pointer px-2 py-1.5 text-xs font-medium text-gray-600"
+                <div className="flex flex-row items-center">
+                  <div
+                    className="flex items-center justify-center rounded-sm cursor-pointer text-xs font-medium text-gray"
                   >
-                    <i className="fal fa-star text-gray"></i>
-                  </button>
-                  <button
-                    type="button"
-                    className="flex items-center justify-center rounded-sm cursor-pointer px-2 py-1.5 text-xs font-medium text-gray-600"
-                  >
-                    <i className="fal fa-copy text-gray"></i>
-                  </button>
-                  <button
-                    type="button"
-                    className="flex items-center justify-center rounded-sm cursor-pointer px-2 py-1.5 text-xs font-medium text-gray-600"
-                  >
-                    <i className="fas fa-sync-alt text-gray"></i>
-                  </button>
-                  <button
-                    type="button"
-                    className="flex items-center justify-center rounded-sm cursor-pointer px-2 py-1.5 text-xs font-medium text-gray-600 hidden sm:inline-block"
-                  >
-                    <i className="fas fa-globe text-gray"></i>
-                  </button>
-                  <button
-                    type="button"
-                    className="flex items-center justify-center rounded-sm cursor-pointer px-2 py-1.5 text-xs font-medium text-gray-600 hidden sm:inline-block"
-                  >
-                    <i className="fab fa-twitter text-gray"></i>
-                  </button>
+                    <FavStar watchlist={{address:[], authorAddress:""}} id={collectionData?.id} onWatchlist={false}/>
+                  </div>
+                  <div>     
+                    <svg                     
+                          onClick={() => {navigator.clipboard.writeText(collectionData?.id)}}
+                          className="ml-3 cursor-pointer  text-gray hover:text-white" aria-hidden="true" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                        <path fillRule="evenodd" d="M18 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1V9a4 4 0 0 0-4-4h-3a1.99 1.99 0 0 0-1 .267V5a2 2 0 0 1 2-2h7Z" clipRule="evenodd"/>
+                        <path fillRule="evenodd" d="M8 7.054V11H4.2a2 2 0 0 1 .281-.432l2.46-2.87A2 2 0 0 1 8 7.054ZM10 7v4a2 2 0 0 1-2 2H4v6a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3Z" clipRule="evenodd"/>
+                    </svg>
+                  </div>
+                    {collectionData?.discordUrl!=null && collectionData?.discordUrl != ""?
+                  <div className="ml-3 cursor-pointer">
+                    <Link className="text-gray hover:text-white" target="_blank" rel="noopener noreferrer" href={collectionData?.discordUrl}>
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13.5447 2.77022C12.5249 2.3023 11.4313 1.95755 10.2879 1.76011C10.2671 1.75629 10.2463 1.76582 10.2356 1.78486C10.0949 2.03501 9.93915 2.36134 9.83006 2.61784C8.60027 2.43372 7.37679 2.43372 6.17221 2.61784C6.0631 2.35564 5.90166 2.03501 5.76038 1.78486C5.74966 1.76645 5.72886 1.75693 5.70803 1.76011C4.56527 1.95692 3.47171 2.30167 2.45129 2.77022C2.44246 2.77403 2.43488 2.78038 2.42986 2.78863C0.355594 5.88754 -0.212633 8.91028 0.0661201 11.8955C0.0673814 11.9101 0.0755799 11.9241 0.086932 11.933C1.45547 12.938 2.78114 13.5482 4.08219 13.9526C4.10301 13.9589 4.12507 13.9513 4.13832 13.9342C4.44608 13.5139 4.72043 13.0707 4.95565 12.6047C4.96953 12.5774 4.95628 12.545 4.92791 12.5342C4.49275 12.3692 4.0784 12.1679 3.67982 11.9393C3.64829 11.9209 3.64577 11.8758 3.67477 11.8543C3.75865 11.7914 3.84255 11.726 3.92264 11.66C3.93713 11.6479 3.95732 11.6454 3.97435 11.653C6.59286 12.8485 9.4277 12.8485 12.0153 11.653C12.0323 11.6447 12.0525 11.6473 12.0677 11.6593C12.1478 11.7254 12.2316 11.7914 12.3161 11.8543C12.3451 11.8758 12.3433 11.9209 12.3117 11.9393C11.9131 12.1723 11.4988 12.3692 11.063 12.5336C11.0346 12.5444 11.022 12.5774 11.0359 12.6047C11.2762 13.0701 11.5505 13.5132 11.8526 13.9335C11.8652 13.9513 11.8879 13.9589 11.9087 13.9526C13.2161 13.5482 14.5417 12.938 15.9103 11.933C15.9223 11.9241 15.9298 11.9108 15.9311 11.8962C16.2647 8.44488 15.3723 5.44693 13.5655 2.78926C13.5611 2.78038 13.5535 2.77403 13.5447 2.77022ZM5.34668 10.0778C4.55833 10.0778 3.90875 9.35406 3.90875 8.46521C3.90875 7.57635 4.54574 6.85259 5.34668 6.85259C6.15392 6.85259 6.79721 7.5827 6.78459 8.46521C6.78459 9.35406 6.14761 10.0778 5.34668 10.0778ZM10.6632 10.0778C9.87484 10.0778 9.22526 9.35406 9.22526 8.46521C9.22526 7.57635 9.86222 6.85259 10.6632 6.85259C11.4704 6.85259 12.1137 7.5827 12.1011 8.46521C12.1011 9.35406 11.4704 10.0778 10.6632 10.0778Z" fill="currentColor"></path></svg>
+                    </Link>
+                  </div>:
+                  <div/>}
+
+                    {collectionData?.twitterUrl!=null  && collectionData?.twitterUrl != ""?
+                    <div className="ml-3 cursor-pointer">
+                    <Link className="text-gray hover:text-white" target="_blank" rel="noopener noreferrer" href = {collectionData?.twitterUrl}>
+                        <svg width="14" height="14" fill="none" viewBox="0 0 16 16" ><path d="M9.14163 7.19284L13.6089 2H12.5503L8.67137 6.50887L5.57328 2H2L6.68492 8.81821L2 14.2637H3.05866L7.15491 9.50218L10.4267 14.2637H14L9.14137 7.19284H9.14163ZM7.69165 8.87828L7.21697 8.19934L3.44011 2.79694H5.06615L8.11412 7.15685L8.5888 7.83579L12.5508 13.503H10.9248L7.69165 8.87854V8.87828Z" fill="currentColor"></path></svg>
+                    </Link>
+                    </div>:
+                    <div/>}
+
+                    {collectionData?.externalUrl!=null && collectionData?.externalUrl != ""?
+                    <div className="ml-3 cursor-pointer">
+                    <Link className="text-gray hover:text-white" target="_blank" rel="noopener noreferrer" href = {collectionData?.externalUrl}>
+                    <svg  aria-hidden="true"  width="14" height="14" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.213 9.787a3.391 3.391 0 0 0-4.795 0l-3.425 3.426a3.39 3.39 0 0 0 4.795 4.794l.321-.304m-.321-4.49a3.39 3.39 0 0 0 4.795 0l3.424-3.426a3.39 3.39 0 0 0-4.794-4.795l-1.028.961"/>
+                    </svg>
+                    </Link>
+                    </div>:
+                    <div/>}
                 </div>
-              </div>
-              <p className="text-sm text-gray-400 mt-1 uppercase">
+                </div>
+              <div className="text-sm text-gray-400 mt-1 uppercase space-x-2">
+              {collectionData?.contractKind?.substring(0, 3) == "erc"?
                 <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
-                  {collectionData?.contractKind?.substring(0, 3) == "erc"
-                    ? "Ethereum"
-                    : "Polygon"}
-                </span>
+                  Ethereum
+                </span>:<div/>}
                 <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
                   {collectionData?.tokenCount} ITEMS
                 </span>
@@ -104,7 +117,7 @@ const TopSection = ({ collectionData }: { collectionData: CollectionData }) => {
                 <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
                   {Number(collectionData?.royalties.bps) / 100}% CREATOR FEE
                 </span>
-              </p>
+              </div>
             </div>
           </div>
         </div>
@@ -228,19 +241,25 @@ const ItemsSection = ({
 }: {
   collectionData: CollectionData;
 }) => {
+  const [isTextExpanded, setIsTextExpanded] = useState(false);
   return (
     <div>
-      <div className="mx-auto p-2 pl-6 pr-6 md:flex md:items-center md:justify-between hidden sm:inline-block">
+      <div
+        className={`mx-auto p-2 pl-6 pr-6 md:flex md:items-center md:justify-between hidden sm:inline-block`}
+      >
         {/* Description */}
-        <p className="md:flex-1 md:mr-4 text-gray">
-          {collectionData.description}
-        </p>
-        {/* See More/Less Button */}
-        <div className="text-right mt-2">
-          <button
-            className="text-blue-500"
-            x-text="expanded ? 'See less' : 'See more'"
-          ></button>
+        <div className="w-full flex flex-col">
+          <p
+            className={`md:flex-1 md:mr-4 text-gray ${isTextExpanded ? "" : "line-clamp-3"}`}
+          >
+            {collectionData.description}
+          </p>
+          <div
+            className="text-white cursor-pointer"
+            onClick={() => setIsTextExpanded(!isTextExpanded)}
+          >
+            {isTextExpanded ? "Show less" : "Show more"}
+          </div>
         </div>
       </div>
       <NFTCards id={collectionData.id} />
@@ -353,31 +372,68 @@ const ActivitySection = () => {
     </div>
   );
 };
-
+type TokenType = {
+  market: { 
+    floorAsk: { 
+      price: { 
+        amount: { 
+          decimal: number; }; };
+      source: {
+        domain: string;
+      };
+        }; };
+  token: { 
+    tokenId: string; 
+    rarity: string; 
+    image: string;
+    name: string;
+    attributes:[
+      {
+        key: string;
+        value: string;
+      }
+    ];
+    lastSale:{
+      price:{
+        amount:{
+          decimal: number;
+        }
+      }
+    };
+    owner: string;
+    collection: { 
+      name: string;
+    };
+  };
+}
 function TokenCard({
   collectionId,
-  market,
-  token,
+  setDetailsToken,
+  setDetailsModal,
+  nft,
 }: {
   collectionId: string;
-  market: { floorAsk: { price: { amount: { decimal: number } } } };
-  token: { tokenId: string; rarity: string; image: string; name: string };
+  setDetailsToken: (detailsToken: TokenType) => void;
+  setDetailsModal: (detailsModal: boolean) => void;
+  nft: TokenType;
 }) {
-  const buyToken = async (tokenId: string) => {};
   return (
     <div className="bg-dark-gray text-white rounded-xl flex flex-col border border-transparent hover:border-gray-700 group relative overflow-hidden">
       <div className="px-3 py-1.5">
         <span className="text-light-green text-xs font-medium">
-          Rarity #{token.rarity}
+          Rarity #{nft.token.rarity}
         </span>
       </div>
       <div className="flex-1 relative flex justify-center items-center">
         <div className="object-cover">
-          {token.image != " " ? (
-            <img
-              src={token.image?.toString()}
+          {nft.token.image != " " ? (
+            <Image
+              src={nft.token.image? nft.token.image.toString() : "/images/img-placeholder.png"}
               alt="Token"
               style={{ objectFit: "cover" }}
+              layout="responsive"
+              width={350}
+              height={260}
             />
           ) : (
             <div className="object-cover w-[350px] h-[260px] bg-gray-200"></div>
@@ -386,39 +442,40 @@ function TokenCard({
       </div>
       <div className="flex flex-col p-2">
         <a className="mb-1.5 flex items-center gap-1 hover:text-blue" href="#">
-          {token.name}
+          {nft.token.name}
         </a>
-        <div className="flex justify-between items-center pb-1.5">
+        <div className="flex justify-between items-center mb-1 relative">
           <button
             type="button"
             className="flex items-center justify-center px-2 py-1.5 text-xs font-medium text-light-green border border-dark-gray-all gray hover:border-gray-400 rounded"
           >
-            {market?.floorAsk?.price?.amount?.decimal?.toString()} ETH
+            {nft.market?.floorAsk?.price?.amount?.decimal?.toString()} ETH
           </button>
           <a
             id="btn"
-            className="border font-medium text-xs text-light-green border-dark-gray-all rounded hover:bg-gray-700 hover:text-white hover:border-gray-400 px-1.5 h-6 flex items-center cursor-pointer"
+            className="border font-medium text-xs text-light-green border-dark-gray-all rounded hover:bg-gray hover:text-white hover:border-gray-400 px-1.5 h-6 flex items-center cursor-pointer"
+            onClick={() => {setDetailsToken(nft); setDetailsModal(true);}}
           >
             Details
           </a>
         </div>
         <div className="flex justify-between">
-          <div className="text-xs -mx-3 -mb-2 px-3 py-1 text-light-green flex items-center">
-            Last -- ETH
+          <div className="text-xs -mx-3 mb-2 px-3 py-1 text-light-green flex items-center">
+            Last {nft.token.lastSale?.price?.amount?.decimal+" " || "-- "}ETH
             <i className="fas fa-history ml-1"></i>
           </div>
         </div>
       </div>
       {/* Buy Now Button */}
       <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform">
-        {market?.floorAsk ? (
+        {nft.market?.floorAsk ? (
           <BuyModal
             trigger={
               <button className="w-full py-2 bg-yellow text-black uppercase text-sm font-bold rounded-b-xl hover:bg-yellow-600">
                 Buy Now
               </button>
             }
-            token={collectionId + ":" + token.tokenId}
+            token={collectionId + ":" + nft.token.tokenId}
             onConnectWallet={() => {
               console.log("Connected");
             }}
@@ -439,41 +496,49 @@ function TokenCard({
 }
 
 function NFTCards({ id }: { id: string }) {
+
   type TraitType = {
     key: string;
     value: string;
   };
   type TraitCategoryType = {
     key: string;
-    values: [TraitType];
+    attributeCount: number;
+    values: TraitType[];
   };
-  const [tokenData, setTokenData] = useState([
-    {
-      market: { floorAsk: { price: { amount: { decimal: 0 } } } },
-      token: { tokenId: "0", rarity: "0", image: " ", name: " " },
-    },
-  ]);
 
+  const [tokenData, setTokenData] = useState<TokenType[]>([]);
+  const [detailsModal, setDetailsModal] = useState(false);
+  const [detailsToken, setDetailsToken] = useState<TokenType>();
+  const account = getAccount(config);
   /*State Variables for traits and Trait Filters*/
   //Raw Trait data from ReservoirKit, an array of objects
   const [traitData, setTraitData] = useState<TraitCategoryType[]>([]);
   //state variable to store whether or not the traits dropdown is open
   const [traitsOpen, setTraitsOpen] = useState(false);
   //State variable for the selected trait category in Trait Filter Dropdown
-  const [selectedTraitCategory, setSelectedTraitCategory] = useState<string>("all");
+  const [selectedTraitCategory, setSelectedTraitCategory] =
+    useState<string>("all");
   //State varaiable to store whether each individual Trait Category dropdown in the section is open
-  const [traitCategoryDropdown, setTraitCategoryDropdown] = useState<Record<string, boolean>>({});
+  const [traitCategoryDropdown, setTraitCategoryDropdown] = useState<
+    Record<string, boolean>
+  >({});
   //store whether any trait filters are applied
   const [traitFilterApplied, setTraitFilterApplied] = useState(false);
   //store selected filters
-  const [traitFilterSelection, setTraitFilterSelection] = useState<Record<string, boolean>>({});
-
+  const [traitFilterSelection, setTraitFilterSelection] = useState<
+    Record<string, boolean>
+  >({});
+  //store ordering direction of filter Category
+  const [traitOrderDirection, setTraitOrderDirection] =
+    useState<string>("Most");
+  const [traitSearch, setTraitSearch] = useState("");
   const [sortOpen, setSortOpen] = useState(false);
   const [sort, setSort] = useState("floorAskPrice");
   const [sortDirection, setSortDirection] = useState("asc");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState(false);
-  const [activeStatus, setActiveStatus] = useState("");
+  const [activeStatus, setActiveStatus] = useState("show_all");
   const [price, setPrice] = useState(false);
   const [priceFloor, setPriceFloor] = useState(0);
   const [priceCeiling, setPriceCeiling] = useState(1000000);
@@ -491,12 +556,17 @@ function NFTCards({ id }: { id: string }) {
     Blur: true,
     NFTX: true,
     SudoSwap: true,
+    MagicEden: true,
   });
   const [myItems, setMyItems] = useState(false);
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let value = event.target.value;
+    //value = encodeURIComponent(value);
+    setSearch(value);
+  };const handleTraitSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let value = event.target.value;
     value = encodeURIComponent(value);
-    setSearch(value);
+    setTraitSearch(value);
   };
   const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setActiveStatus(event.target.value);
@@ -559,10 +629,11 @@ function NFTCards({ id }: { id: string }) {
     let value = event.target.checked;
     setMarkets((prevMarkets) => ({ ...prevMarkets, SudoSwap: value }));
   };
-  const handleMyItemsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMagicEdenChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let value = event.target.checked;
-    setMyItems(!myItems);
+    setMarkets((prevMarkets) => ({ ...prevMarkets, MagicEden: value }));
   };
+
   /*
   This function:
   - reverses the value of the changed trait filter
@@ -575,56 +646,37 @@ function NFTCards({ id }: { id: string }) {
       ...prevState,
       [value]: !traitFilterSelection[value],
     }));
-    if(traitFilterSelection[value] !== true){
+    if (traitFilterSelection[value] !== true) {
       setTraitFilterApplied(true);
-    }
-    else{
+    } else {
       let applied = false;
       for (let key in traitFilterSelection) {
-        if(key != value && traitFilterSelection[key] == true){
+        if (key != value && traitFilterSelection[key] == true) {
           applied = true;
         }
       }
-      if(!applied){
+      if (!applied) {
         setTraitFilterApplied(false);
       }
     }
-  };
+  }
+  /*function for sorting trait categories*/
+ 
   /*function to reset all trait filters to false and turn off the trait filter*/
-  function resetTraitFilters(){
-    for (let key in traitFilterSelection){
+  function resetTraitFilters() {
+    for (let key in traitFilterSelection) {
       setTraitFilterSelection((prevState) => ({
         ...prevState,
         [key]: false,
       }));
-    };
+    }
     setTraitFilterApplied(false);
+    setTraitSearch("");
   }
   useEffect(() => {
     async function nftLookup() {
-      /*let lookupString = `https://api.reservoir.tools/tokens/v7?collection=${id}&sortBy=${sort}&sortDirection=${sortDirection}`;
-      if (search != "" && search != null) {
-        lookupString = lookupString + `&tokenName=${search}`;
-      }*/
-      let lookupString = `https://api.reservoir.tools/tokens/v7?collection=${id}&limit=100`;
-
-      /*if (activePriceFloor >= 0) {
-        lookupString = lookupString + `&minFloorAskPrice=${activePriceFloor}`;
-      }
-      if (activePriceCeiling >= 0) {
-        lookupString = lookupString + `&maxFloorAskPrice=${activePriceCeiling}`;
-      }*/
-      /*if (activeRarityFloor >= 1) {
-        lookupString = lookupString + `&minRarityRank=${activeRarityFloor}`;
-      }
-      if (activeRarityCeiling >= 1) {
-        lookupString = lookupString + `&maxRarityRank=${activeRarityCeiling.toString()}`;
-      }
-      if (markets.OpenSea) {
-        lookupString = lookupString + `&source=opensea.io`;
-      }*/
-      //lookupString = lookupString + `&source=opensea.io`;
-      //lookupString = lookupString + `&source=blur.io`;
+      
+      let lookupString = `https://api.reservoir.tools/tokens/v7?collection=${id}&sortBy=${sort}&sortDirection=${sortDirection}&limit=100&includeLastSale=true&includeAttributes=true`;
 
       console.log(lookupString);
       const options = {
@@ -641,13 +693,66 @@ function NFTCards({ id }: { id: string }) {
         return response.data.tokens;
       } catch (error) {
         console.error(error);
-        return {};
+        return [];
       }
     }
 
     if (id) {
       const fetchNftData = async () => {
-        const nftData = await nftLookup();
+        let nftData = await nftLookup();
+        if(activeStatus == "buy_now" && nftData.length>0){
+          nftData = nftData.filter((item:TokenType) => item.market.floorAsk.price.amount.decimal > 0);
+        }
+        if(activePriceFloor >= 0 && nftData.length>0){
+          nftData = nftData.filter((item:TokenType) => item.market.floorAsk.price.amount.decimal > activePriceFloor);
+        }
+        if(activePriceCeiling <= 100000 && nftData.length>0){
+          nftData = nftData.filter((item:TokenType) => item.market.floorAsk.price.amount.decimal < activePriceCeiling);
+        }
+        if(activeRarityFloor >= 1 && nftData.length>0){
+          nftData = nftData.filter((item:TokenType) => Number(item.token.rarity) > activeRarityFloor);
+        }
+        if(activeRarityCeiling <= 10000 && nftData.length>0){
+          nftData = nftData.filter((item:TokenType) => Number(item.token.rarity) < activeRarityCeiling);
+        }
+        if(!markets.OpenSea && nftData.length>0){
+          nftData = nftData.filter((item:TokenType) => item.market.floorAsk.source.domain != "opensea.io");
+        }
+        if(!markets.Blur && nftData.length>0){
+          nftData = nftData.filter((item:TokenType) => item.market.floorAsk.source.domain != "blur.io");
+        }
+        if(!markets.LooksRare && nftData.length>0){
+          nftData = nftData.filter((item:TokenType) => item.market.floorAsk.source.domain != "looksrare.org");
+        }
+        if(!markets.NFTX && nftData.length>0){
+          nftData = nftData.filter((item:TokenType) => item.market.floorAsk.source.domain != "nftx.io");
+        }
+        if(!markets.SudoSwap && nftData.length>0){
+          nftData = nftData.filter((item:TokenType) => item.market.floorAsk.source.domain != "sudoswap.xyz");
+        }
+        if(!markets.MagicEden && nftData.length>0){
+          nftData = nftData.filter((item:TokenType) => item.market.floorAsk.source.domain != "magiceden.io");
+        }
+        if(traitFilterApplied){
+          for(let attribute in traitFilterSelection){
+            if(traitFilterSelection[attribute] && nftData.length>0){
+              nftData = nftData.filter((item:TokenType) => item.token.attributes?.some((trait) => trait.value == attribute));
+            }
+          }
+        }
+        if(myItems && nftData.length>0){
+          console.log(account.address);
+          if(account.address!=undefined){
+            nftData = nftData.filter((item:TokenType) => item.token.owner == account.address);
+          }
+          else{
+            nftData = [];
+          }
+        }
+        if (search != "" && search != null && nftData.length>0) {
+          nftData = nftData.filter((item:TokenType) => item.token.name.toLowerCase().includes(search.toLowerCase()));
+        }
+        console.log(nftData);
         setTokenData(nftData);
       };
       fetchNftData();
@@ -663,22 +768,29 @@ function NFTCards({ id }: { id: string }) {
     activeRarityFloor,
     activeRarityCeiling,
     markets,
+    traitFilterSelection,
+    traitFilterApplied,
+    activeStatus,
+    myItems,
+    account.address,
   ]);
   useEffect(() => {
-    async function traitLookup<TraitCategoryType>(): Promise<TraitCategoryType[]>{
+    async function traitLookup<TraitCategoryType>(): Promise<
+      TraitCategoryType[]
+    > {
       let lookupString = `https://api.reservoir.tools/collections/${id}/attributes/all/v4`;
       console.log(lookupString);
       const options = {
         method: "GET",
         url: `${lookupString}`,
         headers: {
-          accept: "*/*",
+          //accept: "*/*",
           "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
         },
       };
       try {
         const response = await axios.request(options);
-        console.log(response.data);
+        //console.log(response.data);
         return response.data.attributes;
       } catch (error) {
         console.error(error);
@@ -689,24 +801,62 @@ function NFTCards({ id }: { id: string }) {
     if (id) {
       const fetchTraitData = async () => {
         const traits = await traitLookup<TraitCategoryType>();
+        if(traitSearch != ""){
+          for(let attribute in traits){
+            let filteredValues = traits[attribute].values.filter((item) => item.value.toLowerCase().includes(traitSearch.toLowerCase()));
+            if(filteredValues.length!>0){
+              traits[attribute].values = filteredValues;
+            }
+            else{
+              delete traits[attribute];
+            }
+          }
+        }
         setTraitData(traits);
+
         //initialize trait categories
         for (let attribute in traits) {
-          setTraitCategoryDropdown(prevState => ({
+          setTraitCategoryDropdown((prevState) => ({
             ...prevState,
-            [attribute]: false
+            [attribute]: false,
           }));
           for (let value in traits[attribute].values) {
-            setTraitFilterSelection(prevState => ({
+            setTraitFilterSelection((prevState) => ({
               ...prevState,
-              [value]: false
+              [value]: false,
             }));
+          }
         }
-      };
       };
       fetchTraitData();
     }
-  }, [id, setTraitData, setTraitCategoryDropdown]);
+  }, [id, setTraitData, setTraitCategoryDropdown, traitOrderDirection, traitSearch]);
+  useEffect(() => {
+    function TraitCompare(a: TraitCategoryType, b: TraitCategoryType) {
+      if (traitOrderDirection == "Least") {
+        if (a.attributeCount < b.attributeCount) {
+          return -1;
+        }
+        if (a.attributeCount > b.attributeCount) {
+          return 1;
+        }
+        return 0;
+      } else if (traitOrderDirection == "Most") {
+        if (a.attributeCount > b.attributeCount) {
+          return -1;
+        }
+        if (a.attributeCount < b.attributeCount) {
+          return 1;
+        }
+        return 0;
+      }
+      return 0;
+    }
+    let traits = traitData;
+    traits.sort((a, b) => TraitCompare(a, b));
+    setTraitData(traits);
+
+  }, [traitOrderDirection, traitData, ]);
 
   return (
     <div>
@@ -744,7 +894,7 @@ function NFTCards({ id }: { id: string }) {
 
                 {/* Dropdown Content */}
                 <div
-                  className={` ${sortOpen ? " " : "hidden "} absolute w-50 mt-1 z-10`}
+                  className={` ${sortOpen ? " " : "hidden "} absolute w-50 mt-1 z-30`}
                 >
                   <div className="bg-dark-gray mt-2 text-white rounded-sm shadow-lg">
                     {/* Dropdown Options */}
@@ -820,7 +970,7 @@ function NFTCards({ id }: { id: string }) {
                 <input
                   type="text"
                   placeholder="Search for tokens"
-                  onChange={handleInputChange}
+                  onChange={handleSearchInputChange}
                   className=" border-2 border-dark-gray border-l border-r border-t bg-black w-full px-4 py-2 rounded-sm bg-black text-white placeholder-gray-50 focus:outline-none ml-2 h-[50px]"
                   autoComplete="off"
                 />
@@ -846,7 +996,7 @@ function NFTCards({ id }: { id: string }) {
               )}
             </div>
             <div
-              className={`absolute dropdown-content w-[150px] bg-light-gray z-10 mt-1 ${status ? "" : "hidden"} z-10`}
+              className={`absolute dropdown-content w-[150px] bg-light-gray z-30 mt-1 ${status ? "" : "hidden"} z-30`}
             >
               <div className="bg-gray text-light-green rounded-sm">
                 <label className="block cursor-pointer px-4 py-2 pl-0">
@@ -891,7 +1041,7 @@ function NFTCards({ id }: { id: string }) {
               )}
             </div>
             <div
-              className={`absolute bg-gray dropdown-content w-[200px] z-10 mt-1 ${price ? "  " : "hidden"}`}
+              className={`absolute bg-gray dropdown-content w-[200px] z-30 mt-1 ${price ? "  " : "hidden"}`}
             >
               <div className="w-full flex items-center justify-center space-x-2 px-4 py-2 pl-0 pr-0">
                 {/* Min Input */}
@@ -942,7 +1092,7 @@ function NFTCards({ id }: { id: string }) {
               )}
             </div>
             <div
-              className={`absolute bg-gray dropdown-content w-[200px] z-10 mt-1 ${rarity ? "  " : "hidden"}`}
+              className={`absolute bg-gray dropdown-content w-[200px] z-30 mt-1 ${rarity ? "  " : "hidden"}`}
             >
               <div className="w-full flex items-center justify-center space-x-2 px-4 py-2 pl-0 pr-0">
                 {/* Min Input */}
@@ -994,7 +1144,7 @@ function NFTCards({ id }: { id: string }) {
             </div>
             {/* Dropdown Content */}
             <div
-              className={`absolute bg-gray dropdown-content w-[200px] z-10 mt-1 ${market ? "block" : "hidden"}`}
+              className={`absolute bg-gray dropdown-content w-[200px] z-30 mt-1 ${market ? "block" : "hidden"}`}
             >
               <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
                 {/* Market Options with additional data */}
@@ -1006,7 +1156,7 @@ function NFTCards({ id }: { id: string }) {
                     onChange={handleOpenseaChange}
                   />
                   OpenSea{" "}
-                  <span className="text-xs text-gray ml-1">239 (2.46%)</span>
+                  <span className="text-xs text-gray ml-1"></span>
                 </label>
                 <label className="block cursor-pointer px-4 py-2">
                   <input
@@ -1016,7 +1166,7 @@ function NFTCards({ id }: { id: string }) {
                     onChange={handleLooksRareChange}
                   />
                   LooksRare{" "}
-                  <span className="text-xs text-gray ml-1">182 (2.1.78%)</span>
+                  <span className="text-xs text-gray ml-1"></span>
                 </label>
                 <label className="block cursor-pointer px-4 py-2">
                   <input
@@ -1026,7 +1176,7 @@ function NFTCards({ id }: { id: string }) {
                     onChange={handleBlurChange}
                   />
                   Blur{" "}
-                  <span className="text-xs text-gray ml-1">79 (0.81%)</span>
+                  <span className="text-xs text-gray ml-1"></span>
                 </label>
                 <label className="block cursor-pointer px-4 py-2">
                   <input
@@ -1036,7 +1186,7 @@ function NFTCards({ id }: { id: string }) {
                     onChange={handleNFTXChange}
                   />
                   NFTX{" "}
-                  <span className="text-xs text-gray ml-1">21 (0.21%)</span>
+                  <span className="text-xs text-gray ml-1"></span>
                 </label>
                 <label className="block cursor-pointer px-4 py-2">
                   <input
@@ -1046,7 +1196,17 @@ function NFTCards({ id }: { id: string }) {
                     onChange={handleSudoSwapChange}
                   />
                   Sudoswap{" "}
-                  <span className="text-xs text-gray ml-1">21 (0.21%)</span>
+                  <span className="text-xs text-gray ml-1"></span>
+                </label>
+                <label className="block cursor-pointer px-4 py-2">
+                  <input
+                    type="checkbox"
+                    className="form-checkbox accent-yellow mr-2"
+                    checked={markets.MagicEden}
+                    onChange={handleMagicEdenChange}
+                  />
+                  MagicEden{" "}
+                  <span className="text-xs text-gray ml-1"></span>
                 </label>
                 {/* Add other options similarly */}
               </div>
@@ -1072,24 +1232,37 @@ function NFTCards({ id }: { id: string }) {
             {/* Dropdown Content */}
             <div
               id="traits-dropdown"
-              className={`z-10 ${traitsOpen ? "block" : "hidden"} absolute mt-3 right-0 mt-1  bg-dark-gray border-gray-all rounded-sm shadow-lg w-[500px] h-[330px]`}
+              className={`z-30 ${traitsOpen ? "block" : "hidden"} absolute mt-3 right-0 mt-1  bg-dark-gray border-gray-all rounded-sm shadow-lg w-[500px] h-[330px]`}
             >
-              <div className="p-4">
+              <div className="p-4 h-full">
                 {/* Search and Rarity Filter */}
                 <div className="flex justify-between pb-3 border-dark-gray">
                   <div className="flex-1 mr-2">
                     <input
                       type="text"
                       placeholder="Search for Traits"
+                      onChange={handleTraitSearchInputChange}
                       className="w-full px-3 py-2 bg-black focus:none text-white rounded-sm"
+                      autoComplete="off"
                     ></input>
                   </div>
                   <div className="w-30">
-                    <select className="w-full px-3 py-2 bg-dark-gray border-dark-gray-all text-gray h-10 rounded-sm">
-                      <option>Most Rare</option>
-                      <option>Least Rare</option>
+                    <select
+                      onChange={(e) => setTraitOrderDirection(e.target.value)}
+                      className="w-full px-3 py-2 bg-dark-gray border-dark-gray-all text-gray h-10 rounded-sm"
+                    >
+                      <option value="Most">Most Rare</option>
+                      <option value="Least">Least Rare</option>
                     </select>
                   </div>
+                  <button
+                    onClick={() => {
+                      resetTraitFilters();
+                    }}
+                    className={`${traitFilterApplied ? "block " : "hidden "}w-30 bg-dark-gray text-yellow border-dark-gray-all  font-bold hover:bg-gray py-2 px-4 ml-2 rounded-sm text-sm text-center`}
+                  >
+                    Reset
+                  </button>
                 </div>
 
                 {/* Tabbed Content with Scrollable Sections */}
@@ -1124,47 +1297,53 @@ function NFTCards({ id }: { id: string }) {
                         selectedTraitCategory == thisTraitCategory.key ? (
                           <div>
                             <span
-                              onClick={() =>
-                                {setTraitCategoryDropdown(prevState=> ({
+                              onClick={() => {
+                                setTraitCategoryDropdown((prevState) => ({
                                   ...prevState,
-                                  [thisTraitCategory.key] : !traitCategoryDropdown[thisTraitCategory.key]}))
+                                  [thisTraitCategory.key]:
+                                    !traitCategoryDropdown[
+                                      thisTraitCategory.key
+                                    ],
+                                }));
                               }}
                               className="text-white py-4 text-lg flex flex-row justify-between"
                             >
                               {thisTraitCategory.key}
 
-                              {traitCategoryDropdown[
-                                thisTraitCategory.key
-                              ] ? (
+                              {traitCategoryDropdown[thisTraitCategory.key] ? (
                                 <FaChevronUp className="text-gray-400 mr-4 align-right" />
                               ) : (
                                 <FaChevronDown className="text-gray-400 mr-4 align-right" />
                               )}
                             </span>
-                            {traitCategoryDropdown[
-                                thisTraitCategory.key
-                              ] ? (
-                            <ul className="text-md text-white bg-black w-full py-2">
-                              {thisTraitCategory.values?.map(
-                                (traitval: { value: string }) => (
-                                  <li
-                                    key={traitval.value}
-                                    className="p-2 hover:bg-gray-700 cursor-pointer traits-list-item"
-                                  >
-                                    <input
-                                      type="checkbox"
-                                      className="form-checkbox accent-yellow mr-2 h-[20px] w-[20px]"
-                                      checked={traitFilterSelection[traitval.value]}
-                                      onChange={() => {
-                                        handleTraitFilterSelectionChange(traitval.value);
-                                      }}
-                                    />
-                                    {traitval.value}
-                                  </li>
-                                )
-                              )}
-                            </ul>):
-                            <div></div>}
+                            {traitCategoryDropdown[thisTraitCategory.key] ? (
+                              <ul className="text-md text-white bg-black w-full py-2">
+                                {thisTraitCategory.values?.map(
+                                  (traitval: { value: string }) => (
+                                    <li
+                                      key={traitval.value}
+                                      className="p-2 hover:bg-gray-700 cursor-pointer traits-list-item"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        className="form-checkbox accent-yellow mr-2 h-[20px] w-[20px]"
+                                        checked={
+                                          traitFilterSelection[traitval.value]
+                                        }
+                                        onChange={() => {
+                                          handleTraitFilterSelectionChange(
+                                            traitval.value
+                                          );
+                                        }}
+                                      />
+                                      {traitval.value}
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            ) : (
+                              <div></div>
+                            )}
                           </div>
                         ) : (
                           <div></div>
@@ -1173,12 +1352,6 @@ function NFTCards({ id }: { id: string }) {
                     ))}
                   </div>
                 </div>
-                <button
-                  id="resetButton"
-                  className="hidden absolute bottom-4 left-4 bg-dark-gray text-yellow py-2 px-4 pl-2 rounded-sm text-sm"
-                >
-                  Reset
-                </button>
               </div>
             </div>
           </div>
@@ -1196,9 +1369,9 @@ function NFTCards({ id }: { id: string }) {
           </div>
         </div>
         <div className="flex-1">
-          <div className="flex flex-row items-center  gap-2 flex-wrap md:ml-2 md:pl-2">
+          <div className="flex flex-row items-center flex-wrap md:ml-2 md:pl-2">
             <div
-              className={`${activeStatus == "buy_now" ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center justify-center text-xs`}
+              className={`${activeStatus == "buy_now" ? "block" : "hidden"} ml-2 text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center justify-center text-xs`}
             >
               <span className="text-gray capitalize">Status</span>
               <span className="capitalize text-light-green mr-1 ml-1">
@@ -1215,7 +1388,7 @@ function NFTCards({ id }: { id: string }) {
             </div>
 
             <div
-              className={`${activePriceFloor > 0 ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 `}
+              className={`${activePriceFloor > 0 ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 ml-2`}
             >
               <span className="text-gray capitalize">Price</span>
               <span className="capitalize text-light-green mr-1 ml-1">
@@ -1232,7 +1405,7 @@ function NFTCards({ id }: { id: string }) {
             </div>
 
             <div
-              className={`${activePriceCeiling < 10000 ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 `}
+              className={`${activePriceCeiling < 10000 ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 ml-2`}
             >
               <span className="text-gray capitalize">Price</span>
               <span className="capitalize text-light-green mr-1 ml-1">
@@ -1249,7 +1422,7 @@ function NFTCards({ id }: { id: string }) {
             </div>
 
             <div
-              className={`${activeRarityFloor > 1 ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 `}
+              className={`${activeRarityFloor > 1 ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 ml-2`}
             >
               <span className="text-gray capitalize">Rarity</span>
               <span className="capitalize text-light-green mr-1 ml-1">
@@ -1266,7 +1439,7 @@ function NFTCards({ id }: { id: string }) {
             </div>
 
             <div
-              className={`${activeRarityCeiling < 10000 ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 `}
+              className={`${activeRarityCeiling < 10000 ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 ml-2`}
             >
               <span className="text-gray capitalize">Rarity</span>
               <span className="capitalize text-light-green mr-1 ml-1">
@@ -1283,7 +1456,7 @@ function NFTCards({ id }: { id: string }) {
             </div>
 
             <div
-              className={`${activeRarityCeiling < 10000 ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 `}
+              className={`${activeRarityCeiling < 10000 ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 ml-2`}
             >
               <span className="text-gray capitalize">Market</span>
               <span className="capitalize text-light-green mr-1 ml-1">
@@ -1303,12 +1476,13 @@ function NFTCards({ id }: { id: string }) {
             markets.LooksRare == true &&
             markets.Blur == true &&
             markets.NFTX == true &&
-            markets.SudoSwap == true ? (
+            markets.SudoSwap == true &&
+            markets.MagicEden == true? (
               <div />
             ) : (
-              <div className="flex flex-row space-x-2">
+              <div className="flex flex-row">
                 <div
-                  className={` ${markets.OpenSea ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600`}
+                  className={` ${markets.OpenSea ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 ml-2`}
                 >
                   <span className="text-gray capitalize">Market</span>
                   <span className="capitalize text-light-green mr-1 ml-1">
@@ -1328,7 +1502,7 @@ function NFTCards({ id }: { id: string }) {
                 </div>
 
                 <div
-                  className={` ${markets.LooksRare ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600`}
+                  className={` ${markets.LooksRare ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 ml-2`}
                 >
                   <span className="text-gray capitalize">Market</span>
                   <span className="capitalize text-light-green mr-1 ml-1">
@@ -1348,7 +1522,7 @@ function NFTCards({ id }: { id: string }) {
                 </div>
 
                 <div
-                  className={` ${markets.Blur ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600`}
+                  className={` ${markets.Blur ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 ml-2`}
                 >
                   <span className="text-gray capitalize">Market</span>
                   <span className="capitalize text-light-green mr-1 ml-1">
@@ -1368,7 +1542,7 @@ function NFTCards({ id }: { id: string }) {
                 </div>
 
                 <div
-                  className={` ${markets.NFTX ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600`}
+                  className={` ${markets.NFTX ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 ml-2`}
                 >
                   <span className="text-gray capitalize">Market</span>
                   <span className="capitalize text-light-green mr-1 ml-1">
@@ -1388,7 +1562,7 @@ function NFTCards({ id }: { id: string }) {
                 </div>
 
                 <div
-                  className={` ${markets.SudoSwap ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600`}
+                  className={` ${markets.SudoSwap ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 ml-2`}
                 >
                   <span className="text-gray capitalize">Market</span>
                   <span className="capitalize text-light-green mr-1 ml-1">
@@ -1406,25 +1580,56 @@ function NFTCards({ id }: { id: string }) {
                     X
                   </i>
                 </div>
+
+                <div
+                  className={` ${markets.MagicEden ? "block" : "hidden"} text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 ml-2`}
+                >
+                  <span className="text-gray capitalize">Market</span>
+                  <span className="capitalize text-light-green mr-1 ml-1">
+                    MagicEden
+                  </span>
+                  <i
+                    onClick={() =>
+                      setMarkets((prevMarkets) => ({
+                        ...prevMarkets,
+                        MagicEden: false,
+                      }))
+                    }
+                    className=" cursor-pointer font-bold"
+                  >
+                    X
+                  </i>
+                </div>
               </div>
             )}
-            {traitFilterApplied ? 
-            <div className="flex flex-row">
-            {Object.keys(traitFilterSelection).map((value) => (
-            <div className="flex flex-row flex-start" key={value}>
-            {traitFilterSelection[value]?
-              <div className="ml-2 text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 hidden sm:block">
-              <span className="text-gray capitalize">Traits</span>
-              <span className="capitalize text-light-green mr-1 ml-1">
-                {value}
-              </span>
-              <i onClick={()=>{handleTraitFilterSelectionChange(value)}}className=" cursor-pointer h-14 w-14 font-bold">X</i>
-            </div>
-            :<div/>}
-            </div>
-            ))}
-            </div>
-            :<div/>}
+            {traitFilterApplied ? (
+              <div className="flex flex-row">
+                {Object.keys(traitFilterSelection).map((value) => (
+                  <div className="flex flex-row flex-start" key={value}>
+                    {traitFilterSelection[value] ? (
+                      <div className="ml-2 text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600 hidden sm:block">
+                        <span className="text-gray capitalize">Traits</span>
+                        <span className="capitalize text-light-green mr-1 ml-1">
+                          {value}
+                        </span>
+                        <i
+                          onClick={() => {
+                            handleTraitFilterSelectionChange(value);
+                          }}
+                          className=" cursor-pointer h-14 w-14 font-bold"
+                        >
+                          X
+                        </i>
+                      </div>
+                    ) : (
+                      <div />
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div />
+            )}
           </div>
         </div>
         <div className="pr-6 flex items-center gap-4">
@@ -1436,7 +1641,7 @@ function NFTCards({ id }: { id: string }) {
                 value=""
                 className="sr-only peer"
                 onChange={() => {
-                  handleMyItemsChange;
+                  setMyItems(!myItems);
                 }}
               />
               <div className="w-11 h-6 bg-gray rounded-full peer peer-focus:ring-4 peer-focus:ring-yellow dark:peer-focus:ring-yellow peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-yellow"></div>
@@ -1446,19 +1651,21 @@ function NFTCards({ id }: { id: string }) {
       </div>
       <div className="mx-auto px-4 py-0">
         {/* NFT Cards Section */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4 px-2 py-4">
+        <div className="z-20 min-h-[500px] mb-[50px] grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4 px-2 py-4">
           {tokenData ? (
             tokenData.map((nft) => (
               <TokenCard
+                setDetailsModal={setDetailsModal}
+                setDetailsToken={setDetailsToken}
                 key={nft.token.tokenId}
                 collectionId={id}
-                market={nft.market}
-                token={nft.token}
+                nft={nft}
               />
             ))
           ) : (
             <div>Loading...</div>
           )}
+          {detailsModal && detailsToken? <DetailsModal setDetailsModal={setDetailsModal} nft={detailsToken} />: null}
         </div>
       </div>
     </div>
@@ -1754,7 +1961,7 @@ const LuckyBuy = () => {
   return (
     <div
       id="modal-lucky-buy"
-      className="h-auto w-11/12 lg:w-9/12 p-3 bg-black rounded-sm z-10"
+      className="h-auto w-11/12 lg:w-9/12 p-3 bg-black rounded-sm z-40"
     >
       <div className="flex flex-col w-full h-auto">
         {/* Modal Header */}
@@ -1808,7 +2015,7 @@ const LuckyBuy = () => {
                     <br /> XP can be redeemed for Zaar.
                   </p>
 
-                  <div className="flex justify-center items-center sticky top-5 z-9 bg-black">
+                  <div className="flex justify-center items-center sticky top-5 z-30 bg-black">
                     {/* Container for the cards */}
                     <div className="inline-flex gap-1">
                       {/* Cards to the left with XP */}
@@ -2022,8 +2229,8 @@ const LuckyBuy = () => {
                   <div className="max-w-md mx-auto bg-black rounded-sm overflow-hidden md:max-w-lg">
                     <div className="md:flex">
                       <div className="w-full">
-                        <div className="p-2 border-b border-dark-gray">
-                          <div className="text-sm font-semibold text-light-green uppercase">
+                        <div className="p-2 border-b border-dark-gray hover:bg-gray">
+                          <div className="text-sm font-semibold text-white uppercase">
                             Details
                           </div>
                         </div>
@@ -2092,13 +2299,15 @@ const LuckyBuy = () => {
     </div>
   );
 };
-const DetailsModal = () => {
+const DetailsModal = ({setDetailsModal, nft} : {setDetailsModal: (detailsModal: boolean)=> void, nft: TokenType}) => {
   return (
     <div>
+    <div className="w-screen h-screen fixed top-0 left-0 bg-black opacity-60 z-40"></div>
+    <div className="fixed z-50 w-[100%] h-[90%] top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2 opacity-100 ">
       {/*view NFT modal*/}
       <div
         id="modal-view-nft"
-        className="h-auto w-11/12 lg:w-9/12 p-3 bg-dark-gray rounded-sm z-10"
+        className="h-auto w-11/12 lg:w-9/12 p-3 bg-dark-gray rounded-sm z-40"
       >
         <div className="flex flex-col w-full h-auto">
           {/* Modal Header */}
@@ -2134,7 +2343,7 @@ const DetailsModal = () => {
                 Next &rarr;
               </button>
               {/* Escape/Close Button */}
-              <button className="text-gray-300 bg-transparent hover:text-white border border-gray-600 hover:border-white rounded px-3 py-1 focus:outline-none">
+              <button onClick={()=>{setDetailsModal(false)}} className="text-gray-300 bg-transparent hover:text-white border border-gray-600 hover:border-white rounded px-3 py-1 focus:outline-none">
                 <i className="far fa-times-square"></i> Esc
               </button>
             </div>
@@ -2155,13 +2364,13 @@ const DetailsModal = () => {
                       href="/collection/milady"
                       className="text-yellow font-semibold hover:underline"
                     >
-                      Milady Maker
+                      {nft?.token?.collection?.name}
                     </Link>
                   </div>
 
                   {/* NFT Title */}
                   <h2 className="text-3xl font-bold text-light-green mb-3">
-                    Milady 5799
+                  {nft?.token?.name}
                   </h2>
 
                   {/* NFT Attributes */}
@@ -2169,7 +2378,7 @@ const DetailsModal = () => {
                     <div className="mb-2 flex items-center">
                       {/* Rarity Ranking */}
                       <span className="mr-2 bg-gray text-gray text-xs font-semibold px-2.5 py-0.5 rounded">
-                        #6,211
+                        #{nft.token?.rarity}
                       </span>
                     </div>
                     <div className="text-gray mt-7">
@@ -2196,7 +2405,7 @@ const DetailsModal = () => {
                               href="#"
                               className="text-yellow hover:text-yellow-200"
                             >
-                              ugliestduck
+                              {nft.token?.owner.substring(0,7)}...
                             </a>
                           </div>
                         </div>
@@ -2213,7 +2422,7 @@ const DetailsModal = () => {
                         <div className="mr-0 sm:mr-7">
                           <span className="text-xs">Last Price</span>
                           <div className="text-sm font-bold text-light-green">
-                            18.00<i className="fab fa-ethereum ml-1"></i>
+                            {nft.token?.lastSale?.price?.amount?.decimal}<i className="fab fa-ethereum ml-1"></i>
                           </div>
                         </div>
 
@@ -2304,11 +2513,12 @@ const DetailsModal = () => {
             <div className="md:w-4/12 p-2 bg-dark-gray rounded-lg mr-2">
               <div className="flex flex-col items-center md:items-start">
                 <Image
-                  width={16}
-                  height={16}
-                  alt="NFT Image width={16} height ={16}"
+                  width={600}
+                  height={600}
+                  layout="responsive"
+                  alt="NFT Image"
                   className="object-cover w-full mb-3 rounded-sm"
-                  src="/images/collections/milady/milady-5799.jpg"
+                  src={nft.token.image? nft.token.image : "./images/img-placeholder.png"}
                 />
                 <div className="bg-transparent p-0 rounded-sm w-full mt-2 border border-1 border-dark-gray-all">
                   <div className="flex justify-between text-white mb-0">
@@ -2414,6 +2624,7 @@ const DetailsModal = () => {
         </div>
       </div>
     </div>
+    </div>
   );
 };
 
@@ -2427,6 +2638,9 @@ export default function Home() {
     name: "",
     image: "",
     id: "",
+    twitterUrl: "",
+    discordUrl: "",
+    externalUrl: "",
     description: "",
     tokenCount: "",
     royalties: { bps: "" },
@@ -2442,7 +2656,7 @@ export default function Home() {
       method: "GET",
       url: `https://api.reservoir.tools/collections/v7?id=${id}`,
       headers: {
-        accept: "*/*",
+        //accept: "*/*",
         "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
       },
     };
