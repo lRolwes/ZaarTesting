@@ -545,7 +545,7 @@ function TokenCard({
               }
               alt="Token"
               style={{ objectFit: "cover" }}
-              layout="responsive"
+              className="responsive"
               width={350}
               height={260}
             />
@@ -804,10 +804,8 @@ function NFTCards({ id, count }: { id: string; count: number }) {
   const [hasMore, setHasMore] = useState(true);
   const [startIndex, setStartIndex] = useState(0);
   const [endIndex, setEndIndex] = useState(50);
-  useEffect(() => {
-    fetchMoreData(); // Fetch initial data on component mount
-  });
-
+  
+ 
   const fetchMoreData = async () => {
     // Fetch more data here. This is just a placeholder.
     setEndIndex(endIndex+10);
@@ -821,192 +819,174 @@ function NFTCards({ id, count }: { id: string; count: number }) {
     setData(prevData => [...prevData, ...newData]);
   };
 
-
-
-
   useEffect(() => {
-    async function nftLookup() {
-      let rawTokensString = `https://api.reservoir.tools/tokens/ids/v1?collection=${id}&limit=1000`;
-      let idArray;
-      let tokenArray = [];
-      const options1 = {
+  async function nftLookup() {
+    let cont = "";
+    let prevCont = "start";
+    let lookupString = `https://api.reservoir.tools/tokens/v7?collection=${id}&limit=100&includeTopBid=true&includeLastSale=true&includeAttributes=true`;
+    let tokenArray: TokenType[] = [];
+    while(cont.length<10){
+      let newLookupString = lookupString
+      if (cont!=""){
+        newLookupString += `&continuation=${cont}`;
+      }
+      const options = {
         method: "GET",
-        url: `${rawTokensString}`,
+        url: `${newLookupString}`,
         headers: {
           accept: "*/*",
           "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
         },
       };
+
       try {
-        const rawResponse = await axios.request(options1);
-        idArray = rawResponse.data.tokens;
-        //console.log(idArray);
+        const response = await axios.request(options);
+        prevCont = cont;
+        cont = response.data.continuation;
+        console.log(cont);
+        //console.log(response.data.tokens);
+        tokenArray = [...tokenArray, ...response.data.tokens];
       } catch (error) {
         console.error(error);
-        idArray = [];
       }
-      let index1 = 0;
-      let index2 = 0;
-      while(index2<idArray.length){
-        index2 = index2 + 1;
-        if(index2 == (index1+49)){
-          //console.log(index1, index2);
-          //fetch data
-          let items = idArray.slice(index1, index2);
-          let newArray = items.map((item:string) => `${id}%3A`+ item);
-          newArray = newArray.join("&tokens=");
-          //console.log("new Array:"+newArray);
-          let lookupString = `https://api.reservoir.tools/tokens/v7?tokens=${newArray}&limit=50&includeTopBid=true&includeLastSale=true&includeAttributes=true`;
-          //console.log(lookupString);
-          const options2 = {
-            method: "GET",
-            url: `${lookupString}`,
-            headers: {
-              accept: "*/*",
-              "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
-            },
-          };
-          try {
-            const response = await axios.request(options2);
-            //console.log(response.data.tokens);
-            for(let tok of response.data.tokens){
-              //console.log(tok);
-              tokenArray.push(tok);
-            }
-          } catch (error) {
-            console.error(error);
-          }
-          index1 = index2;
-        }
+  }
+    return tokenArray;
+}
+
+  if (id) {
+    const fetchNftData = async () => {
+      let nftData = await nftLookup();
+      console.log(nftData);
+      setTokenData(nftData);
+      
+    };
+    fetchNftData();
+  }
+},[id]);
+    
+      /*
+      if (activeStatus == "buy_now" && nftData.length > 0) {
+        console.log("applied 1");
+        nftData = nftData.filter(
+          (item: TokenType) =>
+            item.market?.floorAsk?.price?.amount?.decimal > 0
+        );
       }
-      //console.log(tokenArray);
-      return tokenArray;
-    }
+      if (activePriceFloor > 0 && nftData.length > 0) {
+        console.log("applied 2");
+        nftData = nftData.filter(
+          (item: TokenType) =>
+            item.market?.floorAsk?.price?.amount?.decimal > activePriceFloor
+        );
+      }
+      if (activePriceCeiling < 10000 && nftData.length > 0) {
+        console.log("applied 3");
 
-    if (id) {
-      const fetchNftData = async () => {
-        let nftData = await nftLookup();
-        console.log(nftData);
-        if (activeStatus == "buy_now" && nftData.length > 0) {
-          console.log("applied 1");
-          nftData = nftData.filter(
-            (item: TokenType) =>
-              item.market?.floorAsk?.price?.amount?.decimal > 0
-          );
-        }
-        if (activePriceFloor > 0 && nftData.length > 0) {
-          console.log("applied 2");
-          nftData = nftData.filter(
-            (item: TokenType) =>
-              item.market?.floorAsk?.price?.amount?.decimal > activePriceFloor
-          );
-        }
-        if (activePriceCeiling < 10000 && nftData.length > 0) {
-          console.log("applied 3");
+        nftData = nftData.filter(
+          (item: TokenType) =>
+            item.market?.floorAsk?.price?.amount?.decimal < activePriceCeiling
+        );
+      }
+      if (activeRarityFloor >= 1 && nftData.length > 0) {
+        console.log("applied 4");
 
-          nftData = nftData.filter(
-            (item: TokenType) =>
-              item.market?.floorAsk?.price?.amount?.decimal < activePriceCeiling
-          );
-        }
-        if (activeRarityFloor >= 1 && nftData.length > 0) {
-          console.log("applied 4");
+        nftData = nftData.filter(
+          (item: TokenType) => Number(item.token.rarity) > activeRarityFloor
+        );
+      }
+      if (activeRarityCeiling < 10000 && nftData.length > 0) {
+        console.log("applied 5");
+        nftData = nftData.filter(
+          (item: TokenType) => Number(item.token.rarity) < activeRarityCeiling
+        );
+      }
+      if (!markets.OpenSea && nftData.length > 0) {
+        console.log("applied 6");
 
-          nftData = nftData.filter(
-            (item: TokenType) => Number(item.token.rarity) > activeRarityFloor
-          );
-        }
-        if (activeRarityCeiling < 10000 && nftData.length > 0) {
-          console.log("applied 5");
-          nftData = nftData.filter(
-            (item: TokenType) => Number(item.token.rarity) < activeRarityCeiling
-          );
-        }
-        if (!markets.OpenSea && nftData.length > 0) {
-          console.log("applied 6");
+        nftData = nftData.filter(
+          (item: TokenType) =>
+            item.market.floorAsk.source.domain != "opensea.io"
+        );
+      }
+      if (!markets.Blur && nftData.length > 0) {
+        console.log("applied 7");
 
-          nftData = nftData.filter(
-            (item: TokenType) =>
-              item.market.floorAsk.source.domain != "opensea.io"
-          );
-        }
-        if (!markets.Blur && nftData.length > 0) {
-          console.log("applied 7");
+        nftData = nftData.filter(
+          (item: TokenType) => item.market.floorAsk.source.domain != "blur.io"
+        );
+      }
+      if (!markets.LooksRare && nftData.length > 0) {
+        console.log("applied 8");
 
-          nftData = nftData.filter(
-            (item: TokenType) => item.market.floorAsk.source.domain != "blur.io"
-          );
-        }
-        if (!markets.LooksRare && nftData.length > 0) {
-          console.log("applied 8");
+        nftData = nftData.filter(
+          (item: TokenType) =>
+            item.market.floorAsk.source.domain != "looksrare.org"
+        );
+      }
+      if (!markets.NFTX && nftData.length > 0) {
+        console.log("applied 9");
 
-          nftData = nftData.filter(
-            (item: TokenType) =>
-              item.market.floorAsk.source.domain != "looksrare.org"
-          );
-        }
-        if (!markets.NFTX && nftData.length > 0) {
-          console.log("applied 9");
+        nftData = nftData.filter(
+          (item: TokenType) => item.market.floorAsk.source.domain != "nftx.io"
+        );
+      }
+      if (!markets.SudoSwap && nftData.length > 0) {
+        console.log("applied 10");
 
-          nftData = nftData.filter(
-            (item: TokenType) => item.market.floorAsk.source.domain != "nftx.io"
-          );
-        }
-        if (!markets.SudoSwap && nftData.length > 0) {
-          console.log("applied 10");
+        nftData = nftData.filter(
+          (item: TokenType) =>
+            item.market.floorAsk.source.domain != "sudoswap.xyz"
+        );
+      }
+      if (!markets.MagicEden && nftData.length > 0) {
+        console.log("applied 11");
 
-          nftData = nftData.filter(
-            (item: TokenType) =>
-              item.market.floorAsk.source.domain != "sudoswap.xyz"
-          );
-        }
-        if (!markets.MagicEden && nftData.length > 0) {
-          console.log("applied 11");
+        nftData = nftData.filter(
+          (item: TokenType) =>
+            item.market.floorAsk.source.domain != "magiceden.io"
+        );
+      }
+      if (traitFilterApplied) {
+        console.log("applied 12");
 
-          nftData = nftData.filter(
-            (item: TokenType) =>
-              item.market.floorAsk.source.domain != "magiceden.io"
-          );
-        }
-        if (traitFilterApplied) {
-          console.log("applied 12");
-
-          for (let attribute in traitFilterSelection) {
-            if (traitFilterSelection[attribute] && nftData.length > 0) {
-              nftData = nftData.filter((item: TokenType) =>
-                item.token.attributes?.some((trait) => trait.value == attribute)
-              );
-            }
-          }
-        }
-        if (myItems && nftData.length > 0) {
-          console.log("applied 13");
-
-          //console.log(account.address);
-          if (account.address != undefined) {
-            nftData = nftData.filter(
-              (item: TokenType) => item.token.owner == account.address
+        for (let attribute in traitFilterSelection) {
+          if (traitFilterSelection[attribute] && nftData.length > 0) {
+            nftData = nftData.filter((item: TokenType) =>
+              item.token.attributes?.some((trait) => trait.value == attribute)
             );
-          } else {
-            nftData = [];
           }
         }
-        if (search != "" && search != null && nftData.length > 0) {
-          console.log("applied 14");
+      }
+      if (myItems && nftData.length > 0) {
+        console.log("applied 13");
 
-          nftData = nftData.filter((item: TokenType) =>
-            item.token.name.toLowerCase().includes(search.toLowerCase())
+        //console.log(account.address);
+        if (account.address != undefined) {
+          nftData = nftData.filter(
+            (item: TokenType) => item.token.owner == account.address
           );
+        } else {
+          nftData = [];
         }
-        console.log(nftData);
-        setTokenData(nftData);
-      };
-      fetchNftData();
+      }
+      if (search != "" && search != null && nftData.length > 0) {
+        console.log("applied 14");
+
+        nftData = nftData.filter((item: TokenType) =>
+          item.token.name.toLowerCase().includes(search.toLowerCase())
+        );
+      }
+      console.log(nftData);*/
+
+/*
+  useEffect(() => {
+    
     }
   }, [
     id,
-    search,
-    setTokenData,
+  ]);*/
+
+    /*search,
     sort,
     sortDirection,
     activePriceFloor,
@@ -1018,8 +998,7 @@ function NFTCards({ id, count }: { id: string; count: number }) {
     traitFilterApplied,
     activeStatus,
     myItems,
-    account.address,
-  ]);
+    account.address,*/
   useEffect(() => {
     async function traitLookup<TraitCategoryType>(): Promise<
       TraitCategoryType[]
@@ -2972,9 +2951,8 @@ const DetailsModal = ({
                     <Image
                       width={300}
                       height={300}
-                      layout="responsive"
                       alt="NFT Image"
-                      className="object-cover w-[100px] mb-3 rounded-sm"
+                      className="object-cover w-[100px] mb-3 rounded-sm responsive"
                       src={
                         nft.token.image
                           ? nft.token.image
