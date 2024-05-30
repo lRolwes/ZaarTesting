@@ -12,8 +12,10 @@ import { getAccount } from "@wagmi/core";
 import { config } from "./../../config";
 import { FavStar } from "./../../components/FavStar";
 import PriceChart from "./../../components/PriceChart";
-import InfiniteScroll from 'react-infinite-scroll-component';
-import Watchlist, { WatchlistProps } from "../../components/Watchlist";
+import InfiniteScroll from "react-infinite-scroll-component";
+import sdk from "@api/reservoirprotocol";
+import { paths } from "@reservoir0x/reservoir-sdk";
+import { reset } from "viem/actions";
 
 type CollectionData = {
   createdAt: string;
@@ -33,6 +35,7 @@ type CollectionData = {
   volume: { "1day": number };
   volumeChange: { "1day": number };
 };
+
 const TopSection = ({ collectionData }: { collectionData: CollectionData }) => {
   const givenDate = new Date(
     collectionData?.createdAt ? collectionData.createdAt : ""
@@ -305,9 +308,9 @@ const NavSection = ({ collectionData }: { collectionData: CollectionData }) => {
       {activeTab == "items" ? (
         <ItemsSection collectionData={collectionData} />
       ) : activeTab == "activity" ? (
-        <ActivitySection />
+        <ActivitySection id={collectionData.id.toString()} /> // Fix: Pass the id property as a string
       ) : activeTab == "traits" ? (
-        <div></div>
+        <TraitsSection id={collectionData.id} />
       ) : (
         <div></div>
       )}
@@ -340,15 +343,262 @@ const ItemsSection = ({
           </div>
         </div>
       </div>
-      <NFTCards
+      <FilterSection
         id={collectionData.id}
         count={Number(collectionData.tokenCount)}
       />
     </div>
   );
 };
+const TraitsSection = ({id}:{id:string}) => {
+  const [traitData, setTraitData] = useState<TraitCategoryType[]>([]);
 
-const ActivitySection = () => {
+  useEffect(() => {
+    async function traitLookup<TraitCategoryType>(): Promise<
+      TraitCategoryType[]
+    > {
+      let lookupString = `https://api.reservoir.tools/collections/${id}/attributes/all/v4`;
+      const options = {
+        method: "GET",
+        url: `${lookupString}`,
+        headers: {
+          //accept: "*/*",
+          "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
+        },
+      };
+      try {
+        const response = await axios.request(options);
+        return response.data.attributes;
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+    }
+    async function traitMetadataLookup<TraitCategoryType>(key:string): Promise<
+      TraitCategoryType[]
+    > {
+      let lookupString = `https://api.reservoir.tools/collections/${id}/attributes/explore/v5?attributeKey=${key}&limit=500`;
+      const options = {
+        method: "GET",
+        url: `${lookupString}`,
+        headers: {
+          accept: "*/*",
+          "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
+        },
+      };
+      try {
+        const response = await axios.request(options);
+        return response.data.attributes;
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+    }
+
+    if (id) {
+      const fetchTraitData = async () => {
+        const traits = await traitLookup<TraitCategoryType>();
+        for(let category in traits){
+          let values = await traitMetadataLookup<TraitType>(traits[category].key);
+          traits[category].values = values;
+        }
+        setTraitData(traits);
+      }
+      fetchTraitData();
+    }
+  }, [id]);
+  return (
+  <div className="px-6 flex flex-col">
+    {traitData.map((category, index) => {
+    return(
+    <div className = " ml-3 text-xl text-white mb-8 " key={index}> <p className="font-bold">{category.key}{" ("+category.attributeCount+")"}</p>
+    <div className="grid grid-cols-6">
+      {category.values.map((trait, index) => {return(
+      <div key={index} className="flex flex-row p-2" >
+        <Image
+          src={trait.sampleImages[0]}
+          width={100}
+          height={100}
+          alt="img"
+        />
+        <div className="ml-4 flex flex-col">
+        <div>{trait.value}</div>
+        <div>{trait.floorAskPrices[0]}</div>
+        <div>{trait.tokenCount}</div>
+
+        </div>
+      </div>
+      );})}
+
+      </div>
+    </div>);
+  })}
+
+  </div>);
+};
+const ActivitySection = ({id}:{id:string}) => {
+  const [activityData, setActivityData] = useState<ActivityType[]>([]);
+  const [filteredActivityData, setFilteredActivityData] = useState<ActivityType[]>();
+  const [listing, setListing] = useState(true);
+  const [transfer, setTransfer] = useState(true);
+  const [mint, setMint] = useState(true);
+  const [sale, setSale] = useState(true);
+  const [bid, setBid] = useState(true);
+  const [markets, setMarkets] = useState({
+    OpenSea: true,
+    LooksRare: true,
+    Blur: true,
+    NFTX: true,
+    SudoSwap: true,
+    MagicEden: true,
+  });
+  const [eventsDropdown, setEventsDropdown] = useState(false);
+  const [marketsDropdown, setMarketsDropdown] = useState(false);
+  const [search, setSearch] = useState("");
+  const handleOpenseaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let value = event.target.checked;
+    setMarkets((prevMarkets) => ({ ...prevMarkets, OpenSea: value }));
+  };
+  const handleLooksRareChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    let value = event.target.checked;
+    setMarkets((prevMarkets) => ({ ...prevMarkets, LooksRare: value }));
+  };
+  const handleBlurChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let value = event.target.checked;
+    setMarkets((prevMarkets) => ({ ...prevMarkets, Blur: value }));
+  };
+  const handleNFTXChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let value = event.target.checked;
+    setMarkets((prevMarkets) => ({ ...prevMarkets, NFTX: value }));
+  };
+  const handleSudoSwapChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let value = event.target.checked;
+    setMarkets((prevMarkets) => ({ ...prevMarkets, SudoSwap: value }));
+  };
+  const handleMagicEdenChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    let value = event.target.checked;
+    setMarkets((prevMarkets) => ({ ...prevMarkets, MagicEden: value }));
+  };
+  const resetFilters = () => {
+    setListing(true);
+    setSale(true);
+    setTransfer(true);
+    setMint(true);
+    setMarkets({
+      OpenSea: true,
+      LooksRare: true,
+      Blur: true,
+      NFTX: true,
+      SudoSwap: true,
+      MagicEden: true,
+    });
+  };
+  const handleSearchInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    let value = event.target.value;
+    //value = encodeURIComponent(value);
+    setSearch(value);
+  };
+  useEffect(() => {
+    async function nftLookup() {
+      let cont = "";
+      let lookupString = `https://api.reservoir.tools/collections/activity/v6?collection=${id}`;
+      let eventArray: ActivityType[] = [];
+      let count = 0;
+      const options = {method: 'GET', headers: {accept: '*/*', 'x-api-key': 'f1bc813b-97f8-5808-83de-1238af13d6f9'}};
+
+      while (cont != null && count < 10) {
+        count = count+1;
+        let newString = lookupString;
+        if (cont != "") {
+          newString = newString + `&continuation=${cont}`;
+        }
+        const res = await fetch(`${newString}`, options);
+        const data = await res.json();
+        eventArray = [...eventArray, ...data.activities];
+        cont = data.continuation;
+      }
+      return eventArray;
+    }
+
+    if (id) {
+      const fetchNftData = async () => {
+        let data = await nftLookup();
+        setActivityData(data);
+      };
+      fetchNftData();
+    }
+  },[id]);
+  useEffect(() => {
+    let data = activityData;
+    if (search != "") {
+      data = data.filter((item) => {
+        return item.token?.tokenId?.toLowerCase().includes(search.toLowerCase());
+      });
+    }
+    if (!listing) {
+      data = data.filter((item) => {
+        return item.type != "list" && item.type != "ask";
+      });
+    }
+    if (!bid) {
+      data = data.filter((item) => {
+        return item.type != "bid" && item.type != "bid_cancel";
+      });
+    }
+    if (!mint) {
+      data = data.filter((item) => {
+        return item.type != "mint";
+      });
+    }
+    if (!transfer) {
+      data = data.filter((item) => {
+        return item.type != "transfer";
+      });
+    }
+    if (!sale) {
+      data = data.filter((item) => {
+        return item.type != "sale";
+      });
+    }
+    if (!markets.OpenSea) {
+      data = data.filter((item) => {
+        return item.order?.source?.name != "OpenSea";
+      });
+    }
+    if (!markets.Blur) {
+      data = data.filter((item) => {
+        return item.order?.source?.name != "Blur";
+      });
+    }
+    if (!markets.LooksRare) {
+      data = data.filter((item) => {
+        return item.order?.source?.name != "LooksRare";
+      });
+    }
+    if (!markets.NFTX) {
+      data = data.filter((item) => {
+        return item.order?.source?.name != "NFTX";
+      });
+    }
+    if (!markets.SudoSwap) {
+      data = data.filter((item) => {
+        return item.order?.source?.name != "SudoSwap";
+      });
+    }
+    if (!markets.MagicEden) {
+      data = data.filter((item) => {
+        return item.order?.source?.name != "MagicEden";
+      });
+    }
+    setFilteredActivityData(data);
+  },[activityData, search, listing, bid, mint, transfer, sale, markets]);
+
   return (
     <div className="">
       <div className="container-fluid mx-auto">
@@ -360,15 +610,11 @@ const ActivitySection = () => {
                 <div className="relative w-full sm:max-w-90">
                   <div className="relative max-w-[350px]">
                     <div className="flex items-center rounded-sm border border-dark-gray-all h-10 w-full">
-                      <span className="font-medium text-xs pl-2 text-gray-400">
-                        {/* Font Awesome icon for search */}
-                        <i className="fas fa-search"></i>
-                      </span>
                       <input
                         placeholder="Search for items"
                         type="text"
                         className="bg-transparent text-sm w-full outline-none px-2.5 text-gray placeholder-gray-500"
-                        id="search-input"
+                        onChange={handleSearchInputChange}
                       />
                     </div>
                   </div>
@@ -377,76 +623,392 @@ const ActivitySection = () => {
               {/* Additional filters for larger screens */}
               <div className="hidden lg:flex gap-1.5 items-center mt-2">
                 {/* Event filter */}
-                <div className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1">
+                <div className="relative">
+                <div
+                  className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1"
+                  onClick={() => {
+                    setEventsDropdown(!eventsDropdown);
+                    setMarketsDropdown(false);
+                  }}
+                >
                   Event
-                  <i className="fas fa-chevron-up transform rotate-180 text-gray mr-1"></i>
+                  {eventsDropdown ? (
+                    <FaChevronUp className="text-gray ml-1" />
+                  ) : (
+                    <FaChevronDown className="text-gray ml-1" />
+                  )}
+                </div>
+                <div
+                  className={`absolute right-0 dropdown-content w-[200px] z-30 mt-1 ${eventsDropdown ? "block" : "hidden"}`}
+                >
+                  <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
+                    {/* Market Options with additional data */}
+                    <label className="block cursor-pointer px-4 py-2">
+                      <input
+                        type="checkbox"
+                        className="form-checkbox accent-yellow mr-2"
+                        checked={listing}
+                        onChange={()=>{setListing(!listing)}}
+                      />
+                      Listing <span className="text-xs text-gray ml-1"></span>
+                    </label>
+                    <label className="block cursor-pointer px-4 py-2">
+                      <input
+                        type="checkbox"
+                        className="form-checkbox accent-yellow mr-2"
+                        checked={bid}
+                        onChange={()=>{setBid(!bid)}}
+                      />
+                      Bid <span className="text-xs text-gray ml-1"></span>
+                    </label>
+                    <label className="block cursor-pointer px-4 py-2">
+                      <input
+                        type="checkbox"
+                        className="form-checkbox accent-yellow mr-2"
+                        checked={sale}
+                        onChange={()=>{setSale(!sale)}}
+                      />
+                      Sale <span className="text-xs text-gray ml-1"></span>
+                    </label>
+                    <label className="block cursor-pointer px-4 py-2">
+                      <input
+                        type="checkbox"
+                        className="form-checkbox accent-yellow mr-2"
+                        checked={transfer}
+                        onChange={()=>{setTransfer(!transfer)}}
+                      />
+                      Transfer <span className="text-xs text-gray ml-1"></span>
+                    </label>
+                    <label className="block cursor-pointer px-4 py-2">
+                      <input
+                        type="checkbox"
+                        className="form-checkbox accent-yellow mr-2"
+                        checked={mint}
+                        onChange={()=>{setMint(!mint)}}
+                      />
+                      Mint <span className="text-xs text-gray ml-1"></span>
+                    </label>
+                  </div>
+                  </div>
                 </div>
                 {/* Market filter */}
-                <div className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1">
+                <div className="relative">
+                <div
+                  className="border rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1"
+                  onClick={() => {
+                    setMarketsDropdown(!marketsDropdown);
+                    setEventsDropdown(false);
+                  }}
+                >
                   Market
-                  <i className="fas fa-chevron-up transform rotate-180 text-gray mr-1"></i>
+                  {marketsDropdown ? (
+                    <FaChevronUp className="text-gray ml-1" />
+                  ) : (
+                    <FaChevronDown className="text-gray ml-1" />
+                  )}
+                </div>
+                <div
+                  className={`absolute right-0 dropdown-content w-[200px] z-30 mt-1 ${marketsDropdown ? "block" : "hidden"}`}
+                >
+                  <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
+                    {/* Market Options with additional data */}
+                    <label className="block cursor-pointer px-4 py-2">
+                      <input
+                        type="checkbox"
+                        className="form-checkbox accent-yellow mr-2"
+                        checked={markets.OpenSea}
+                        onChange={handleOpenseaChange}
+                      />
+                      OpenSea <span className="text-xs text-gray ml-1"></span>
+                    </label>
+                    <label className="block cursor-pointer px-4 py-2">
+                      <input
+                        type="checkbox"
+                        className="form-checkbox accent-yellow mr-2"
+                        checked={markets.LooksRare}
+                        onChange={handleLooksRareChange}
+                      />
+                      LooksRare <span className="text-xs text-gray ml-1"></span>
+                    </label>
+                    <label className="block cursor-pointer px-4 py-2">
+                      <input
+                        type="checkbox"
+                        className="form-checkbox accent-yellow mr-2"
+                        checked={markets.Blur}
+                        onChange={handleBlurChange}
+                      />
+                      Blur <span className="text-xs text-gray ml-1"></span>
+                    </label>
+                    <label className="block cursor-pointer px-4 py-2">
+                      <input
+                        type="checkbox"
+                        className="form-checkbox accent-yellow mr-2"
+                        checked={markets.NFTX}
+                        onChange={handleNFTXChange}
+                      />
+                      NFTX <span className="text-xs text-gray ml-1"></span>
+                    </label>
+                    <label className="block cursor-pointer px-4 py-2">
+                      <input
+                        type="checkbox"
+                        className="form-checkbox accent-yellow mr-2"
+                        checked={markets.SudoSwap}
+                        onChange={handleSudoSwapChange}
+                      />
+                      Sudoswap <span className="text-xs text-gray ml-1"></span>
+                    </label>
+                    <label className="block cursor-pointer px-4 py-2">
+                      <input
+                        type="checkbox"
+                        className="form-checkbox accent-yellow mr-2"
+                        checked={markets.MagicEden}
+                        onChange={handleMagicEdenChange}
+                      />
+                      MagicEden <span className="text-xs text-gray ml-1"></span>
+                    </label>
+                    {/* Add other options similarly */}
+                  </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap ml-6 sm:ml-4 md:pl-2">
-          <button
-            type="button"
-            className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
-          >
+        {!markets.Blur || !markets.LooksRare || !markets.MagicEden || !markets.NFTX || !markets.OpenSea || !markets.SudoSwap ?
+          <div className="flex flex-row gap-2">
+            {markets.Blur ?
+          <button className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+            <span className="text-gray capitalize">Market</span>
+            <span className="capitalize text-light-green mr-1 ml-1">Blur</span>
+            <span
+                onClick={()=>{setMarkets((prevMarkets) => ({ ...prevMarkets, Blur: false }))}}>
+                X
+            </span>
+          </button> : null}
+          {markets.OpenSea ?
+          <button className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+            <span className="text-gray capitalize">Market</span>
+            <span className="capitalize text-light-green mr-1 ml-1">OpenSea</span>
+            <span
+                onClick={()=>{setMarkets((prevMarkets) => ({ ...prevMarkets, OpenSea: false }))}}>
+                X
+            </span>
+          </button> : null}
+          {markets.LooksRare ?
+          <button className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+            <span className="text-gray capitalize">Market</span>
+            <span className="capitalize text-light-green mr-1 ml-1">LooksRare</span>
+            <span
+                onClick={()=>{setMarkets((prevMarkets) => ({ ...prevMarkets, LooksRare: false }))}}>
+                X
+            </span>
+          </button> : null}
+          {markets.NFTX ?
+          <button className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+            <span className="text-gray capitalize">Market</span>
+            <span className="capitalize text-light-green mr-1 ml-1">NFTX</span>
+            <span
+                onClick={()=>{setMarkets((prevMarkets) => ({ ...prevMarkets, NFTX: false }))}}>
+                X
+            </span>
+          </button> : null}
+          {markets.SudoSwap ?
+          <button className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+            <span className="text-gray capitalize">Market</span>
+            <span className="capitalize text-light-green mr-1 ml-1">SudoSwap</span>
+            <span
+                onClick={()=>{setMarkets((prevMarkets) => ({ ...prevMarkets, SudoSwap: false }))}}>
+                X
+            </span>
+          </button> : null}
+          {markets.MagicEden?
+          <button className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+            <span className="text-gray capitalize">Market</span>
+            <span className="capitalize text-light-green mr-1 ml-1">MagicEden</span>
+            <span
+                onClick={()=>{setMarkets((prevMarkets) => ({ ...prevMarkets, MagicEden: false }))}}>
+                X
+            </span>
+          </button> : null}
+          </div>
+          : null}
+        {sale && !(listing && sale && transfer && mint && bid) ?
+          <button className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
             <span className="text-gray capitalize">Event</span>
             <span className="capitalize text-light-green mr-1 ml-1">Sale</span>
-            <i className="fas fa-times cursor-pointer h-14 w-14"></i>
-          </button>
-          <div className="flex items-center gap-2 flex-wrap md:ml-0 md:pl-0">
-            <button
-              type="button"
-              className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
-            >
+            <span
+                onClick={()=>{setSale(false)}}>
+                X
+            </span>
+          </button> : null}
+            {listing && !(listing && sale && transfer &&mint && bid) ?
+              <button className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
               <span className="text-gray capitalize">Event</span>
               <span className="capitalize text-light-green mr-1 ml-1">
                 Listing
               </span>
-              <i className="fas fa-times cursor-pointer h-14 w-14"></i>
+              <span
+                onClick={()=>{setListing(false)}}>
+                X
+              </span>
             </button>
-          </div>
-          <div className="flex items-center gap-2 flex-wrap md:ml-0 md:pl-0">
-            <button
-              type="button"
-              className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
-            >
+            : null}
+            {transfer && !(listing && sale && transfer &&mint && bid) ?
+            <button className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
               <span className="text-gray capitalize">Event</span>
               <span className="capitalize text-light-green mr-1 ml-1">
                 Transfer
               </span>
-              <i className="fas fa-times cursor-pointer h-14 w-14"></i>
-            </button>
-          </div>
-          <div className="flex items-center gap-2 flex-wrap md:ml-0 md:pl-0">
-            <button
-              type="button"
-              className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600"
-            >
+              <span
+                onClick={()=>{setTransfer(false)}}>
+                X
+              </span>
+            </button>: null}
+          {mint && !(listing && sale && transfer && mint && bid) ?
+             <button className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
               <span className="text-gray capitalize">Event</span>
               <span className="capitalize text-light-green mr-1 ml-1">
                 Mint
               </span>
-              <i className="fas fa-times cursor-pointer h-14 w-14"></i>
+              <span
+                onClick={()=>{setMint(false)}}>
+                X
+              </span>
             </button>
-          </div>
-          <a
+            : null}
+          {bid && !(listing && sale && transfer && mint && bid) ?
+             <button className="text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+              <span className="text-gray capitalize">Event</span>
+              <span className="capitalize text-light-green mr-1 ml-1">
+                Bid
+              </span>
+              <span
+                onClick={()=>{setBid(false)}}>
+                X
+              </span>
+            </button>
+            : null}
+          <div
             className="inline-block text-xs cursor-pointer text-blue my-1"
-            role="button"
+            onClick={()=>{resetFilters()}}
           >
             Clear
-          </a>
+          </div>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap ml-2 mr-2 md:ml-6 md:pl-1 md:mr-8 mt-3">
           {/*Table*/}
-          <div className="overflow-x-auto rounded-lg w-full">
-            <Table />
+          <div className="overflow-x-auto rounded-lg w-full min-h-[500px]">
+            <div className="table-wrapper">
+            
+              <table className="sticky-first-column not-sticky-second-column w-full text-sm text-left text-light-green">
+                <thead className="text-xs uppercase text-gray">
+                  
+                  <tr className="border-b border-dark-gray cursor-pointer">
+                    <th scope="col" className="px-6 py-3">
+                      Event
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left">
+                      Item
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-right">
+                      Value
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-right">
+                      From
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-right">
+                      To
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-right">
+                      Time
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                {filteredActivityData && filteredActivityData.map((item, index) => {
+                return(
+                    <tr key={index} className="dark-gray-hover cursor-pointer">
+                    <td className="px-4 py-4 flex items-center">
+                      <div className="bg-black border border-dark-gray-all w-[30px] h-[30px] mr-2 flex items-center justify-center rounded-lg shadow-md hover:bg-gray-800">
+                        {item.order?.source?.icon && <Image
+                          width={160}
+                          height={160}
+                          className="w-7 h-7 object-cover rounded-sm"
+                          src={item.order.source.icon}
+                          alt="Blur"
+                        />}
+                      </div>
+                      {item.type}
+
+                    </td>
+                    <td className="px-2 py-0 text-right">
+                      <div
+                        className="flex items-center text-sm overflow-hidden last:pr-4"
+                        role="cell"
+                      >
+                        <div className="overflow-hidden">
+                          <div className="flex items-center w-full overflow-hidden">
+                            <div className="mr-2">
+                              <div className="relative overflow-hidden rounded-sm w-[30px] h-[30px]">
+                                {item.token.tokenImage && <Image
+                                  width={160}
+                                  height={160}
+                                  alt="NFT Image"
+                                  className="object-cover w-full"
+                                  src={item.token.tokenImage}
+                                />}{" "}
+                              </div>
+                            </div>
+                            <div className="flex-1 flex flex-col gap-1">
+                              <div className="flex items-center gap-1">
+                                <div className="text-sm text-gray">{item?.token?.tokenName? item.token.tokenName: null}</div>
+                              </div>
+                              <div className="inline-block">
+                                <div className="bg-gray rounded-md h-5 px-2 inline-flex items-center justify-center">
+                                  <div className="text-light-green text-xs">
+                                    <div> {item.token?.rarityScore? item.token.rarityScore : null}</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      {item.price?.amount?.decimal? item.price.amount.decimal : null} <i className="fab fa-ethereum"></i>
+                      <br />
+                      <span className="text-xs text-gray">36% above floor</span>
+                    </td>
+                    <td className="px-6 py-4 text-right text-light-green">
+                      <div className="truncate undefined">{item.fromAddress? item.fromAddress.slice(0,4)+"..."+item.fromAddress.slice(-4) : null}</div>
+                    </td>
+                    <td className="px-6 py-4 text-right text-green-500">
+                      <div >{item.toAddress? item.toAddress.slice(0,4)+"..."+item.toAddress.slice(-4) : null}</div>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                    {item.timestamp ? (() => {
+    const diffInMinutes = Math.floor((new Date().getTime() - new Date(item.timestamp * 1000).getTime()) / (1000 * 60));
+    if (diffInMinutes < 60) {
+      return diffInMinutes + "M ago";
+    } else {
+      return Math.floor(diffInMinutes / 60) + "H ago";
+    }
+  })() : null
+  }
+                      <br />
+                      <span className="text-xs text-gray">{item.timestamp ? new Date(item.timestamp * 1000).toLocaleString() : null}</span>
+                    </td>
+                  </tr>
+                  );
+                  })}
+                  
+                              
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -515,6 +1077,13 @@ type TraitType = {
       usd: number;
     };
   };
+  sampleImages: string[];
+  floorAskPrices: number[];
+};
+type TraitCategoryType = {
+  key: string;
+  attributeCount: number;
+  values: TraitType[];
 };
 function TokenCard({
   collectionId,
@@ -616,16 +1185,17 @@ function TokenCard({
   );
 }
 
-function NFTCards({ id, count }: { id: string; count: number }) {
-  type TraitCategoryType = {
-    key: string;
-    attributeCount: number;
-    values: TraitType[];
-  };
-
+function FilterSection({ id, count }: { id: string; count: number }) {
+  
+  //stores raw token Data
   const [tokenData, setTokenData] = useState<TokenType[]>([]);
+  //stores filtered token data
+  const [filteredTokenData, setFilteredTokenData] = useState<TokenType[]>([]);
+  //stores if details modal is expanded or any token
   const [detailsModal, setDetailsModal] = useState(false);
+  //sets the token to be displayed in the details modal
   const [detailsToken, setDetailsToken] = useState<TokenType>();
+  //user account address
   const account = getAccount(config);
   /*State Variables for traits and Trait Filters*/
   //Raw Trait data from ReservoirKit, an array of objects
@@ -648,7 +1218,10 @@ function NFTCards({ id, count }: { id: string; count: number }) {
   //store ordering direction of filter Category
   const [traitOrderDirection, setTraitOrderDirection] =
     useState<string>("Most");
+  //string to search for traits
   const [traitSearch, setTraitSearch] = useState("");
+
+  //Other filters
   const [sortOpen, setSortOpen] = useState(false);
   const [sort, setSort] = useState("floorAskPrice");
   const [sortDirection, setSortDirection] = useState("asc");
@@ -675,6 +1248,13 @@ function NFTCards({ id, count }: { id: string; count: number }) {
     MagicEden: true,
   });
   const [myItems, setMyItems] = useState(false);
+  //values for the infinite scroll table
+  const [data, setData] = useState<TokenType[]>([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [startIndex, setStartIndex] = useState(0);
+  const [endIndex, setEndIndex] = useState(50);
+
+  //handler functions to help interact with filters
   const handleSearchInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -783,7 +1363,6 @@ function NFTCards({ id, count }: { id: string; count: number }) {
       }
     }
   }
-  /*function for sorting trait categories*/
 
   /*function to reset all trait filters to false and turn off the trait filter*/
   function resetTraitFilters() {
@@ -796,197 +1375,155 @@ function NFTCards({ id, count }: { id: string; count: number }) {
     setTraitFilterApplied(false);
     setTraitSearch("");
   }
-
-
-
-
-  const [data, setData] = useState<TokenType[]>([]);
-  const [hasMore, setHasMore] = useState(true);
-  const [startIndex, setStartIndex] = useState(0);
-  const [endIndex, setEndIndex] = useState(50);
-  
- 
   const fetchMoreData = async () => {
     // Fetch more data here. This is just a placeholder.
-    setEndIndex(endIndex+10);
-    setStartIndex(startIndex+10);
-    const newData = tokenData.slice(startIndex, endIndex);
+    setEndIndex(endIndex + 10);
+    setStartIndex(startIndex + 10);
+    const newData = filteredTokenData.slice(startIndex, endIndex);
 
     if (newData.length === 0) {
       setHasMore(false);
       return;
     }
-    setData(prevData => [...prevData, ...newData]);
+    setData((prevData) => [...prevData, ...newData]);
   };
-
+  // UseEffect to get and store all tokens in the collection and store in tokenData
   useEffect(() => {
-  async function nftLookup() {
-    let cont = "";
-    let prevCont = "start";
-    let lookupString = `https://api.reservoir.tools/tokens/v7?collection=${id}&limit=100&includeTopBid=true&includeLastSale=true&includeAttributes=true`;
-    let tokenArray: TokenType[] = [];
-    while(cont.length<10){
-      let newLookupString = lookupString
-      if (cont!=""){
-        newLookupString += `&continuation=${cont}`;
-      }
-      const options = {
-        method: "GET",
-        url: `${newLookupString}`,
-        headers: {
-          accept: "*/*",
-          "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
-        },
-      };
-
-      try {
+    async function nftLookup() {
+      let cont = "";
+      let lookupString = `https://api.reservoir.tools/tokens/v7?collection=${id}&limit=100&includeTopBid=true&includeLastSale=true&includeAttributes=true`;
+      let tokenArray: TokenType[] = [];
+      while (cont != null) {
+        let newString = lookupString;
+        if (cont != "") {
+          newString = newString + `&continuation=${cont}`;
+        }
+        const options = {
+          method: "GET",
+          url: `${newString}`,
+          headers: {
+            "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
+          },
+        };
         const response = await axios.request(options);
-        prevCont = cont;
-        cont = response.data.continuation;
-        console.log(cont);
-        //console.log(response.data.tokens);
-        tokenArray = [...tokenArray, ...response.data.tokens];
-      } catch (error) {
-        console.error(error);
+        const data = response.data;
+        console.log(response.data);
+        tokenArray = [...tokenArray, ...data.tokens];
+        cont = data.continuation;
       }
-  }
-    return tokenArray;
-}
-
-  if (id) {
-    const fetchNftData = async () => {
-      let nftData = await nftLookup();
-      console.log(nftData);
-      setTokenData(nftData);
-      
-    };
-    fetchNftData();
-  }
-},[id]);
-    
-      /*
-      if (activeStatus == "buy_now" && nftData.length > 0) {
-        console.log("applied 1");
-        nftData = nftData.filter(
-          (item: TokenType) =>
-            item.market?.floorAsk?.price?.amount?.decimal > 0
-        );
-      }
-      if (activePriceFloor > 0 && nftData.length > 0) {
-        console.log("applied 2");
-        nftData = nftData.filter(
-          (item: TokenType) =>
-            item.market?.floorAsk?.price?.amount?.decimal > activePriceFloor
-        );
-      }
-      if (activePriceCeiling < 10000 && nftData.length > 0) {
-        console.log("applied 3");
-
-        nftData = nftData.filter(
-          (item: TokenType) =>
-            item.market?.floorAsk?.price?.amount?.decimal < activePriceCeiling
-        );
-      }
-      if (activeRarityFloor >= 1 && nftData.length > 0) {
-        console.log("applied 4");
-
-        nftData = nftData.filter(
-          (item: TokenType) => Number(item.token.rarity) > activeRarityFloor
-        );
-      }
-      if (activeRarityCeiling < 10000 && nftData.length > 0) {
-        console.log("applied 5");
-        nftData = nftData.filter(
-          (item: TokenType) => Number(item.token.rarity) < activeRarityCeiling
-        );
-      }
-      if (!markets.OpenSea && nftData.length > 0) {
-        console.log("applied 6");
-
-        nftData = nftData.filter(
-          (item: TokenType) =>
-            item.market.floorAsk.source.domain != "opensea.io"
-        );
-      }
-      if (!markets.Blur && nftData.length > 0) {
-        console.log("applied 7");
-
-        nftData = nftData.filter(
-          (item: TokenType) => item.market.floorAsk.source.domain != "blur.io"
-        );
-      }
-      if (!markets.LooksRare && nftData.length > 0) {
-        console.log("applied 8");
-
-        nftData = nftData.filter(
-          (item: TokenType) =>
-            item.market.floorAsk.source.domain != "looksrare.org"
-        );
-      }
-      if (!markets.NFTX && nftData.length > 0) {
-        console.log("applied 9");
-
-        nftData = nftData.filter(
-          (item: TokenType) => item.market.floorAsk.source.domain != "nftx.io"
-        );
-      }
-      if (!markets.SudoSwap && nftData.length > 0) {
-        console.log("applied 10");
-
-        nftData = nftData.filter(
-          (item: TokenType) =>
-            item.market.floorAsk.source.domain != "sudoswap.xyz"
-        );
-      }
-      if (!markets.MagicEden && nftData.length > 0) {
-        console.log("applied 11");
-
-        nftData = nftData.filter(
-          (item: TokenType) =>
-            item.market.floorAsk.source.domain != "magiceden.io"
-        );
-      }
-      if (traitFilterApplied) {
-        console.log("applied 12");
-
-        for (let attribute in traitFilterSelection) {
-          if (traitFilterSelection[attribute] && nftData.length > 0) {
-            nftData = nftData.filter((item: TokenType) =>
-              item.token.attributes?.some((trait) => trait.value == attribute)
-            );
-          }
-        }
-      }
-      if (myItems && nftData.length > 0) {
-        console.log("applied 13");
-
-        //console.log(account.address);
-        if (account.address != undefined) {
-          nftData = nftData.filter(
-            (item: TokenType) => item.token.owner == account.address
-          );
-        } else {
-          nftData = [];
-        }
-      }
-      if (search != "" && search != null && nftData.length > 0) {
-        console.log("applied 14");
-
-        nftData = nftData.filter((item: TokenType) =>
-          item.token.name.toLowerCase().includes(search.toLowerCase())
-        );
-      }
-      console.log(nftData);*/
-
-/*
-  useEffect(() => {
-    
+      return tokenArray;
     }
-  }, [
-    id,
-  ]);*/
 
-    /*search,
+    if (id) {
+      const fetchNftData = async () => {
+        let nftData = await nftLookup();
+        setTokenData(nftData);
+      };
+      fetchNftData();
+    }
+  }, [id, count]);
+
+  /*useEffect(() => {
+    let nftData = tokenData;
+    if (activeStatus == "buy_now" && nftData.length > 0) {
+      nftData = nftData.filter(
+        (item: TokenType) => item.market?.floorAsk?.price?.amount?.decimal > 0
+      );
+    }
+    if (activePriceFloor > 0 && nftData.length > 0) {
+      nftData = nftData.filter(
+        (item: TokenType) =>
+          item.market?.floorAsk?.price?.amount?.decimal > activePriceFloor
+      );
+    }
+    if (activePriceCeiling < 10000 && nftData.length > 0) {
+
+      nftData = nftData.filter(
+        (item: TokenType) =>
+          item.market?.floorAsk?.price?.amount?.decimal < activePriceCeiling
+      );
+    }
+    if (activeRarityFloor >= 1 && nftData.length > 0) {
+
+      nftData = nftData.filter(
+        (item: TokenType) => Number(item.token.rarity) > activeRarityFloor
+      );
+    }
+    if (activeRarityCeiling < 10000 && nftData.length > 0) {
+      nftData = nftData.filter(
+        (item: TokenType) => Number(item.token.rarity) < activeRarityCeiling
+      );
+    }
+    if (!markets.OpenSea && nftData.length > 0) {
+
+      nftData = nftData.filter(
+        (item: TokenType) => item.market.floorAsk.source.domain != "opensea.io"
+      );
+    }
+    if (!markets.Blur && nftData.length > 0) {
+
+      nftData = nftData.filter(
+        (item: TokenType) => item.market.floorAsk.source.domain != "blur.io"
+      );
+    }
+    if (!markets.LooksRare && nftData.length > 0) {
+
+      nftData = nftData.filter(
+        (item: TokenType) =>
+          item.market.floorAsk.source.domain != "looksrare.org"
+      );
+    }
+    if (!markets.NFTX && nftData.length > 0) {
+
+      nftData = nftData.filter(
+        (item: TokenType) => item.market.floorAsk.source.domain != "nftx.io"
+      );
+    }
+    if (!markets.SudoSwap && nftData.length > 0) {
+
+      nftData = nftData.filter(
+        (item: TokenType) =>
+          item.market.floorAsk.source.domain != "sudoswap.xyz"
+      );
+    }
+    if (!markets.MagicEden && nftData.length > 0) {
+
+      nftData = nftData.filter(
+        (item: TokenType) =>
+          item.market.floorAsk.source.domain != "magiceden.io"
+      );
+    }
+    if (traitFilterApplied) {
+
+      for (let attribute in traitFilterSelection) {
+        if (traitFilterSelection[attribute] && nftData.length > 0) {
+          nftData = nftData.filter((item: TokenType) =>
+            item.token.attributes?.some((trait) => trait.value == attribute)
+          );
+        }
+      }
+    }
+    if (myItems && nftData.length > 0) {
+
+      if (account.address != undefined) {
+        nftData = nftData.filter(
+          (item: TokenType) => item.token.owner == account.address
+        );
+      } else {
+        nftData = [];
+      }
+    }
+    if (search != "" && search != null && nftData.length > 0) {
+
+      nftData = nftData.filter((item: TokenType) =>
+        item.token.name.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    setFilteredTokenData(nftData);
+  }, [
+    tokenData,
+    id,
+    search,
     sort,
     sortDirection,
     activePriceFloor,
@@ -998,24 +1535,24 @@ function NFTCards({ id, count }: { id: string; count: number }) {
     traitFilterApplied,
     activeStatus,
     myItems,
-    account.address,*/
+    account.address,
+  ]);*/
+  //useEffect for loading traits for collections
   useEffect(() => {
     async function traitLookup<TraitCategoryType>(): Promise<
       TraitCategoryType[]
     > {
       let lookupString = `https://api.reservoir.tools/collections/${id}/attributes/all/v4`;
-      //console.log(lookupString);
       const options = {
         method: "GET",
         url: `${lookupString}`,
         headers: {
-          //accept: "*/*",
+          accept: "*/*",
           "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
         },
       };
       try {
         const response = await axios.request(options);
-        //console.log(response.data);
         return response.data.attributes;
       } catch (error) {
         console.error(error);
@@ -1063,6 +1600,7 @@ function NFTCards({ id, count }: { id: string; count: number }) {
     traitOrderDirection,
     traitSearch,
   ]);
+  //useEffect for sorting and filtering traits
   useEffect(() => {
     function TraitCompare(a: TraitCategoryType, b: TraitCategoryType) {
       if (traitOrderDirection == "Least") {
@@ -1624,7 +2162,7 @@ function NFTCards({ id, count }: { id: string; count: number }) {
             <div className="pr-1 inline-flex items-center justify-center rounded-full w-[10px] h-[10px] bg-yellow" />
 
             <span className="text-xs text-gray dark:text-gray mr-2 ml-2">
-              {tokenData.length} results
+              {filteredTokenData.length} results
             </span>
           </div>
         </div>
@@ -1714,8 +2252,6 @@ function NFTCards({ id, count }: { id: string; count: number }) {
                 X
               </i>
             </div>
-
-
 
             {markets.OpenSea == true &&
             markets.LooksRare == true &&
@@ -1896,334 +2432,41 @@ function NFTCards({ id, count }: { id: string; count: number }) {
       </div>
       <div className="mx-auto px-4 py-0">
         {/* NFT Cards Section */}
-          {tokenData ? (
-
-        <InfiniteScroll
-          dataLength={data.length}
-          next={fetchMoreData}
-          hasMore={hasMore}
-          loader={<h4>Loading...</h4>}
-          endMessage={
-            <p style={{ textAlign: 'center' }}>
-              <b>End of list</b>
-            </p>
-        }
-        >
-        <div className="z-20 min-h-[500px] mb-[50px] grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4 px-2 py-4">
-
-            {tokenData.map((nft) => (
-              <TokenCard
-                setDetailsModal={setDetailsModal}
-                setDetailsToken={setDetailsToken}
-                key={nft.token.tokenId}
-                collectionId={id}
-                nft={nft}
-              />
-            ))}
-          </div>
-
+        {filteredTokenData ? (
+          <InfiniteScroll
+            dataLength={data.length}
+            next={fetchMoreData}
+            hasMore={hasMore}
+            loader={<h4>Loading...</h4>}
+            endMessage={
+              <p style={{ textAlign: "center" }}>
+                <b>End of list</b>
+              </p>
+            }
+          >
+            <div className="z-20 min-h-[500px] mb-[50px] grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4 px-2 py-4">
+              {filteredTokenData.map((nft) => (
+                <TokenCard
+                  setDetailsModal={setDetailsModal}
+                  setDetailsToken={setDetailsToken}
+                  key={nft.token.tokenId}
+                  collectionId={id}
+                  nft={nft}
+                />
+              ))}
+            </div>
           </InfiniteScroll>
-
-          
-          ) : (
-            <div>Loading...</div>
-          )}
-          {detailsModal && detailsToken ? (
-            <DetailsModal
-              setDetailsModal={setDetailsModal}
-              nft={detailsToken}
-            />
-          ) : null}
+        ) : (
+          <div>Loading...</div>
+        )}
+        {detailsModal && detailsToken ? (
+          <DetailsModal setDetailsModal={setDetailsModal} nft={detailsToken} />
+        ) : null}
       </div>
     </div>
   );
 }
-const Table = () => {
-  return (
-    <div className="table-wrapper">
-      <table className="sticky-first-column not-sticky-second-column w-full text-sm text-left text-light-green">
-        <thead className="text-xs uppercase text-gray">
-          <tr className="border-b border-dark-gray cursor-pointer">
-            <th scope="col" className="px-6 py-3">
-              Event
-            </th>
-            <th scope="col" className="px-6 py-3 text-left">
-              Item
-            </th>
-            <th scope="col" className="px-6 py-3 text-right">
-              Value
-            </th>
-            <th scope="col" className="px-6 py-3 text-right">
-              From
-            </th>
-            <th scope="col" className="px-6 py-3 text-right">
-              To
-            </th>
-            <th scope="col" className="px-6 py-3 text-right">
-              Time
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {/* 1st row */}
-          <tr className="dark-gray-hover cursor-pointer">
-            <td className="px-4 py-4 flex items-center">
-              <div className="bg-black border border-dark-gray-all w-6 h-6 mr-2 flex items-center justify-center rounded-lg shadow-md hover:bg-gray-800">
-                <Image
-                  width={16}
-                  height={16}
-                  className="w-7 h-7 object-cover rounded-sm"
-                  src="/images/blur.png"
-                  alt="Blur"
-                />
-              </div>
-              Listing
-            </td>
-            <td className="px-2 py-0 text-right">
-              <div
-                className="flex items-center text-sm overflow-hidden last:pr-4"
-                role="cell"
-              >
-                <div className="overflow-hidden">
-                  <div className="flex items-center w-full overflow-hidden">
-                    <div className="mr-2">
-                      <div className="relative overflow-hidden rounded-sm w-9 h-9">
-                        <Image
-                          width={16}
-                          height={16}
-                          alt="NFT Image"
-                          className="object-cover w-full"
-                          src="/images/collections/milady/milady-5799.jpg"
-                        />{" "}
-                      </div>
-                    </div>
-                    <div className="flex-1 flex flex-col gap-1">
-                      <div className="flex items-center gap-1">
-                        <div className="text-sm text-gray"># 5799</div>
-                      </div>
-                      <div className="inline-block">
-                        <div className="bg-gray rounded-md h-5 px-2 inline-flex items-center justify-center">
-                          <div className="text-light-green text-xs">
-                            <div> #6,211</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </td>
-            <td className="px-6 py-4 text-right">
-              4.94 <i className="fab fa-ethereum"></i>
-              <br />
-              <span className="text-xs text-gray">36% above floor</span>
-            </td>
-            <td className="px-6 py-4 text-right text-light-green">
-              <div className="truncate undefined">0x3a…c279</div>
-            </td>
-            <td className="px-6 py-4 text-right text-green-500">
-              <span className="text-gray" />
-            </td>
-            <td className="px-6 py-4 text-right">
-              13s ago
-              <br />
-              <span className="text-xs text-gray">Apr 1 11:34 PM</span>
-            </td>
-          </tr>
-          {/* 2nd row */}
-          <tr className="dark-gray-hover cursor-pointer">
-            <td className="px-4 py-4 flex items-center">
-              <div className="bg-black border border-dark-gray-all w-6 h-6 mr-2 flex items-center justify-center rounded-lg shadow-md hover:bg-gray-800">
-                <Image
-                  width={16}
-                  height={16}
-                  className="w-5 h-5 object-cover rounded-sm"
-                  src="/images/opensea.svg"
-                  alt="OpenSea"
-                />
-              </div>
-              Listing
-            </td>
-            <td className="px-2 py-0 text-right">
-              <div
-                className="flex items-center text-sm overflow-hidden last:pr-4"
-                role="cell"
-              >
-                <div className="overflow-hidden">
-                  <div className="flex items-center w-full overflow-hidden">
-                    <div className="mr-2">
-                      <div className="relative overflow-hidden rounded-sm w-9 h-9">
-                        <Image
-                          width={16}
-                          height={16}
-                          alt="NFT Image width={16} height ={16}"
-                          className="object-cover w-full"
-                          src="/images/collections/milady/milady-1884.jpg"
-                        />{" "}
-                      </div>
-                    </div>
-                    <div className="flex-1 flex flex-col gap-1">
-                      <div className="flex items-center gap-1">
-                        <div className="text-sm text-gray"># 1884</div>
-                      </div>
-                      <div className="inline-block">
-                        <div className="bg-gray rounded-md h-5 px-2 inline-flex items-center justify-center">
-                          <div className="text-light-green text-xs">
-                            <div> #156</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </td>
-            <td className="px-6 py-4 text-right">
-              7.77 <i className="fab fa-ethereum"></i>
-              <br />
-              <span className="text-xs text-gray">113% above floor</span>
-            </td>
-            <td className="px-6 py-4 text-right text-light-green">
-              <div className="truncate undefined">0x66…0bd0</div>
-            </td>
-            <td className="px-6 py-4 text-right text-green-500">
-              <span className="text-gray" />
-            </td>
-            <td className="px-6 py-4 text-right">
-              2m ago
-              <br />
-              <span className="text-xs text-gray">Apr 1 11:32 PM</span>
-            </td>
-          </tr>
-          {/* 3rd row */}
-          <tr className="dark-gray-hover cursor-pointer">
-            <td className="px-4 py-4 flex items-center">
-              <div className="bg-black border border-dark-gray-all w-6 h-6 mr-2 flex items-center justify-center rounded-lg shadow-md hover:bg-gray-800">
-                <Image
-                  width={16}
-                  height={16}
-                  className="w-8 h-8 object-cover rounded-sm"
-                  src="/images/blur.png"
-                  alt="Blur"
-                />
-              </div>
-              Listing
-            </td>
-            <td className="px-2 py-0 text-right">
-              <div
-                className="flex items-center text-sm overflow-hidden last:pr-4"
-                role="cell"
-              >
-                <div className="overflow-hidden">
-                  <div className="flex items-center w-full overflow-hidden">
-                    <div className="mr-2">
-                      <div className="relative overflow-hidden rounded-sm w-9 h-9">
-                        <Image
-                          width={16}
-                          height={16}
-                          alt="NFT Image width={16} height ={16}"
-                          className="object-cover w-full"
-                          src="/images/collections/milady/milady-4551.jpg"
-                        />{" "}
-                      </div>
-                    </div>
-                    <div className="flex-1 flex flex-col gap-1">
-                      <div className="flex items-center gap-1">
-                        <div className="text-sm text-gray"># 4511</div>
-                      </div>
-                      <div className="inline-block">
-                        <div className="bg-gray rounded-md h-5 px-2 inline-flex items-center justify-center">
-                          <div className="text-light-green text-xs">
-                            <div> #2,082</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </td>
-            <td className="px-6 py-4 text-right">
-              7.77 <i className="fab fa-ethereum"></i>
-              <br />
-              <span className="text-xs text-gray">113% above floor</span>
-            </td>
-            <td className="px-6 py-4 text-right text-light-green">
-              <div className="truncate undefined">0x66…0bd0</div>
-            </td>
-            <td className="px-6 py-4 text-right text-green-500">
-              <span className="text-gray" />
-            </td>
-            <td className="px-6 py-4 text-right">
-              3m ago
-              <br />
-              <span className="text-xs text-gray">Apr 1 11:31 PM</span>
-            </td>
-          </tr>
-          {/* 4th row */}
-          <tr className="dark-gray-hover cursor-pointer">
-            <td className="px-4 py-4 flex items-center">
-              <div className="bg-black border border-dark-gray-all w-6 h-6 mr-2 flex items-center justify-center rounded-lg shadow-md hover:bg-gray-800">
-                <i className="fas fa-long-arrow-right"></i>
-              </div>
-              Sale
-            </td>
-            <td className="px-2 py-0 text-right">
-              <div
-                className="flex items-center text-sm overflow-hidden last:pr-4"
-                role="cell"
-              >
-                <div className="overflow-hidden">
-                  <div className="flex items-center w-full overflow-hidden">
-                    <div className="mr-2">
-                      <div className="relative overflow-hidden rounded-sm w-9 h-9">
-                        <Image
-                          width={16}
-                          height={16}
-                          alt="NFT Image width={16} height ={16}"
-                          className="object-cover w-full"
-                          src="/images/collections/milady/milady-6991.jpg"
-                        />{" "}
-                      </div>
-                    </div>
-                    <div className="flex-1 flex flex-col gap-1">
-                      <div className="flex items-center gap-1">
-                        <div className="text-sm text-gray"># 6991</div>
-                      </div>
-                      <div className="inline-block">
-                        <div className="bg-gray rounded-md h-5 px-2 inline-flex items-center justify-center">
-                          <div className="text-light-green text-xs">
-                            <div> #7,814</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </td>
-            <td className="px-6 py-4 text-right">
-              3.64 <i className="fab fa-ethereum"></i>
-              <br />
-              <span className="text-xs text-gray">floor price</span>
-            </td>
-            <td className="px-6 py-4 text-right text-light-green">
-              <div className="truncate undefined">JokerFrog.eth</div>
-            </td>
-            <td className="px-6 py-4 text-right text-light-green">
-              <div className="truncate undefined">0x3a…c279</div>
-            </td>
-            <td className="px-6 py-4 text-right">
-              5m ago <i className="far fa-level-up"></i>
-              <br />
-              <span className="text-xs text-gray">Apr 1 11:29 PM</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  );
-};
+
 const LuckyBuy = () => {
   return (
     <div
@@ -2569,6 +2812,20 @@ const LuckyBuy = () => {
 type ActivityType = {
   type: string;
   timestamp: number;
+  fromAddress: string;
+  toAddress: string;
+  token:{
+    tokenId: string;
+    tokenName: string;
+    tokenImage: string;
+    rarityScore: number;
+  };
+  order: {
+    source:{
+      name: string;
+      icon: string;
+    };
+  };
   price: {
     amount: {
       decimal: number;
@@ -2658,8 +2915,6 @@ const DetailsModal = ({
         }
         setDates(newDates);
         setPrices(newPrices);
-        console.log(dates);
-        console.log(prices);
         return response.data.activities;
       } catch (error) {
         console.error(error);
@@ -2667,7 +2922,14 @@ const DetailsModal = ({
       }
     }
     activityLookup();
-  }, [nft.token.tokenId, dates, setDates, prices, setPrices, nft.token.collection.id]);
+  }, [
+    nft.token.tokenId,
+    dates,
+    setDates,
+    prices,
+    setPrices,
+    nft.token.collection.id,
+  ]);
 
   return (
     <div>
@@ -2934,7 +3196,7 @@ const DetailsModal = ({
 
                       <div className="rounded-sm overflow-hidden">
                         <div className="py-3 px-0 uppercase mt-2 text-light-green">
-                          Sale History 
+                          Sale History
                         </div>
                         {/*<canvas className="p-0" id="chartLine"></canvas>*/}
                         <PriceChart prices={prices} dates={dates} />
@@ -3060,7 +3322,6 @@ export default function Home() {
 
     try {
       const response = await axios.request(options);
-      //console.log(response.data);
       setNftData(response.data.collections[0]);
       return response.data;
     } catch (error) {

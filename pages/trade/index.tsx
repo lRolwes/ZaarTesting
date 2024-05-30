@@ -55,32 +55,32 @@ const TableSection: React.FC<{WatchlistItems:WatchList[]}> = ({WatchlistItems}) 
       let tokenCount = [];
       let onSaleCount = [];
       for (let x = 0; x < 1000; x++) {
-        ids.push(collections?.[x].id || " ");
-        images.push("url('" + collections?.[x].image + "')" || " ");
-        names.push(collections?.[x].name?.toString() || " ");
-        volumes.push(Number(collections?.[x].volume?.toFixed(2)) || 0);
+        ids.push(collections?.[x]?.id || " ");
+        images.push("url('" + collections?.[x]?.image + "')" || " ");
+        names.push(collections?.[x]?.name?.toString() || " ");
+        volumes.push(Number(collections?.[x]?.volume?.toFixed(2)) || 0);
         floorPrices.push(
-          collections?.[x].floorAsk?.price?.amount?.decimal || 0
+          collections?.[x]?.floorAsk?.price?.amount?.decimal || 0
         );
-        topBids.push(collections?.[x].topBid?.price?.amount?.decimal || 0);
+        topBids.push(collections?.[x]?.topBid?.price?.amount?.decimal || 0);
         percentChanges.push(
-          Number(collections?.[x].floorAskPercentChange?.toFixed(2)) || 0
+          Number(collections?.[x]?.floorAskPercentChange?.toFixed(2)) || 0
         );
         rawChanges.push(
-          (Number(collections?.[x].floorAskPercentChange) / 100) *
-          Number(collections?.[x].floorAsk?.price?.amount?.decimal) || 0
+          (Number(collections?.[x]?.floorAskPercentChange) / 100) *
+          Number(collections?.[x]?.floorAsk?.price?.amount?.decimal) || 0
         );
-        owners.push(collections?.[x].ownerCount || 0);
-        sales.push(collections?.[x].onSaleCount || 0);
+        owners.push(collections?.[x]?.ownerCount || 0);
+        sales.push(collections?.[x]?.onSaleCount || 0);
         percentListed.push(
           Number(
             (
-              (Number(collections?.[x].onSaleCount)/Number(collections?.[x].tokenCount))
+              (Number(collections?.[x]?.onSaleCount)/Number(collections?.[x]?.tokenCount))
             ).toFixed(2)
           ) || 0
         );
-        tokenCount.push(collections?.[x].tokenCount?.toString() || "0");
-        onSaleCount.push(collections?.[x].onSaleCount?.toString() || "0");
+        tokenCount.push(collections?.[x]?.tokenCount?.toString() || "0");
+        onSaleCount.push(collections?.[x]?.onSaleCount?.toString() || "0");
       }
       setId(ids);
       setImage(images);

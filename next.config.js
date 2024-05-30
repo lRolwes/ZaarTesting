@@ -7,7 +7,11 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'img.reservoir.tools',
         pathname: '**',
-  },
+  },{
+    protocol: 'https',
+    hostname: 'blur.io',
+    pathname: '**',
+},
 ],
 }
 }
