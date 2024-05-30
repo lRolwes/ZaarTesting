@@ -1186,7 +1186,6 @@ function TokenCard({
 }
 
 function FilterSection({ id, count }: { id: string; count: number }) {
-  
   //stores raw token Data
   const [tokenData, setTokenData] = useState<TokenType[]>([]);
   //stores filtered token data
@@ -1344,6 +1343,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
   - if not, it checks if any filters are selected
   - if no filters are selected, it sets the trait filter to not applied
   */
+
   function handleTraitFilterSelectionChange(value: string) {
     setTraitFilterSelection((prevState) => ({
       ...prevState,
@@ -1376,7 +1376,6 @@ function FilterSection({ id, count }: { id: string; count: number }) {
     setTraitSearch("");
   }
   const fetchMoreData = async () => {
-    // Fetch more data here. This is just a placeholder.
     setEndIndex(endIndex + 10);
     setStartIndex(startIndex + 10);
     const newData = filteredTokenData.slice(startIndex, endIndex);
@@ -1390,28 +1389,60 @@ function FilterSection({ id, count }: { id: string; count: number }) {
   // UseEffect to get and store all tokens in the collection and store in tokenData
   useEffect(() => {
     async function nftLookup() {
-      let cont = "";
-      let lookupString = `https://api.reservoir.tools/tokens/v7?collection=${id}&limit=100&includeTopBid=true&includeLastSale=true&includeAttributes=true`;
-      let tokenArray: TokenType[] = [];
-      while (cont != null) {
-        let newString = lookupString;
-        if (cont != "") {
-          newString = newString + `&continuation=${cont}`;
-        }
-        const options = {
-          method: "GET",
-          url: `${newString}`,
-          headers: {
-            "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
-          },
-        };
-        const response = await axios.request(options);
-        const data = response.data;
-        console.log(response.data);
-        tokenArray = [...tokenArray, ...data.tokens];
-        cont = data.continuation;
+      let lookupString = `https://api.reservoir.tools/tokens/v7?collection=${id}`;
+      if(search != "") {
+        lookupString += `&tokenName=${search}`;
       }
-      return tokenArray;
+      if (activePriceFloor > 0) {
+        lookupString += `&minFloorAskPrice=${activePriceFloor}`;
+      }
+      if (activePriceCeiling < 10000) {
+        lookupString += `&maxFloorAskPrice=${activePriceCeiling}`;
+      }
+      if (activeRarityFloor >= 1 && activePriceFloor <=0 && activePriceCeiling >= 10000) {
+        lookupString += `&minRarityRank=${activeRarityFloor}`;
+      }
+      if (activeRarityCeiling < 10000 && activePriceFloor <=0 && activePriceCeiling >= 10000) {
+        lookupString += `&maxRarityRank=${activeRarityCeiling}`;
+      }
+      if (sort == "floorAskPrice") {
+        lookupString+="&sortBy=floorAskPrice"
+      }
+      if (sort == "rarity") {
+        lookupString+="&sortBy=rarity"
+      }
+      if (sort == "listedAt"){
+        lookupString+="&sortBy=listedAt"
+      }
+      if (sortDirection == "desc") {
+        lookupString+="&sortDirection=desc"
+      }
+      if (traitFilterApplied) {
+        for (let attribute in traitFilterSelection) {
+          if(traitFilterSelection[attribute]){
+            let parts = attribute.split(":");
+            lookupString += `&attributes[${parts[0]}]=${parts[1]}`
+          }
+        }
+      }
+      lookupString += "&includeTopBid=true&includeLastSale=true&includeAttributes=true&limit=100";
+      const options = {
+        method: "GET",
+        url: `${lookupString}`,
+        headers: {
+          "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
+        },
+      };
+      try{
+      const response = await axios.request(options);
+      const data = response.data;
+      console.log(response.data);
+      return data.tokens;
+      }
+      catch (error) {
+        console.error(error);
+        return [];
+      }
     }
 
     if (id) {
@@ -1421,47 +1452,21 @@ function FilterSection({ id, count }: { id: string; count: number }) {
       };
       fetchNftData();
     }
-  }, [id, count]);
+  }, [id, count, search, sort, sortDirection, activePriceFloor, activePriceCeiling, activeRarityFloor, activeRarityCeiling, traitFilterApplied, traitFilterSelection]);
 
-  /*useEffect(() => {
+  useEffect(() => {
     let nftData = tokenData;
     if (activeStatus == "buy_now" && nftData.length > 0) {
       nftData = nftData.filter(
         (item: TokenType) => item.market?.floorAsk?.price?.amount?.decimal > 0
       );
     }
-    if (activePriceFloor > 0 && nftData.length > 0) {
-      nftData = nftData.filter(
-        (item: TokenType) =>
-          item.market?.floorAsk?.price?.amount?.decimal > activePriceFloor
-      );
-    }
-    if (activePriceCeiling < 10000 && nftData.length > 0) {
-
-      nftData = nftData.filter(
-        (item: TokenType) =>
-          item.market?.floorAsk?.price?.amount?.decimal < activePriceCeiling
-      );
-    }
-    if (activeRarityFloor >= 1 && nftData.length > 0) {
-
-      nftData = nftData.filter(
-        (item: TokenType) => Number(item.token.rarity) > activeRarityFloor
-      );
-    }
-    if (activeRarityCeiling < 10000 && nftData.length > 0) {
-      nftData = nftData.filter(
-        (item: TokenType) => Number(item.token.rarity) < activeRarityCeiling
-      );
-    }
     if (!markets.OpenSea && nftData.length > 0) {
-
       nftData = nftData.filter(
         (item: TokenType) => item.market.floorAsk.source.domain != "opensea.io"
       );
     }
     if (!markets.Blur && nftData.length > 0) {
-
       nftData = nftData.filter(
         (item: TokenType) => item.market.floorAsk.source.domain != "blur.io"
       );
@@ -1480,21 +1485,19 @@ function FilterSection({ id, count }: { id: string; count: number }) {
       );
     }
     if (!markets.SudoSwap && nftData.length > 0) {
-
       nftData = nftData.filter(
         (item: TokenType) =>
           item.market.floorAsk.source.domain != "sudoswap.xyz"
       );
     }
     if (!markets.MagicEden && nftData.length > 0) {
-
       nftData = nftData.filter(
         (item: TokenType) =>
           item.market.floorAsk.source.domain != "magiceden.io"
       );
     }
+    /*
     if (traitFilterApplied) {
-
       for (let attribute in traitFilterSelection) {
         if (traitFilterSelection[attribute] && nftData.length > 0) {
           nftData = nftData.filter((item: TokenType) =>
@@ -1503,8 +1506,8 @@ function FilterSection({ id, count }: { id: string; count: number }) {
         }
       }
     }
+    */
     if (myItems && nftData.length > 0) {
-
       if (account.address != undefined) {
         nftData = nftData.filter(
           (item: TokenType) => item.token.owner == account.address
@@ -1513,12 +1516,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
         nftData = [];
       }
     }
-    if (search != "" && search != null && nftData.length > 0) {
-
-      nftData = nftData.filter((item: TokenType) =>
-        item.token.name.toLowerCase().includes(search.toLowerCase())
-      );
-    }
+    
     setFilteredTokenData(nftData);
   }, [
     tokenData,
@@ -1536,7 +1534,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
     activeStatus,
     myItems,
     account.address,
-  ]);*/
+  ]);
   //useEffect for loading traits for collections
   useEffect(() => {
     async function traitLookup<TraitCategoryType>(): Promise<
@@ -1586,7 +1584,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
           for (let value in traits[attribute].values) {
             setTraitFilterSelection((prevState) => ({
               ...prevState,
-              [value]: false,
+              [attribute+":"+value]: false,
             }));
           }
         }
@@ -2092,11 +2090,11 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                                           type="checkbox"
                                           className="form-checkbox accent-yellow mr-2 h-[20px] w-[20px]"
                                           checked={
-                                            traitFilterSelection[traitval.value]
+                                            traitFilterSelection[thisTraitCategory.key+":"+traitval.value]
                                           }
                                           onChange={() => {
                                             handleTraitFilterSelectionChange(
-                                              traitval.value
+                                              thisTraitCategory.key+":"+traitval.value
                                             );
                                           }}
                                         />
