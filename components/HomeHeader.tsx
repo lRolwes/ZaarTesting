@@ -71,35 +71,35 @@ export const HomeHeader = () => {
     setIsMenuOpen(!isMenuOpen);
   };
   return (
-    <header className= {`fixed top-0 left-0 w-full z-30 flex justify-between items-center px-8 pl-6 sm:pl-2 bg-black bg-opacity-20 filter ${isMenuOpen? " " : " backdrop-blur-md"}`}>
-      <div className="flex justify-between items-center p-3 px-0  pl-2 border-dark-gray w-full">
+    <header className= {`fixed top-0 left-0 w-full border-dark-gray z-30 flex justify-between items-center px-8 pl-6 sm:pl-2 bg-black bg-opacity-20 filter ${isMenuOpen? " " : " backdrop-blur-md"}`}>
+      <div className="flex justify-between items-center p-3 px-0  pl-2 w-full">
         {/* Logo and Navigation */}
         <div className="flex items-center justify-between md:space-x-4 text-sm z-1000">
           {isMenuOpen && (
-            <div className="space-y-4 fixed top-0 right-0 bottom-0 left-0 z-1000 w-full h-full bg-black flex flex-col items-center justify-center opacity-90 text-3xl font-bold z-1000">
+            <div className="space-y-3 fixed top-0 right-0 bottom-0 left-0 z-1000 w-full h-full bg-black flex flex-col items-center justify-center opacity-90 text-xl font-bold z-1000">
               {/* Your mobile navigation menu goes here */}
               <ConnectWallet />
-              <Link href="/migration" className={`${page=="/"? "text-white" : "text-yellow hover:text-hoveryellow transform hover:-translate-y-1"}`}>
-                <div className="p-5 ">HOME</div>
+              <Link href="/" className={`${page=="/"? "text-white" : "text-yellow hover:text-hoveryellow transform hover:-translate-y-1"}`}>
+                <div className="p-4 ">HOME</div>
               </Link>
               <Link href="/trade" className={`${page=="/trade"? "text-white" : "text-yellow hover:text-hoveryellow transform hover:-translate-y-1"}`}>
-                <div className="p-5 ">TRADE</div>
+                <div className="p-4 ">TRADE</div>
               </Link>
               <Link href="/migration" className={`${page=="/migration"? "text-white" : "text-yellow hover:text-hoveryellow transform hover:-translate-y-1"}`}>
-                <div className="p-5 ">MIGRATE PRTC</div>
+                <div className="p-4 ">MIGRATE PRTC</div>
               </Link>
               <Link href="/xp" className={`${page=="/xp"? "text-white" : "text-yellow hover:text-hoveryellow transform hover:-translate-y-1"}`}>
-                <div className="p-5 ">EARN XP</div>
+                <div className="p-4 ">EARN XP</div>
               </Link>
               <Link
                 href="https://t.me/ZaarTradingBot"
                 className="text-yellow hover:text-hoveryellow transform hover:-translate-y-1 "
               >
-                <div className="p-5 ">TELEGRAM TRADING</div>
+                <div className="p-4 ">TELEGRAM TRADING</div>
               </Link>
               <button
                 onClick={handleMenuButtonClick}
-                className="p-3 text-black bg-yellow hover:text-hoveryellow transform hover:-translate-y-1 text-4xl rounded-md font-bold fixed top-4 right-5"
+                className="p-2 text-black bg-yellow hover:text-hoveryellow text-2xl rounded-md font-bold fixed top-4 right-5"
               >
                 X
               </button>
@@ -120,19 +120,19 @@ export const HomeHeader = () => {
           <div className="flex-grow md:hidden"></div>
         </div>
         <div className="lg:block hidden">
-          <nav className="space-x-7 uppercase relative text-md md:ml-3 font-l flex flex-row">
+          <nav className="space-x-7 uppercase relative text-sm md:ml-3 font-l flex flex-row">
             <Link href="/trade" className="contain ">
-            <div className={`${page=="/trade"? "text-white transform -translate-y-1" : "text-yellow hover:text-hoveryellow transform hover:-translate-y-1"}`}>
+            <div className={`${page=="/trade"? "text-white transform -translate-y-1" : "text-gray hover:text-hoveryellow transform hover:-translate-y-1"}`}>
               Trade
               </div>
             </Link>
             <Link href="/migration" className="contain ">
-            <div className={`${page=="/migration"? "text-white transform -translate-y-1" : "text-yellow hover:text-hoveryellow transform hover:-translate-y-1"}`}>
+            <div className={`${page=="/migration"? "text-white transform -translate-y-1" : "text-gray hover:text-hoveryellow transform hover:-translate-y-1"}`}>
               Migrate PRTC
               </div>
             </Link>
             <Link href="/xp" >
-              <div className={`${page=="/xp"? "text-white transform -translate-y-1" : "text-yellow hover:text-hoveryellow transform hover:-translate-y-1"}`}>  
+              <div className={`${page=="/xp"? "text-white transform -translate-y-1" : "text-gray hover:text-hoveryellow transform hover:-translate-y-1"}`}>  
               Earn XP
               </div>
             </Link>
@@ -140,18 +140,18 @@ export const HomeHeader = () => {
               href="https://t.me/ZaarTradingBot"
               className="text-yellow  contain "
             >
-              <div className="text-yellow  hover:text-hoveryellow transform hover:-translate-y-1 ">
+              <div className="text-gray  hover:text-hoveryellow transform hover:-translate-y-1 ">
               Telegram Trading
               </div>
             </Link>
           </nav>
         </div>
         <div className="flex flex-col w-[250px] md:w-[360px] mx-auto text-base relative z-10 align-center item-center self-center" ref={wrapperRef}>
-          <input type="text" placeholder="Search" onChange={handleInputChange} className=" border-2 border-white border-l border-r border-t bg-black w-full px-4 py-2 rounded-sm bg-black text-white placeholder-gray-50 focus:outline-none ml-2" id="search-bar" autoComplete="off"/>
+          <input type="text" placeholder="Search" onChange={handleInputChange} className=" border-dark-gray-all border-l border-r border-t bg-black w-full px-4 py-2 rounded-sm bg-black text-white placeholder-gray-50 focus:outline-none ml-2" id="search-bar" autoComplete="off"/>
           <div className="relative">
           <div className="absolute ">
 
-            {searching && <Link href={`/${searchData[0]?.id? searchData[0].id:""}`} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-white bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+            {searching && <Link href={`/${searchData[0]?.id? searchData[0].id:""}`} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
                       <a><div
                         className="h-10 w-10 rounded-sm mr-4 "
                         style={{ 
@@ -162,7 +162,7 @@ export const HomeHeader = () => {
                         }}
                       /></a>
                        {searchData[0].name? searchData[0].name: " "} </Link>}
-                       {searching && <Link href={`/${searchData[1].id}`} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px]  flex flex-row  items-center hover:bg-gray border-l border-r border-t border-white bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+                       {searching && <Link href={`/${searchData[1].id}`} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px]  flex flex-row  items-center hover:bg-gray border-l border-r border-t border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
                       <div
                         className="h-10 w-10 rounded-sm mr-4 "
                         style={{ 
@@ -173,7 +173,7 @@ export const HomeHeader = () => {
                         }}
                       />
                        {searchData[1].name? searchData[1].name: " "} </Link>}
-                       {searching && <Link href={`/${searchData[2].id}`} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-white bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+                       {searching && <Link href={`/${searchData[2].id}`} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
                       <div
                         className="h-10 w-10 rounded-sm mr-4"
                         style={{ 
@@ -184,7 +184,7 @@ export const HomeHeader = () => {
                         }}
                       />
                        {searchData[2].name? searchData[2].name: " "} </Link>}
-                       {searching && <Link href={`/${searchData[3].id}`} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-white bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+                       {searching && <Link href={`/${searchData[3].id}`} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
                       <div
                         className="h-10 w-10 rounded-sm mr-4 "
                         style={{ 
@@ -195,7 +195,7 @@ export const HomeHeader = () => {
                         }}
                       />
                        {searchData[3].name? searchData[3].name: " "} </Link>}
-                       {searching && <Link href={`/${searchData[4].id}`} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-1 border-l border-r border-t border-b border-white bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+                       {searching && <Link href={`/${searchData[4].id}`} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-1 border-l border-r border-t border-b border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
                       <div
                         className="h-10 w-10 rounded-sm mr-4 "
                         style={{ 

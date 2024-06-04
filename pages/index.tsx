@@ -61,7 +61,7 @@ const HeroContent = () => {
           <span className="inline-block text-yellow bg-yellow bg-opacity-20 tracking-widest mb-3 px-6 py-1 rounded-full text-lg z-20">
             <i className="fad fa-stars "></i> LAUNCHING SOON™
           </span>
-          <div className="flex relative w-[400px] md:w-[45%] justify-center items-center h-auto z-20 ">
+          <div className="flex relative w-[400px] md:w-[35%] justify-center items-center h-auto z-20 ">
             <Image
               src="/images/logo-white.png"
               alt="logo"
@@ -71,7 +71,7 @@ const HeroContent = () => {
               height={600}
             />
           </div>
-          <h1 className="text-3xl font-bold mb-3 text-white uppercase mt-5 z-20">
+          <h1 className="text-lg md:text-xl font-bold mb-3 text-white uppercase mt-5 z-20">
             A full-featured mobile-friendly NFT marketplace
           </h1>
           <div className="flex justify-center space-x-8 mb-"></div>
@@ -317,7 +317,7 @@ const TableSection = () => {
         <div className="overflow-x-auto rounded-lg">
           <div className="table-wrapper">
             <table className="sticky-first-column w-full text-sm text-left text-white">
-              <thead className="text-xs uppercase text-gray">
+              <thead className="text-xs uppercase text-gray whitespace-nowrap">
                 <tr className="border-b border-dark-gray cursor-pointer">
                   <th scope="col" className="px-6 py-3"></th>
                   <th scope="col" className="px-6 py-3">
@@ -890,25 +890,25 @@ const BottomSection = () => {
                 </div>
               </section>
               {/* Subtitle */}
-              <p className="text-lg sm:text-2xl mb-10 sm:mb-12 mt-10 sm:mt-12 text-white leading-10">
+              <p className="text-lg sm:text-2xl mb-10 sm:mb-12 mt-10 sm:mt-12 text-light-green leading-10">
                 Ditch legacy trading. Trade faster than ever before on Zaar.
               </p>
               {/* Stats */}
               <div className="flex flex-wrap justify-center gap-12">
                 {/* Stat Block 1 */}
                 <div className="text-center">
-                    <p className="text-3xl font-bold mb-5 uppercase text-white">#1 in global<br/> liquidity</p>
-                    <p className="uppercase text-lg text-white">Zaar aggregates liquidity from<br/> all top platforms</p>
+                    <p className="text-3xl font-bold mb-5 uppercase text-light-green">#1 in global<br/> liquidity</p>
+                    <p className="uppercase text-lg text-light-gray">Zaar aggregates liquidity from<br/> all top platforms</p>
                 </div>
                 {/* Stat Block 2 */}
                 <div className="text-center">
-                  <p className="text-3xl font-bold mb-5 uppercase text-white">earn yield on your<br/>idle nfts</p>
-                  <p className="uppercase text-lg text-white">deposit to the nft capsule to earn<br/>ETH yield</p>
+                  <p className="text-3xl font-bold mb-5 uppercase text-light-green">earn yield on your<br/>idle nfts</p>
+                  <p className="uppercase text-lg text-light-gray">deposit to the nft capsule to earn<br/>ETH yield</p>
                 </div>
                 {/* Stat Block 3 */}
                 <div className="text-center">
-                    <p className="text-3xl font-bold mb-5 uppercase text-white">lock zaar to<br/> maximize yield</p>
-                    <p className="uppercase text-lg text-white">upgraded tokenomics model<br/> rewards high conviction holders</p>
+                    <p className="text-3xl font-bold mb-5 uppercase text-light-green">lock zaar to<br/> maximize yield</p>
+                    <p className="uppercase text-lg text-light-gray">upgraded tokenomics model<br/> rewards high conviction holders</p>
                 </div>
               </div>
             </div>

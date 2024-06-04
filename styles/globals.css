@@ -94,6 +94,11 @@ a:hover {
   background-color: inherit; /* This is to ensure the background of the header doesn't become transparent when scrolling */
   z-index: 1; /* This is to ensure the header stays on top of the other elements when scrolling */
 }
+th {
+  position: sticky;
+  top: 0px;  /* 0px if you don't have a navbar, but something is required */
+  background: black;
+}
 
 @layer utilities {
   /* Hide scrollbar for Chrome, Safari and Opera */

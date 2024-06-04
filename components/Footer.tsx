@@ -4,7 +4,7 @@ import Link from 'next/link';
 import React from "react";
 export const Footer = () =>{
     return(
-    <div className="fixed bottom-0 left-navbar right-0 bg-black w-full border-t border-dark-gray-top z-50 pt-1 pb-1">
+    <div className="fixed bottom-0 left-navbar right-0 bg-black w-full border-t border-dark-gray-top z-50 pt-2 pb-2">
         <nav className="mx-auto px-6">
             <div className="w-full h-footer flex items-center justify-between">
             <ul className="text-xs font-normal text-gray-400 max-w-[50%] flex items-center gap-3">

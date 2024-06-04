@@ -1,16 +1,12 @@
-import { GetStaticProps, GetServerSideProps } from "next"
-import Watchlist, { WatchlistProps } from "./Watchlist"
-import prisma from '../lib/prisma';
-import {
-  useAccount,
-} from "wagmi";
-import InfiniteScroll from "react-infinite-scroll-component";
+
 import React, { use, useEffect, useState } from "react";
-import { useTrendingCollections } from "@reservoir0x/reservoir-kit-ui";
 import axios from 'axios';
-import { read } from "fs";
 import {FavStar} from './FavStar';
 import Link from 'next/link';
+import { getAccount } from '@wagmi/core'
+import { config } from './../config'
+
+
 
 type WatchList = {
   address: string[]
@@ -41,9 +37,10 @@ type Collection = {
   onSaleCount: number
   count: number
 }
-const Watch: React.FC<{WatchlistItems:WatchList[]}> = ({WatchlistItems}) => {
-  const [watchlist, setWatchlist] = useState<WatchList>(WatchlistItems[0]);
+const Watch: React.FC<{WatchlistItems:WatchList}> = ({WatchlistItems}) => {
+  const [watchlist, setWatchlist] = useState<WatchList>(WatchlistItems);
   const [collections, setCollections] = useState<Collection[]>([]);
+  
 
 async function readNFTs(){
   try{
@@ -59,7 +56,7 @@ async function readNFTs(){
     console.log(e);
   }
 }
-  const [collectionId, setId] = useState([" "]);
+  const [collectionId, setId] = useState<string[]>([]);
   const [collectionImage, setImage] = useState([" "]);
   const [collectionName, setName] = useState([" "]);
   const [collectionVolume, setVolume] = useState([0]);
@@ -86,7 +83,7 @@ async function readNFTs(){
     }
   }
   useEffect(() => {
-    setWatchlist(WatchlistItems[0]);
+    setWatchlist(WatchlistItems);
     readNFTs();
     if (collections.length>0) {
       let ids = [];
@@ -102,7 +99,7 @@ async function readNFTs(){
       let percentListed = [];
 
       for (let item of collections) {
-        ids.push(item?.id || " ");
+        ids.push(item?.id);
         images.push("url('" + item?.image + "')" || " ");
         names.push(item?.name?.toString() || " ");
         volumes.push(item?.volume['1day']? Number(item?.volume['1day']?.toFixed(2)): 0);
@@ -139,7 +136,6 @@ async function readNFTs(){
       setSales(sales);
       set24HourRawChange(rawChanges);
       setPercentListed(percentListed);
-      //console.log(collections);
     }
   }, [collections]);
 
@@ -147,13 +143,13 @@ async function readNFTs(){
   return (
     <div>      
     <div className=" ">
-      
+    
       <div className="container-fluid mx-auto px-4 ">
         {/* Table */}
-          <div className="overflow-x-auto rounded-lg z-10">
+          <div className="overflow-x-auto rounded-lg z-10 no-scrollbar">
             <div className="table-wrapper">
               <table className="sticky-first-column w-full text-sm text-left text-white z-10">
-                <thead className="max-h-[800px] text-s uppercase text-gray w-full z-1">
+                <thead className="max-h-[800px] text-s uppercase text-gray w-full z-1 whitespace-nowrap">
                   <tr className="border-b border-dark-gray cursor-pointer">
                     <th scope="col" className="px-6 pb-3"></th>
                     <th scope="col" className="px-6 pb-3">
@@ -205,7 +201,7 @@ async function readNFTs(){
                                   className="flex items-center w-full h-full"
                                 >
                                   <div className="flex items-center">
-                                <FavStar watchlist = {watchlist!=undefined ? watchlist : {address:[], authorAddress:""}} id = {collectionId[index]} onWatchlist={true}/>
+                                   {collectionId[index]? <FavStar id={collectionId[index]}  defaultStatus={true} />: null}
                                   </div>
                                 </div>
                               </div>

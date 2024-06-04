@@ -1,11 +1,9 @@
 import React, { use, useEffect, useState } from "react";
+import { getAccount } from '@wagmi/core'
+import { config } from './../config'
 import Router from "next/router";
+import toast, { Toaster } from 'react-hot-toast';
 
-type FavStarProps = {
-  id: string;
-  watchlist: WatchList;
-  onWatchlist: boolean;
-};
 type WatchList = {
   address: string[];
   authorAddress: string;
@@ -35,33 +33,67 @@ const addAddress = async (
   );
 };
 
-export const FavStar = ({ id, watchlist, onWatchlist}: FavStarProps): JSX.Element => {
-  const [isFav, setIsFav] = useState(false);
+export const FavStar = ({id, defaultStatus}:{id: string, defaultStatus: boolean}) => {
+  const [watchlist, setWatchlist] = useState<WatchList>({address:[], authorAddress:""});
   useEffect(() => {
-    if (watchlist.address.includes(id)) {
-      setIsFav(true);
+    const address = getAccount(config).address;
+    const loadData = async () => {
+      fetchData(address? address.toString() : "").then(data => {
+        //console.log(data, id)
+        setWatchlist(data);
+        if (data?.address.includes(id)) {
+          //console.log("yes");
+          setIsFav(true);
+        }
+        else{
+          //console.log("no")
+          setIsFav(false);
+        }
+      });
     }
-    else{
-        setIsFav(false);
+    loadData();
+    
+  }, [id]);
+  const fetchData = async (ownerAddress:string): Promise<WatchList> => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/getWatchlist?ownerAddress=`+ownerAddress);
+      let userData: WatchList = await response.json();
+      return userData;
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      return (
+        { address: [], authorAddress: "" }
+      );
     }
-  }, [watchlist.address, id]);
+  };
+  const [isFav, setIsFav] = useState<boolean>(defaultStatus);
   
   function handler() {
+    if(watchlist?.authorAddress){
     if (isFav) {
       watchlist.address = watchlist.address.filter(item => item !== id);
       remAddress(id, watchlist.address, watchlist.authorAddress);
+      setIsFav(false);
     }
     else{
-        addAddress(id, watchlist.address, watchlist.authorAddress);
+      addAddress(id, watchlist?.address? watchlist.address : [], watchlist.authorAddress);
+      setIsFav(true);
+    }}
+    else{
+      toast("Please connect your wallet to add to watchlist.");
     }
   }
   return (
     <div>
+      <Toaster
+          position="top-center"
+          reverseOrder={false}
+        />
       <button onClick={handler}>
         <svg
           fill={isFav ? `#e3bf00` : "gray"}
-          height="20px"
-          width="20px"
+          height="15px"
+          width="15px"
           version="1.1"
           id="Layer_1"
           xmlns="http://www.w3.org/2000/svg"
