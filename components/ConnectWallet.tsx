@@ -4,51 +4,7 @@ import Image from 'next/image';
 import React from "react";
 import {useAccount, useDisconnect, useBalance} from "wagmi";
 import {useState, useEffect} from "react";
-const AccountModal = ({setModalOpen, balance}: {setModalOpen: (arg0: boolean) => void, balance:string|undefined}) => {
-  const account = useAccount();
-  const { disconnect } = useDisconnect();
-  const [rewards, setRewards] = useState(null);
-  const[userTokens, setUserTokens] = useState([]);
-
-  useEffect(() => {
-    const url = `https://offchain-masterchef-e5a6ec82d362.herokuapp.com/rewards?address=${account.address ? account.address : "0x0000000000000000000000000000000000000000"}`;
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => setRewards(data.rewards))
-      .catch((error) => console.error("Error:", error));
-  }, [account.address]);
-  useEffect(() => {
-    async function getUserTokens() {
-      const url = `https://offchain-masterchef-e5a6ec82d362.herokuapp.com/rewards?address=${account.address ? account.address : "0x0000000000000000000000000000000000000000"}`;
-      fetch(url)
-      .then((response) => response.json())
-      .then((data) => setRewards(data.rewards))
-      .catch((error) => console.error("Error:", error));
-    };
-    getUserTokens();
-    }, [account.address]);
-
-   return(
-    <div className= "absolute bg-black top-0 left-0 opacity-70 w-screen h-screen z-40 ">
-      <div className="z-50 bg-gray opacity-100 text-yellow absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 rounded-lg shadow-lg">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Account</h1>
-        <button onClick={()=>{disconnect();setModalOpen(false);}} className="text-red-500">Disconnect</button>
-        <button onClick={()=> {setModalOpen(false)}} className="text-red-500">Close</button>
-
-      </div>
-      <div className="mt-4">
-        <p className="text-lg font-semibold">Address</p>
-        <p className="text-sm text-gray-500">{account?.address}</p>
-        <p className="text-lg font-semibold">Balance</p>
-        <p className="text-sm text-gray-500">{balance? balance: "0"}</p>
-        <p className="text-lg font-semibold">Rewards</p>
-        <p className="text-sm text-gray-500">{rewards? rewards: "0"}</p>
-      </div>
-    </div>
-    </div>
-  );
-}
+import AccountModal from "./AccountModal";
 export const ConnectWallet = () => {
     const [modalOpen, setModalOpen] = useState(false);
     return (
