@@ -33,7 +33,7 @@ const ItemsSection = ({
         {/* Description */}
         <div className="w-full flex flex-col">
           <p
-            className={`md:flex-1 md:mr-4 text-gray ${isTextExpanded ? "" : "line-clamp-3"}`}
+            className={`lg:max-w-[50%] md:flex-1 md:mr-4 text-gray ${isTextExpanded ? "" : "line-clamp-2"}`}
           >
             {collectionData.description}
           </p>

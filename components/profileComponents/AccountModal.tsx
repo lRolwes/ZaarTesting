@@ -3,17 +3,26 @@ import Link from "next/link";
 import React from "react";
 import { useAccount, useDisconnect, useBalance } from "wagmi";
 import { useState, useEffect } from "react";
-import TokenCard from "./collectionPageComponents/TokenCard";
+import TokenCard from "./TokenCard";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import DetailsModal from "./DetailsModal";
+import ActivitySection from "./ActivitySection";
+import { TokenType } from "./TokenCard";
 const ItemsPage = ({userTokens}:{userTokens:TokenType[]}) => {
     const[items, setItems] = useState<TokenType[]>(userTokens);
     const[collections, setCollections] = useState<CollectionType[]>([]);
     const [search, setSearch] = useState("");
     const [collectionSearch, setCollectionSearch] = useState("");
     const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
-    const [sort, setSort] = useState("topValue");
+    const [sort, setSort] = useState("Top Value");
     const [filteredItems, setFilteredItems] = useState<TokenType[]>([]);
     const [filteredCollections, setFilteredCollections] = useState<CollectionType[]>([]);
+    const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+    const [detailsModalNft, setDetailsModalNft] = useState<TokenType|undefined>();
+    useEffect(()=>{
+      setItems(userTokens);
+    }, [userTokens]);
+    
     useEffect(()=>{
         if(collectionSearch==""){
             setFilteredCollections(collections);
@@ -23,13 +32,25 @@ const ItemsPage = ({userTokens}:{userTokens:TokenType[]}) => {
         }
     }, [collections, collectionSearch]);
     useEffect(()=>{
-        if(search==""){
-            setFilteredItems(items);
+        let tempItems: TokenType[] = items;
+        if(sort=="Alphabetical"){
+          tempItems = items.sort((a, b) => {
+            if (a?.token?.name != null && b?.token?.name != null) {
+              return a.token.name.localeCompare(b.token.name);
+            }
+            return 0;
+          });
         }
         else{
-            setFilteredItems(items.filter((item)=>item?.token?.name?.toLowerCase()?.includes(search.toLowerCase())));
+          tempItems = (items.sort((a,b)=>b.token.floorAsk.price.amount.decimal-a.token.floorAsk.price.amount.decimal));
         }
-    },[items, search]);
+        if(search==""){
+          setFilteredItems(tempItems);
+        }
+        else{
+            setFilteredItems(tempItems.filter((item)=>item?.token?.name?.toLowerCase()?.includes(search.toLowerCase())));
+        }
+    },[items, search, sort]);
     useEffect(()=>{
       let tempCollections: CollectionType[] = [];
       for(let tok of items){
@@ -62,8 +83,8 @@ const ItemsPage = ({userTokens}:{userTokens:TokenType[]}) => {
     };
     return(
 
-        <div className="w-full mx-auto px-2 lg:px-6">
-              <div className="group flex py-3 gap-2 top-0 <lg:flex-col justify-between lg:items-center lg:sticky z-10 lg:-mr-6 mt-1">
+        <div className="w-full mx-auto px-2 lg:px-6 overflow-y-auto">
+              <div className=" flex py-3 gap-2 top-0 <lg:flex-col justify-between lg:items-center lg:sticky z-10 lg:-mr-6 mt-1">
                 <div className="flex items-center gap-2">
                   <div className="border border-dark-gray-all h-10 px-2 relative flex items-center bg-black rounded-sm sm:w-[271px] w-full w-52 max-w-full">
                     <i className="far fa-search"></i>
@@ -168,9 +189,9 @@ const ItemsPage = ({userTokens}:{userTokens:TokenType[]}) => {
                               aria-label="scrollable content h-[100%] overflow-hidden;"
                             >
                               <div className="simplebar-content p-0">
-                                <div className="flex flex-col divide-y ">
+                                <div className="flex flex-col divide-y absolute h-[375px] no-scrollbar overflow-y-auto ">
                                         {filteredCollections.map((collection, index)=> {return(
-                                        <div key={index} className="border-2-b border-black flex hover:bg-slate-800 cursor-pointer px-3 h-14 items-center py-2.5 justify-between">
+                                        <Link key={index} href={`/${collection.id}`}className="border-2-b border-black flex hover:bg-slate-800 cursor-pointer px-3 h-14 items-center py-2.5 justify-between">
                                             <div className="min-w-0 flex items-center gap-2">
                                             <div className="-mb-.5">
                                                 <div className="overflow-hidden">
@@ -182,7 +203,7 @@ const ItemsPage = ({userTokens}:{userTokens:TokenType[]}) => {
                                                     width={100}
                                                     height={100}
                                                     data-nimg="fill"
-                                                    src={collection.imageUrl}
+                                                    src={collection.imageUrl || "/images/img-placeholder.png"}
                                                     />
                                                 </div>
                                                 </div>
@@ -211,7 +232,7 @@ const ItemsPage = ({userTokens}:{userTokens:TokenType[]}) => {
                                                 Floor:
                                                 <div className="pl-1 text-light-green inline-flex items-center max-w-full">
                                                     <div className="truncate undefined">
-                                                    {2.399}
+                                                    {collection?.floorAsk?.price?.amount?.decimal?.toFixed(2)}{" ETH"}
                                                     </div>
                                                     <span className="ml-0.5 relative mb-[1px]">
                                                     </span>
@@ -219,7 +240,7 @@ const ItemsPage = ({userTokens}:{userTokens:TokenType[]}) => {
                                                 </div>
                                             </div>
                                             </div>
-                                        </div>
+                                        </Link>
                                         );})}                                  
                                   </div>
                               </div>
@@ -239,79 +260,11 @@ const ItemsPage = ({userTokens}:{userTokens:TokenType[]}) => {
                   <div className="border-r-1 border-gray-300 min-h-[calc(100vh_-_8rem)] h-full"></div>
                 </div>
                 <div className="flex-1 w-full">
-                  <div className="grid grid-flow-row-dense py-3 md:px-6 gap-2 3xl:grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] grid-cols-[repeat(auto-fill,_minmax(180px,_1fr))] !px-0 ml-2">
-                    {filteredItems.map((item, index) => (<TokenCard collectionId ={item.token.collection.id} setDetailsModal={()=>{let x = 0;}} setDetailsToken={()=>{let x = 0;}} nft={item} key={index} />))}
-                    <div
-                      tabIndex={0}
-                      className="relative group max-w-xs w-full justify-self-center"
-                    >
-                      <div className="absolute z-2 left-2 flex items-center gap-1 h-6 top-9"></div>
-                      <div className="bg-dark-gray rounded nft-card-2 flex flex-col border group text-light-green overflow-hidden  break-inside-avoid max-w-xs card-shadow border-transparent hover:border-gray-700">
-                        <div className="text-xs items-baseline flex justify-between py-1.5 h-7 px-3">
-                          <span>
-                            <div
-                              className="text-light-green  text-xs  font-medium"
-                              aria-expanded="false"
-                            >
-                              <div>-</div>
-                            </div>
-                          </span>
-                        </div>
-                        <div className="overflow-hidden flex-1 relative">
-                          <div className="relative overflow-hidden flex-shrink-0">
-                            <img
-                              alt="Image"
-                              loading="lazy"
-                              width="250"
-                              height="250"
-                              decoding="async"
-                              data-nimg="1"
-                              className="z-1 relative object-cover w-full transform transition-transform duration-200 group-hover:scale-105 object-cover aspect-square"
-                              src="assets/img/ohisee-jokerfrog.jpg"
-                            />
-                          </div>
-                        </div>
-                        <div className=" flex flex-col p-2">
-                          <div className="overflow-hidden">
-                            <Link
-                              className="flex items-center gap-1 hover:text-blue undefined"
-                              href="#"
-                            >
-                              <div className="truncate text-xxs">
-                                Oh.. I see
-                              </div>
-                            </Link>
-                          </div>
-                          <div className="mb-1.5">
-                            <Link
-                              className="flex items-center gap-1 hover:text-blue"
-                              href="#"
-                            >
-                              <div className="truncate font-medium text-xs ">
-                                joker frog ^_−☆
-                              </div>
-                            </Link>
-                          </div>
-                          <div className="flex justify-between items-center pb-1.5">
-                            <div>
-                              <div className="flex gap-1 items-center font-medium text-sm">
-                                –
-                              </div>
-                            </div>
-                            <Link
-                              className="border font-medium border-dark-gray-all text-xs text-light-green rounded-sm hover:bg-gray-800 hover:border-gray-600 px-1.5 h-6 box-border flex items-center"
-                              href="/nft/ethereum/0xfa9c0de4d9f65d11565bf9066c1fae99b760878d/95"
-                            >
-                              Details
-                            </Link>
-                          </div>
-                          <div className="flex justify-between ">
-                            <div className="text-xxs -mx-3 -mb-2 px-3 py-0.5 h-[18px] text-gray-400 flex items-center"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                  <div className=" h-[500px] overflow-y-auto no-scrollbar grid grid-cols-3 gap-2 ml-2 ">
+                    {filteredItems.map((item, index) => (<TokenCard key={index} collectionId ={item.token.collection.id} setDetailsModal={setDetailsModalOpen} setDetailsToken={setDetailsModalNft} nft={item} />))}
+                    
                   </div>
+                  {detailsModalOpen? <DetailsModal setDetailsModal={setDetailsModalOpen} nft={detailsModalNft}/> : <></>}
                 </div>
               </div>
             </div>
@@ -325,58 +278,7 @@ const ActivityPage = () => {
     );
 };
 
-type TokenType = {
-    market: {
-      floorAsk: {
-        price: {
-          amount: {
-            decimal: number;
-            usd: number;
-          };
-        };
-        source: {
-          domain: string;
-        };
-        validFrom: number;
-        validUntil: number;
-      };
-      topBid: {
-        price: {
-          amount: {
-            decimal: number;
-          };
-        };
-      };
-    };
-    token: {
-      tokenId: string;
-      rarity: string;
-      image: string;
-      name: string;
-      attributes: TraitType[];
-      lastSale: {
-        price: {
-          amount: {
-            decimal: number;
-          };
-        };
-        timestamp: number;
-      };
-      owner: string;
-      collection: {
-        id: string;
-        name: string;
-        imageUrl: string;
-        creator: string;
-        tokenCount: number;
-        floorAskPrice: {
-          amount: {
-            decimal: number;
-          };
-        };
-      };
-    };
-  };
+
   type TraitType = {
     key: string;
     value: string;
@@ -398,6 +300,13 @@ type TokenType = {
     creator: string;
     imageUrl: string;
     ownedTokenCount: number;
+    floorAsk: {
+      price: {
+        amount: {
+          decimal: number;
+        };
+      };
+    };
     floorAskPrice: {
       amount: {
         decimal: number;
@@ -418,17 +327,17 @@ const AccountModal = ({
   const [navigationPage, setNavigationPage] = useState("items");
   const [totalCollectionValue, setTotalCollectionValue] = useState(0);
   
-  useEffect(() => {
+  /*useEffect(() => {
     const url = `https://offchain-masterchef-e5a6ec82d362.herokuapp.com/rewards?address=${account.address ? account.address : "0x0000000000000000000000000000000000000000"}`;
     fetch(url)
       .then((response) => response.json())
       .then((data) => setRewards(data.rewards))
       .catch((error) => console.error("Error:", error));
-  }, [account.address]);
+  }, [account.address]);*/
   useEffect(()=>{
     async function fetchUserTokens(){
         const options = {method: 'GET', headers: {accept: '*/*', 'x-api-key': 'f1bc813b-97f8-5808-83de-1238af13d6f9'}};
-        const res = await fetch(`https://api.reservoir.tools/users/0x7b04a23862d02dbea5cd75c9bf196b059c894146/tokens/v10`, options);
+        const res = await fetch(`https://api.reservoir.tools/users/0x7b04a23862d02dbea5cd75c9bf196b059c894146/tokens/v10?includeTopBid=true&includeLastSale=true&includeAttributes=true`, options);
         const data = await res.json();
         console.log(data);
         let sum = 0;
@@ -455,7 +364,7 @@ const AccountModal = ({
   }, [account.address]);
 
   return (
-    <div className="w-full h-full overflow-auto">
+    <div className="w-full h-full overflow-y-auto">
       <div className="w-full absolute bg-black top-0 left-0 opacity-70 w-screen h-screen z-40 "></div>
       <div className="w-4/5 h-9/10 absolute z-50 bg-gray opacity-100 text-yellow absolute top-0 left-1/2 transform -translate-x-1/2  rounded-lg shadow-lg overflow-y:auto">
         <div className=" w-full container-fluid py-6 pt-0">
@@ -486,7 +395,9 @@ const AccountModal = ({
                 </div>
                 <div className="flex justify-center gap-2 md:items-end flex-col mt-5 sm:mt-0">
                   <div className="flex items-center">
-                    <Image
+                    <div className="flex flex-row">
+                      <div className="flex flex-row mr-8">
+                    {/*<Image
                         alt="image"
                         src="/images/xp.png"
                         className="w-10 h-10"
@@ -495,12 +406,18 @@ const AccountModal = ({
                     />
                     <div className="text-4xl font-light tracking-wide ml-3">
                       <span className="text-light-green">69</span>
+  </div>*/}
+                    </div>
+                    <div className="flex flex-col ml-4 space-y-1 justify-start">
+                    <button onClick={()=>{disconnect();setModalOpen(false);}} className="text-yellow border border-1 border-yellow-all hover:bg-yellow  hover:text-dark-gray uppercase p-2">Disconnect</button>
+                    <button onClick={()=> {setModalOpen(false)}} className="text-yellow border border-1 border-yellow-all hover:bg-yellow  hover:text-dark-gray uppercase p-2">Close</button>
+                    </div>
                     </div>
                   </div>
                   <div className="flex flex-row justify-between"></div>
                 </div>
               </div>
-              <div className="z-20 flex lg:top-0 pl-5 -mx-2 <lg:px-2 lg:-mx-6 border-b border-dark-gray">
+              <div className="z-20 flex lg:top-0 pl-5 -mx-2 <lg:px-2 lg:-mx-6 ">
                 <div className="flex-1 z-20 lg:mx-6 flex items-center uppercase justify-between flex-wrap-reverse">
                   <div
                     data-simplebar="init"
@@ -551,7 +468,7 @@ const AccountModal = ({
                 </div>
               </div>
             </div>
-            {navigationPage=="items"? <ItemsPage userTokens={userTokens} /> : <ActivityPage/>}
+            {navigationPage=="items" ? <ItemsPage userTokens={userTokens} /> : <ActivitySection id={"0x7b04a23862d02dbea5cd75c9bf196b059c894146"}/>}
           </div>
         </div>
         {/*<div className="flex justify-between items-center">

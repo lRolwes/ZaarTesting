@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { BuyModal, BidModal, Trait } from "@reservoir0x/reservoir-kit-ui";
-type TokenType = {
+import { BuyModal, ListModal, BidModal, Trait } from "@reservoir0x/reservoir-kit-ui";
+export type TokenType = {
   market: {
     floorAsk: {
       price: {
@@ -25,10 +25,17 @@ type TokenType = {
     };
   };
   token: {
+    rarityScore: number;
     tokenId: string;
     rarity: string;
     image: string;
     name: string;
+    floorAsk: {
+      price: {
+        amount: {
+          decimal: number;
+        };
+      };};
     attributes: TraitType[];
     lastSale: {
       price: {
@@ -80,14 +87,14 @@ function TokenCard({
     const [isHovered, setIsHovered] = useState(false);
 
     return (
-      <div onMouseEnter={()=>{setIsHovered(true);}} onMouseLeave={()=>{setIsHovered(false);}} className="bg-dark-gray text-white rounded-xl flex flex-col  group relative overflow-hidden">
-        <div className="px-3 py-1.5">
+      <div onMouseEnter={()=>{setIsHovered(true);}} onMouseLeave={()=>{setIsHovered(false);}} className="bg-dark-gray h-[450px] text-white rounded-xl flex flex-col  group relative overflow-hidden">
+        <div className="px-3 py-1.5 ">
           <span className="text-light-green text-xs font-medium">
-            Rarity #{nft.token.rarity}
+            Rarity #{nft.token.rarityScore}
           </span>
         </div>
         <div className="flex-1 relative flex justify-center items-center">
-          <div className="object-cover w-[350px] h-[260px] bg-gray-200 overflow-hidden">
+          <div className="object-cover w-[350px] h-[260px] bg-gray-200 overflow-hidden ">
             {nft.token.image != " " ? (
               <Image
                 src={
@@ -95,12 +102,12 @@ function TokenCard({
                     ? nft.token.image.toString()
                     : "/images/img-placeholder.png"
                 }
-                alt="Token"
                 onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
                   const target = e.target as HTMLImageElement;
                   target.onerror = null; 
                   target.src="/images/img-placeholder.png";
                 }}
+                alt="Token"
                 style={{ objectFit: "cover" }}
                 className={`responsive transition-transform duration-500 ease-in-out transform ${isHovered? "scale-110":""}`}
                 width={350}
@@ -120,7 +127,7 @@ function TokenCard({
               type="button"
               className="flex items-center justify-center px-2 py-1.5 text-xs font-medium text-light-green border border-dark-gray-all gray hover:border-gray-400 rounded"
             >
-              {nft.market?.floorAsk?.price?.amount?.decimal?.toString()} ETH
+              {nft.token?.floorAsk?.price?.amount?.decimal?.toString()} ETH
             </button>
             <a
               id="btn"
@@ -146,28 +153,27 @@ function TokenCard({
         </div>
         {/* Buy Now Button */}
         <div className={`absolute inset-x-0 bottom-0  ${isHovered? "translate-y-0 transition-transform":"translate-y-full transition-transform"}`}>
-          {nft.market?.floorAsk ? (
-            <BuyModal
+            <ListModal
               trigger={
                 <button className="w-full py-2 bg-yellow text-black uppercase text-sm font-bold rounded-b-xl ">
-                  Buy Now
+                  List Now
                 </button>
               }
-              token={collectionId + ":" + nft.token.tokenId}
-              onConnectWallet={() => {
-                console.log("Connected");
+              collectionId={collectionId}
+              tokenId={nft.token.tokenId}
+              oracleEnabled={false}
+              onGoToToken={() => console.log('Awesome!')}
+              onListingComplete={(data) => {
+                console.log('Listing Complete', data)
               }}
-              onPurchaseComplete={(data) => console.log("Purchase Complete")}
-              onPurchaseError={(error, data) =>
-                console.log("Transaction Error", error, data)
-              }
-              onClose={(data, stepData, currentStep) =>
-                console.log("Modal Closed")
-              }
+              onListingError={(error, data) => {
+                console.log('Transaction Error', error, data)
+              }}
+              onClose={(data, stepData, currentStep) => {
+                console.log('ListModal Closed')
+              }}
             />
-          ) : (
-            <div />
-          )}
+          
         </div>
       </div>
     );

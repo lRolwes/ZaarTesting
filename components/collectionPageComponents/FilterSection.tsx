@@ -1222,7 +1222,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                     setStatus(true);
                   }
                 }}
-                className="cursor-pointer bg-black text-white border hover:bg-slate-800 border-gray rounded px-4 flex justify-between items-center h-10"
+                className="cursor-pointer bg-black text-white border border-gray rounded px-4 flex justify-between items-center h-10"
               >
                 Status
                 {status ? (
@@ -1272,7 +1272,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                     setPrice(true);
                   }
                 }}
-                className="cursor-pointer hover:bg-slate-800 bg-black text-white border border-gray rounded py-2 px-4 flex justify-between items-center h-10 "
+                className="cursor-pointer bg-black text-white border border-gray rounded py-2 px-4 flex justify-between items-center h-10 "
               >
                 Price
                 {price ? (
@@ -1328,7 +1328,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                     setRarity(true);
                   }
                 }}
-                className="cursor-pointer hover:bg-slate-800 bg-black text-white border border-gray rounded py-2 px-4 flex justify-between items-center h-10 "
+                className="cursor-pointer bg-black text-white border border-gray rounded py-2 px-4 flex justify-between items-center h-10 "
               >
                 Rarity
                 {rarity ? (
@@ -1384,7 +1384,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                     setMarket(true);
                   }
                 }}
-                className="cursor-pointer hover:bg-slate-800 bg-black text-white border border-gray rounded py-2 px-4 flex justify-between items-center h-10 "
+                className="cursor-pointer bg-black text-white border border-gray rounded py-2 px-4 flex justify-between items-center h-10 "
               >
                 Markets
                 {market ? (
@@ -1470,7 +1470,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                     setTraitsOpen(true);
                   }
                 }}
-                className="cursor-pointer hover:bg-slate-800 bg-black text-white border border-gray rounded py-2 px-4 flex justify-between items-center h-10 "
+                className="cursor-pointer  bg-black text-white border border-gray rounded py-2 px-4 flex justify-between items-center h-10 "
               >
                 Traits
                 {traitsOpen ? (

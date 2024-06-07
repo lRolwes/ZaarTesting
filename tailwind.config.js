@@ -23,6 +23,7 @@ module.exports = {
         'red': '#ff0000',
         'light-green':'#d7e0cc',
         'blue': '#7baeff',
+        'light-gray': '#c1c1c1',
       },
       filter: { // extending the filter utility
         'blur': 'blur(2px)', // custom blur class

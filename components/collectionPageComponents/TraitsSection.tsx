@@ -91,18 +91,23 @@ const TraitsSection = ({ id }: { id: string }) => {
                 {category.key}
                 {" (" + category.attributeCount + ")"}
               </p>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 ">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 ">
                 {category.values.map((trait, index) => {
                   return (
                     <div key={index} className="flex flex-row p-2">
                       <Image
-                        src={trait.sampleImages[0]}
+                        src={trait.sampleImages[0]? trait.sampleImages[0]: trait.sampleImages[1]? trait.sampleImages[1]:  "/images/img-placeholder.png"}
                         width={100}
                         height={100}
                         alt="img"
+                        onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                          const target = e.target as HTMLImageElement;
+                          target.onerror = null; 
+                          target.src="/images/img-placeholder.png";
+                        }}
                       />
                       <div className="ml-4 flex flex-col mr-4">
-                        <div className="md:whitespace-nowrap whitespace-normal mr-2 text-md font-bold text-blue">{trait.value}</div>
+                        <div className=" whitespace-normal mr-2 text-[18px] font-bold text-blue min-w-[150px] max-w-[200px]">{trait.value}</div>
                         <div className="text-gray text-sm">{trait.floorAskPrices[0]}</div>
                         <div className="text-gray text-sm">{trait.tokenCount}</div>
                       </div>

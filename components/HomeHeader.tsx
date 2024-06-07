@@ -79,21 +79,21 @@ export const HomeHeader = () => {
             <div className="space-y-3 fixed top-0 right-0 bottom-0 left-0 z-1000 w-full h-full bg-black flex flex-col items-center justify-center opacity-90 text-xl font-bold z-1000">
               {/* Your mobile navigation menu goes here */}
               <ConnectWallet />
-              <Link href="/" className={`${page=="/"? "text-white" : "text-yellow hover:text-hoveryellow transform hover:-translate-y-1"}`}>
+              <Link href="/" className={`${page=="/"? "text-white" : "text-yellow hover:text-hoveryellow transform "}`}>
                 <div className="p-4 ">HOME</div>
               </Link>
-              <Link href="/trade" className={`${page=="/trade"? "text-white" : "text-yellow hover:text-hoveryellow transform hover:-translate-y-1"}`}>
+              <Link href="/trade" className={`${page=="/trade"? "text-white" : "text-yellow hover:text-hoveryellow transform "}`}>
                 <div className="p-4 ">TRADE</div>
               </Link>
-              <Link href="/migration" className={`${page=="/migration"? "text-white" : "text-yellow hover:text-hoveryellow transform hover:-translate-y-1"}`}>
+              <Link href="/migration" className={`${page=="/migration"? "text-white" : "text-yellow hover:text-hoveryellow transform "}`}>
                 <div className="p-4 ">MIGRATE PRTC</div>
               </Link>
-              <Link href="/xp" className={`${page=="/xp"? "text-white" : "text-yellow hover:text-hoveryellow transform hover:-translate-y-1"}`}>
+              <Link href="/xp" className={`${page=="/xp"? "text-white" : "text-yellow hover:text-hoveryellow transform "}`}>
                 <div className="p-4 ">EARN XP</div>
               </Link>
               <Link
                 href="https://t.me/ZaarTradingBot"
-                className="text-yellow hover:text-hoveryellow transform hover:-translate-y-1 "
+                className="text-yellow hover:text-hoveryellow transform "
               >
                 <div className="p-4 ">TELEGRAM TRADING</div>
               </Link>
@@ -122,32 +122,25 @@ export const HomeHeader = () => {
         <div className="lg:block hidden">
           <nav className="space-x-7 uppercase relative text-sm md:ml-3 font-l flex flex-row">
             <Link href="/trade" className="contain ">
-            <div className={`${page=="/trade"? "text-white transform -translate-y-1" : "text-gray hover:text-hoveryellow transform hover:-translate-y-1"}`}>
+            <div className={`${page=="/trade"? "text-white " : "text-gray hover:text-hoveryellow transform  "}`}>
               Trade
               </div>
             </Link>
             <Link href="/migration" className="contain ">
-            <div className={`${page=="/migration"? "text-white transform -translate-y-1" : "text-gray hover:text-hoveryellow transform hover:-translate-y-1"}`}>
+            <div className={`${page=="/migration"? "text-white " : "text-gray hover:text-hoveryellow transform  "}`}>
               Migrate PRTC
               </div>
             </Link>
             <Link href="/xp" >
-              <div className={`${page=="/xp"? "text-white transform -translate-y-1" : "text-gray hover:text-hoveryellow transform hover:-translate-y-1"}`}>  
+              <div className={`${page=="/xp"? "text-white " : "text-gray hover:text-hoveryellow transform  "}`}>  
               Earn XP
               </div>
             </Link>
-            <Link
-              href="https://t.me/ZaarTradingBot"
-              className="text-yellow  contain "
-            >
-              <div className="text-gray  hover:text-hoveryellow transform hover:-translate-y-1 ">
-              Telegram Trading
-              </div>
-            </Link>
+            
           </nav>
         </div>
-        <div className="flex flex-col w-[250px] md:w-[360px] mx-auto text-base relative z-10 align-center item-center self-center" ref={wrapperRef}>
-          <input type="text" placeholder="Search" onChange={handleInputChange} className=" border-dark-gray-all border-l border-r border-t bg-black w-full px-4 py-2 rounded-sm bg-black text-white placeholder-gray-50 focus:outline-none ml-2" id="search-bar" autoComplete="off"/>
+        <div className="fixed top-2 left-1/2 transform -translate-x-1/2 flex flex-col w-[250px] md:w-[360px] text-base z-10 align-center item-center self-center" ref={wrapperRef}>
+          <input type="text" placeholder="Search" onChange={handleInputChange} className="placeholder-gray-50 border-dark-gray-all border-l border-r border-t bg-black w-full px-4 py-2 rounded-sm bg-black text-white placeholder-gray-50 focus:outline-none ml-2" id="search-bar" autoComplete="off"/>
           <div className="relative">
           <div className="absolute ">
 

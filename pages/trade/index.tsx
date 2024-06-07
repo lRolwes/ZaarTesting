@@ -195,7 +195,7 @@ const TableSection: React.FC<{WatchlistItems:WatchList}> = ({WatchlistItems}) =>
                               />
                             </Link>
                           
-                          <Link className="hover:text-hoveryellow " href={`/${collectionId[index]}`}>
+                          <Link className="hover:text-hoveryellow w-52 truncate" href={`/${collectionId[index]}`}>
                             {collectionName[index]}
                           </Link>
                           </div>)}

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { BuyModal, BidModal } from "@reservoir0x/reservoir-kit-ui";
+import { BuyModal, BidModal, ListModal} from "@reservoir0x/reservoir-kit-ui";
 import PriceChart from "./PriceChart";
 
 type TokenType = {
@@ -29,7 +29,7 @@ type TokenType = {
   };
   token: {
     tokenId: string;
-    rarity: string;
+    rarityScore: string;
     image: string;
     name: string;
     attributes: TraitType[];
@@ -42,11 +42,36 @@ type TokenType = {
       timestamp: number;
     };
     owner: string;
+    topBid: {
+      price: {
+        amount: {
+          decimal: number;
+        };
+      };
+    };
+    floorAsk: {
+      price: {
+        amount: {
+          decimal: number;
+        };
+      };
+      validFrom: number;
+      validUntil: number;
+    };
     collection: {
       id: string;
       name: string;
       creator: string;
       tokenCount: number;
+      floorAsk: {
+        price: {
+          amount: {
+            decimal: number;
+          };
+        };
+        validFrom: number;
+        validUntil: number;
+      };
       floorAskPrice: {
         amount: {
           decimal: number;
@@ -113,17 +138,17 @@ const DetailsModal = ({
     }
     const now = new Date();
     let validUntil = new Date();
-    if (nft.market?.floorAsk?.validUntil > 0) {
+    if (nft.token?.floorAsk?.validUntil > 0) {
       validUntil = new Date(
-        nft.market?.floorAsk?.validFrom
-          ? nft.market.floorAsk.validUntil * 1000
+        nft.token?.floorAsk?.validFrom
+          ? nft.token?.floorAsk.validUntil * 1000
           : 0
       );
     }
     let validFrom = new Date();
-    if (nft.market?.floorAsk?.validFrom > 0) {
+    if (nft.token?.floorAsk?.validFrom > 0) {
       validFrom = new Date(
-        nft.market?.floorAsk?.validFrom ? nft.market.floorAsk.validFrom * 1000 : 0
+        nft.token?.floorAsk?.validFrom ? nft.token.floorAsk.validFrom * 1000 : 0
       );
     }
     //expiration Date
@@ -198,7 +223,8 @@ const DetailsModal = ({
         <div className="w-screen h-screen fixed top-0 left-0 bg-black opacity-60 z-40"></div>
         {/*view NFT modal*/}
         <div
-          className="fixed z-50 w-[80%] h-[90%] pb-4 mb-4 top-0 left-1/2 transform -translate-x-1/2  opacity-100"
+          id="modal-view-nft"
+          className="fixed z-50 w-[80%] h-[90vh] top-0 left-1/2 transform -translate-x-1/2  opacity-100"
         >
           <div className="flex flex-col">
             {/* Modal Header */}
@@ -243,35 +269,13 @@ const DetailsModal = ({
                       <div className=" flex items-center">
                         {/* Rarity Ranking */}
                         <span className="mr-2 bg-gray text-gray text-xs font-semibold px-2.5 py-0.5 rounded">
-                          #{nft.token?.rarity}
+                          #{nft.token?.rarityScore}
                         </span>
                       </div>
                       <div className="text-gray mt-4">
                         {/* Flex container for inline display on small screens and above */}
                         <div className="flex flex-wrap items-center justify-between gap-4 sm:flex-nowrap">
-                          {/* Created by */}
-                          <div className="mr-0 sm:mr-7">
-                            <span className="text-xs">Created by</span>
-                            <div className="text-sm font-bold">
-                              <div className="text-yellow hover:text-yellow-200">
-                                {nft.token.collection.creator.substring(0, 7)}
-                                ...
-                              </div>
-                            </div>
-                          </div>
-  
-                          {/* Owner */}
-                          <div className="mr-0 sm:mr-7">
-                            <span className="text-xs">Owner</span>
-                            <div className="text-sm font-bold">
-                              <a
-                                href="#"
-                                className="text-yellow hover:text-yellow-200"
-                              >
-                                {nft.token?.owner.substring(0, 7)}...
-                              </a>
-                            </div>
-                          </div>
+                          
   
                           {/* Held for */}
                           <div className="mr-0 sm:mr-7">
@@ -303,8 +307,7 @@ const DetailsModal = ({
                             <span className="text-xs">Collection Floor</span>
                             <div className="text-sm font-bold text-light-green">
                               {
-                                nft.token.collection.floorAskPrice.amount
-                                  .decimal
+                                nft.token.collection?.floorAsk?.price?.amount                                  .decimal
                               }
                               <i className="fab fa-ethereum ml-1"></i>
                             </div>
@@ -315,8 +318,8 @@ const DetailsModal = ({
                             <span className="text-xs">Top Offer</span>
                             <div className="flex items-center">
                               <div className="text-sm font-bold text-light-green">
-                                {nft.market?.topBid?.price?.amount?.decimal
-                                  ? nft.market.topBid.price.amount.decimal
+                                {nft.token?.topBid?.price?.amount?.decimal
+                                  ? nft.token.topBid.price.amount.decimal
                                   : "--"}
                               </div>
                             </div>
@@ -352,66 +355,29 @@ const DetailsModal = ({
                               </span>
                             </div>
                             <div className="flex flex-col md:flex-row gap-2 sm:gap-4 w-full">
-                              {nft.market?.floorAsk ? (
-                                <BuyModal
+                                <ListModal
                                   trigger={
                                     <button
                                       type="button"
                                       className="text-black uppercase bg-yellow hover:bg-white focus:ring-4 focus:outline-none focus:ring-purple-300 font-bold rounded-sm text-sm px-5 py-2.5 text-center flex-grow"
                                     >
-                                      Buy now
+                                      List now
                                     </button>
                                   }
-                                  token={
-                                    nft.token.collection.id +
-                                    ":" +
-                                    nft.token.tokenId
-                                  }
-                                  onConnectWallet={() => {
-                                    console.log("Connected");
+                                  collectionId={nft.token.collection.id}
+                                  tokenId={nft.token.tokenId}
+                                  oracleEnabled={false}
+                                  onGoToToken={() => console.log('Awesome!')}
+                                  onListingComplete={(data) => {
+                                    console.log('Listing Complete', data)
                                   }}
-                                  onPurchaseComplete={(data) =>
-                                    console.log("Purchase Complete")
-                                  }
-                                  onPurchaseError={(error, data) =>
-                                    console.log(
-                                      "Transaction Error",
-                                      error,
-                                      data
-                                    )
-                                  }
-                                  onClose={(data, stepData, currentStep) =>
-                                    console.log("Modal Closed")
-                                  }
-                                />
-                              ) : (
-                                <div />
-                              )}
-  
-                              <BidModal
-                                trigger={
-                                  <button
-                                    id="btn"
-                                    className="text-white uppercase bg-dark border border-gray-600 hover:bg-white hover:text-black focus:ring-4 focus:outline-none focus:ring-white font-medium rounded-sm text-sm px-5 py-2.5 text-center flex-grow"
-                                  >
-                                    Make offer
-                                  </button>
-                                }
-                                collectionId={nft.token.collection.id}
-                                onBidComplete={(data) => {
-                                  console.log("Bid Complete", data);
-                                }}
-                                onBidError={(error, data) => {
-                                  console.log(
-                                    "Bid Transaction Error",
-                                    error,
-                                    data
-                                  );
-                                }}
-                                onClose={(data, stepData, currentStep) => {
-                                  console.log("BidModal Closed");
-                                }}
-                              />
+                                  onListingError={(error, data) => {
+                                    console.log('Transaction Error', error, data)
+                                  }}
+                                  onClose={(data, stepData, currentStep) => {
+                                    console.log('ListModal Closed')
+                                  }}
+                                  /> 
                             </div>
                           </div>
                         </div>
@@ -463,12 +429,12 @@ const DetailsModal = ({
                           <div className="text-left">
                             <div className="text-xs">Floor Difference</div>
                             <div className="text-sm font-bold">
-                              {nft.market?.floorAsk?.price?.amount?.decimal &&
-                                nft.market?.topBid?.price?.amount?.decimal
+                              {nft.token?.floorAsk?.price?.amount?.decimal &&
+                                nft.token?.topBid?.price?.amount?.decimal
                                 ? (
-                                  ((nft.market.floorAsk.price.amount.decimal -
-                                    nft.market.topBid.price.amount.decimal) /
-                                    nft.market.topBid.price.amount.decimal) *
+                                  ((nft.token.floorAsk.price.amount.decimal -
+                                    nft.token.topBid.price.amount.decimal) /
+                                    nft.token.topBid.price.amount.decimal) *
                                   100
                                 ).toFixed(2) + "%"
                                 : "--"}
@@ -477,7 +443,7 @@ const DetailsModal = ({
                         </div>
                       </div>
   
-                      <div className="rounded-sm overflow-hidden pb-8">
+                      <div className="rounded-sm overflow-hidden">
                         <div className="py-3 px-0 uppercase mt-2 text-light-green">
                           Sale History
                         </div>
@@ -515,8 +481,8 @@ const DetailsModal = ({
                       <h2 className="text-xs font-bold text-gray">Trait</h2>
                       <h2 className="text-xs font-bold text-gray">Floor</h2>
                     </div>
-                    <div className="max-h-[150px] overflow-y-auto p-2">
-                      {nft.token.attributes.map(
+                    <div className="max-h-48 overflow-y-auto p-2">
+                      {nft.token.attributes?.map(
                         (trait: TraitType, index: number) => (
                           <div key={index} className={`mb-2 }`}>
                             <div

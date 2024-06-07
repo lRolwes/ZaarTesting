@@ -4,7 +4,7 @@ import Image from 'next/image';
 import React from "react";
 import {useAccount, useDisconnect, useBalance} from "wagmi";
 import {useState, useEffect} from "react";
-import AccountModal from "./AccountModal";
+import AccountModal from "./profileComponents/AccountModal";
 export const ConnectWallet = () => {
     const [modalOpen, setModalOpen] = useState(false);
     return (
@@ -43,7 +43,7 @@ export const ConnectWallet = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <button onClick={openConnectModal} type="button" className = " bg-yellow text-black font-bold p-2 px-5 rounded-sm hover:bg-white border-2 hover:border-yellow transition duration-500">
+                  <button onClick={openConnectModal} type="button" className = " bg-yellow text-black font-bold p-2 px-5 rounded-sm hover:bg-white border-2 transition duration-500">
                     Connect Wallet
                   </button>
                 );
