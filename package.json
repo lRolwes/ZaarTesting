@@ -31,6 +31,7 @@
     "react-infinite-scroll-component": "^6.1.0",
     "request": "^2.88.2",
     "save": "^2.9.0",
+    "thirdweb": "^5.28.0",
     "viem": "^2.8.12",
     "wagmi": "^2.5.11"
   },

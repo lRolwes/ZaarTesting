@@ -1,6 +1,7 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { BuyModal, ListModal, BidModal, Trait } from "@reservoir0x/reservoir-kit-ui";
+
 export type TokenType = {
   market: {
     floorAsk: {
@@ -25,17 +26,10 @@ export type TokenType = {
     };
   };
   token: {
-    rarityScore: number;
     tokenId: string;
-    rarity: string;
+    rarityScore: string;
     image: string;
     name: string;
-    floorAsk: {
-      price: {
-        amount: {
-          decimal: number;
-        };
-      };};
     attributes: TraitType[];
     lastSale: {
       price: {
@@ -46,11 +40,36 @@ export type TokenType = {
       timestamp: number;
     };
     owner: string;
+    topBid: {
+      price: {
+        amount: {
+          decimal: number;
+        };
+      };
+    };
+    floorAsk: {
+      price: {
+        amount: {
+          decimal: number;
+        };
+      };
+      validFrom: number;
+      validUntil: number;
+    };
     collection: {
       id: string;
       name: string;
       creator: string;
       tokenCount: number;
+      floorAsk: {
+        price: {
+          amount: {
+            decimal: number;
+          };
+        };
+        validFrom: number;
+        validUntil: number;
+      };
       floorAskPrice: {
         amount: {
           decimal: number;

@@ -99,7 +99,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
       setSearch(value);
     };
     async function fetchMoreActivities() {
-      let lookupString = `https://api.reservoir.tools/collections/activity/v6?collection=${id}`;
+      let lookupString = `https://api.reservoir.tools/users/activity/v6?users=${id}`;
       lookupString += `&continuation=${continuation}`;
       const options = {
         method: "GET",
@@ -228,8 +228,8 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
         <div className="container-fluid mx-auto">
           <div className="bg-dark-gray text-light-green">
             {/* Activity Header */}
-            <div className="flex items-center justify-between">
-              <div className="flex-1 pt-3 pb-2 md:pt-3 md:pb-2 flex gap-2  md:mx-6 z-3 px-6 md:px-0">
+            <div className="bg-gray flex items-center justify-between">
+              <div className="flex-1 pt-3 pb-2 md:pt-3 md:pb-2 flex gap-2  md:mx-6 z-40 px-6 md:px-0">
                 <div className="flex-col-reverse sm:flex-row-reverse lg:flex-row flex w-full gap-1.5 items-center lg:justify-between">
                   <div className="relative w-full sm:max-w-90">
                     <div className="relative max-w-[350px]">
@@ -247,13 +247,14 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                 {/* Additional filters for larger screens */}
                 <div className="block lg:hidden w-[200px]" >
                   <button
-                    className="w-full border items-center rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1"
+                    className="w-full flex justify-center text-center  bg-dark-gray border items-center rounded-sm flex cursor-pointer font-medium border-dark-gray-all h-10 text-sm text-light-gray items-center whitespace-nowrap truncate px-1"
                     onClick={() => { setFiltersOpen(!filtersOpen) }}
                   >
                     Filters
                   </button>
-                  {filtersOpen ?
-                    <div className="fixed flex flex-col top-0 left-0 w-screen h-screen bg-black z-50 no-scrollbar">
+                  {filtersOpen?
+                    <div className="bg-black fixed top-0 left-0 w-screen p-0 m-0 z-50">
+                    <div className="bg-black z-50 fixed left-0 block flex flex-col w-full h-screen  no-scrollbar">
                       <div className="bg-black flex flex-row ml-4 mr-6 mt-4 justify-between font-bold text-xl">
                         <p>Filters</p>
                         <button
@@ -278,7 +279,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                           )}
                         </div>
                         <div
-                          className={`dropdown-content w-full z-30 ml-4 mr-4 ${eventsDropdown ? "block" : "hidden"}`}
+                          className={`dropdown-content w-full z-40 ml-4 mr-4 ${eventsDropdown ? "block" : "hidden"}`}
                         >
                           <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
                             {/* Market Options with additional data */}
@@ -357,7 +358,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                       )}
                     </div>
                     <div
-                      className={`dropdown-content z-30 mt-1 ${marketsDropdown ? "block" : "hidden"}`}
+                      className={`dropdown-content z-40 mt-1 ${marketsDropdown ? "block" : "hidden"}`}
                     >
                       <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
                         {/* Market Options with additional data */}
@@ -429,6 +430,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                     </div>
                   </div>
                     </div>
+                    </div>
                     : null}
                 </div>
                 <div className="hidden lg:flex gap-1.5 items-center mt-2">
@@ -449,7 +451,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                       )}
                     </div>
                     <div
-                      className={`absolute right-0 dropdown-content w-[200px] z-30 mt-1 ${eventsDropdown ? "block" : "hidden"}`}
+                      className={`absolute right-0 dropdown-content w-[200px] z-40 mt-1 ${eventsDropdown ? "block" : "hidden"}`}
                     >
                       <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
                         {/* Market Options with additional data */}
@@ -529,7 +531,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                       )}
                     </div>
                     <div
-                      className={`absolute right-0 dropdown-content w-[200px] z-30 mt-1 ${marketsDropdown ? "block" : "hidden"}`}
+                      className={`absolute right-0 dropdown-content w-[200px] z-40 mt-1 ${marketsDropdown ? "block" : "hidden"}`}
                     >
                       <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
                         {/* Market Options with additional data */}
@@ -804,7 +806,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
             <div className="bg-black overflow-x-auto rounded-lg w-full min-h-[500px] ">
               <div className="table-wrapper max-h-screen overflow-y-auto no-scrollbar">
                 <table className="sticky-first-column not-sticky-second-column sticky-header w-full text-sm text-left text-light-green">
-                  <thead className=" whitespace-nowrap z-50 sticky top-0 text-xs uppercase text-gray">
+                  <thead className=" whitespace-nowrap z-40 sticky top-0 text-xs uppercase text-gray">
                     <tr className="border-b border-dark-gray cursor-pointer">
                       <th scope="col" className="px-6 py-3">
                         Event

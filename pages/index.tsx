@@ -7,35 +7,55 @@ import { Footer } from "../components/Footer";
 import { HomeHeader } from "../components/HomeHeader";
 import { useTrendingCollections } from "@reservoir0x/reservoir-kit-ui";
 import useTopCollections from "../hooks/TopCollections";
+import axios from "axios";
+
 const HeroContent = () => {
-  const { collectionName, collectionImage, collectionVolume, collectionFloorPrice } = useTopCollections();
-  const [currentImage, setCurrentImage] = useState(collectionImage[0]);
-  const [currentName, setCurrentName] = useState(collectionName[0]);
-  const [currentFloorValue, setCurrentFloorValue] = useState(
-    collectionFloorPrice[0]
-  );
-  const [currentVolume, setCurrentVolume] = useState(collectionVolume[0]);
+  const [carouselImages, setCarouselImages] = useState(["url(/images/hero.jpg)", "url(images/Hero/zaar-hero-remilio.jpg)","url(images/Hero/zaar-hero-milady.jpg)", "url(images/Hero/zaar-hero-pudgys.png)", "url(images/Hero/zaar-hero-azuki.png)"]);
+  const [carouselNames, setCarouselNames] = useState(["Zaar", "Redacted Remilio Babies", "Milady Maker", "Pudgy Penguins", "Azuki"]);
+  const [carouselAddresses, setCarouselAddresses] = useState(["xp",  "0xd3d9ddd0cf0a5f0bfb8f7fceae075df687eaebab","0x5af0d9827e0c53e4799bb226655a1de152a425a5", "0xbd3531da5cf5857e7cfaa92426877b022e612cf8", "0xed5af388653567af2f388e6224dc7c4b3241c544"]);
+  const [carouselAuthors, setCarouselAuthors] = useState(["Zaar", "Remilia Collective", "Remelia Collective", "Pudgy Penguins", "Azuki" ]);
+  const [carouselVolumes, setCarouselVolumes] = useState([0, 0, 0, 0, 0]);
+  const [carouselFloorPrices, setCarouselFloorPrices] = useState([0, 0, 0, 0, 0]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    async function carouselDataLookup() {
+      let index = 1;
+      let carouselFloors = [0, 0, 0, 0, 0];
+      let carouselVolumes = [0, 0, 0, 0, 0];
+      while(index<=4){
+      const options = {
+        method: "GET",
+        url: `https://api.reservoir.tools/collections/v7?id=${carouselAddresses[index]}`,
+        headers: {
+          //accept: "*/*",
+          "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
+        },
+      };
+      try {
+        const response = await axios.request(options);
+        carouselFloors[index] = response.data?.collections[0]?.floorAsk?.price?.amount?.decimal; // update the specific item at 'index'
+        carouselVolumes[index] = response.data?.collections[0]?.volume?.["1day"];
+        index = index+1;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    setCarouselFloorPrices(carouselFloors); // set the state with the new array      return response.data;
+    setCarouselVolumes(carouselVolumes);
+    return
+  }
+    carouselDataLookup();
+  }, [carouselAddresses]);
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const currentIndex = collectionImage.indexOf(currentImage);
-      const nextIndex = (currentIndex + 1) % 5;
-      setCurrentImage(collectionImage[nextIndex]);
-      setCurrentName(collectionName[nextIndex]);
-      setCurrentFloorValue(collectionFloorPrice[nextIndex]);
-      setCurrentVolume(collectionVolume[nextIndex]);
+
+      setCurrentIndex((currentIndex+1)%5);
+      
     }, 6000); // Change image every 3 seconds
     // Clean up function to clear the interval when the component unmounts
     return () => clearInterval(intervalId);
-  }, [
-    currentImage,
-    collectionImage,
-    currentName,
-    collectionName,
-    currentFloorValue,
-    collectionFloorPrice,
-    currentVolume,
-    collectionVolume,
-  ]);
+  }, [currentIndex]);
 
   return (
     <div id="landing">
@@ -45,20 +65,24 @@ const HeroContent = () => {
         style={{ minHeight: "50h" }}
       >
         <div
-        className="absolute left-0 right-0 w-full h-full bg-center bg-cover z-10"
+        className={`absolute left-0 right-0 w-full h-full bg-center bg-cover z-10 `}
         style={{
-          backgroundImage: "url('/images/hero.jpg')",
+          backgroundImage: carouselImages[currentIndex],
           backgroundSize: "cover",
           height: "100vh", // Set a fixed height
           width: "100vw", // Set a fixed width
         }}
-      ></div>
+      >
+      {currentIndex!=0? 
+      <div className="absolute w-full h-full bg-black bg-opacity-40"></div>
+      : null}
+      </div>
       {/* Gradient Overlay */}
 
       {/* Hero Content */}
+      {currentIndex==0 ?
       <div className="container fixed relative h-[90%] z-20 mt-0 w-full ">
         <div className="text-center text-white flex flex-col justify-center items-center">
-          
           <div className="flex relative w-[400px] md:w-[35%] justify-center items-center h-auto z-20 ">
             <Image
               src="/images/logo-white.png"
@@ -73,19 +97,57 @@ const HeroContent = () => {
             A full-featured mobile-friendly NFT marketplace
           </h1>
           <div className="flex justify-center space-x-8 mb-"></div>
-          <Link
+          {/*<Link
             href="/xp"
             className="inline-block bg-yellow hover:bg-whitish border-2 border-yellow hover:text-black text-black py-2 px-4 uppercase rounded-sm font-bold mb-20 hover:text-black"
           >
             Earn Rewards
+          </Link>*/}
+          
+          <Link href={`/xp`} >
+                <div className="inline-block bg-black bg-opacity-60 hover:opacity-100 text-white py-2 px-4 uppercase rounded-sm font-bold  hover:bg-white hover:text-black transition-colors duration-300 ease-in-out mb-10">
+                Earn Rewards
+                </div>
           </Link>
         </div>
       </div>
+      :
+      <div className="container pt-10 sm:pt-0 relative mx-auto z-20">
+            <div className="text-center text-white font-bold">
+                <h1 className="text-4xl text-white font-bold mb-3">{carouselNames[currentIndex]}</h1>
+                <p className="text-2xl mb-0 uppercase">{"BY "}{carouselAuthors[currentIndex]}</p>
+                <div className="flex justify-center space-x-8 mb-6">
+                    {/* Content */}
+                </div>
+                <Link href={`/${carouselAddresses[currentIndex]}`} >
+                <div className="inline-block bg-black bg-opacity-60 hover:opacity-100 text-white py-2 px-4 uppercase rounded-sm font-bold  hover:bg-white hover:text-black transition-colors duration-300 ease-in-out mb-10">View Collection
+                </div>
+                </Link>
+            </div>
+
+            {/* Data Section */}
+            <div className="flex justify-center items-center space-x-2 mb-20 ">
+                {/* Floor Price Column */}
+                <div className="text-center p-2 mt-0">
+                    <span className="text-light-gray text-md uppercase font-semibold">Buy Now</span>
+                    <div className="text-white text-lg font-bold mt-1 ">{carouselFloorPrices[currentIndex]} <i className="fab fa-ethereum fa-sm"></i></div>
+                </div>
+
+                {/* 1D Volume Column */}
+                <div className="text-center p-2">
+                    <span className="text-light-gray text-md uppercase font-semibold">24H Volume</span>
+                    <div className="text-white text-lg font-bold mt-1">{carouselVolumes[currentIndex].toFixed(2)}<i className="fab fa-ethereum fa-sm"></i></div>
+                </div>
+
+                {/* Third Data Column */}
+                <div className="text-center p-2">
+                    <span className="text-light-gray text-md uppercase font-semibold">Capsule APY</span>
+                    <div className="text-light-green text-lg font-bold mt-1">--</div>
+                </div>
+            </div>
+        </div>
+      }
         
- 
-
-
-
         {/* Boxes within Hero Image */}
         <div className="absolute bottom-0 w-full z-20 pr-2  mb-10">
           <div className="flex justify-center px-4 h-full ">
@@ -93,13 +155,16 @@ const HeroContent = () => {
               <div className="flex flex-nowrap lg:mx-0">
                 {/* Each Box */}
                 {/* Apply the hover effect to this div to ensure the entire box moves */}
-                <div className="inline-block px-3 snap-start hover:-translate-y-2 transform transition duration-300 hero-box">
+                {[0,1,2,3,4].map((item)=>{
+                  return(
+                  <div key={item}>
+                  <Link  href={`/${carouselAddresses[item]}`} className="inline-block px-3 snap-start hover:-translate-y-2 transform transition duration-300 hero-box">
                   <div className="w-64 h-48 max-w-xs overflow-hidden rounded-lg shadow-md bg-white hover:shadow-lg transition-shadow duration-300 ease-in-out relative">
                     {/* Clickable area */}
-                    <a href="#" className="block w-full h-full">
+                    <div className="block w-full h-full">
                       <div
                         className="w-full h-full bg-cover bg-center"
-                        style={{ backgroundImage: collectionImage[0] }}
+                        style={{ backgroundImage: carouselImages[item] }}
                       >
                         {/* Gradient Overlay for better text visibility */}
                         <div
@@ -112,129 +177,17 @@ const HeroContent = () => {
                         {/* Title at the bottom left */}
                         <div className="absolute bottom-0 left-0 p-4 z-10">
                           <h2 className="text-white text-lg font-bold">
-                            {collectionName[0]}
+                            {carouselNames[item]}
                           </h2>
                         </div>
                       </div>
-                    </a>
+                    </div>
                   </div>
+                </Link>
                 </div>
-                {/* Repeat boxes as needed */}
-                <div className="inline-block px-3 snap-start hover:-translate-y-2 transform transition duration-300 hero-box">
-                  <div className="w-64 h-48 max-w-xs overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out relative">
-                    {/* Clickable area */}
-                    <a href="#" className="block w-full h-full">
-                      <div
-                        className="w-full h-full bg-cover bg-center"
-                        style={{
-                          backgroundImage: collectionImage[1] || "",
-                        }}
-                      >
-                        {/* Gradient Overlay for better text visibility */}
-                        <div
-                          className="absolute top-0 left-0 w-full h-full"
-                          style={{
-                            background:
-                              "linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%)",
-                          }}
-                        ></div>
-                        {/* Title at the bottom left */}
-                        <div className="absolute bottom-0 left-0 p-4 z-10">
-                          <h2 className="text-white text-lg font-bold">
-                            {collectionName[1]}
-                          </h2>
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                </div>
-                {/* Repeat boxes as needed */}
-                <div className="z-20 inline-block px-3 snap-start rounded-lg hover:-translate-y-2 transform transition duration-300 hero-box ">
-                  <div className="w-64 h-48 max-w-xs overflow-hidden rounded-lg shadow-md bg-white hover:shadow-lg transition-shadow duration-300 ease-in-out relative no-scrollbar">
-                    {/* Clickable area */}
-                    <a href="#" className="block w-full h-full ">
-                      <div
-                        className="w-full h-full bg-cover bg-center "
-                        style={{
-                          backgroundImage: collectionImage[2],
-                        }}
-                      >
-                        {/* Gradient Overlay for better text visibility */}
-                        <div
-                          className="absolute top-0 left-0 w-full h-full"
-                          style={{
-                            background:
-                              "linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%)",
-                          }}
-                        ></div>
-                        {/* Title at the bottom left */}
-                        <div className="absolute bottom-0 left-0 p-4 z-10">
-                          <h2 className="text-white text-lg font-bold">
-                            {collectionName[2]}
-                          </h2>
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                </div>
-                {/* Repeat boxes as needed */}
-                <div className="inline-block px-3 snap-start hover:-translate-y-2 transform transition duration-300 hero-box">
-                  <div className="w-64 h-48 max-w-xs overflow-hidden rounded-lg shadow-md bg-white hover:shadow-lg transition-shadow duration-300 ease-in-out relative">
-                    {/* Clickable area */}
-                    <a href="#" className="block w-full h-full">
-                      <div
-                        className="w-full h-full bg-cover bg-center"
-                        style={{
-                          backgroundImage: collectionImage[3],
-                        }}
-                      >
-                        {/* Gradient Overlay for better text visibility */}
-                        <div
-                          className="absolute top-0 left-0 w-full h-full"
-                          style={{
-                            background:
-                              "linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%)",
-                          }}
-                        ></div>
-                        {/* Title at the bottom left */}
-                        <div className="absolute bottom-0 left-0 p-4 z-10">
-                          <h2 className="text-white text-lg font-bold">
-                            {collectionName[3]}
-                          </h2>
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                </div>
-                {/* Repeat boxes as needed */}
-                <div className="inline-block px-3 snap-start hover:-translate-y-2 transform transition duration-300 hero-box">
-                  <div className="w-64 h-48 max-w-xs overflow-hidden rounded-lg shadow-md bg-white hover:shadow-lg transition-shadow duration-300 ease-in-out relative">
-                    {/* Clickable area */}
-                    <a href="#" className="block w-full h-full">
-                      <div
-                        className="w-full h-full bg-cover bg-center"
-                        style={{
-                          backgroundImage: collectionImage[4],
-                        }}
-                      >
-                        {/* Gradient Overlay for better text visibility */}
-                        <div
-                          className="absolute top-0 left-0 w-full h-full"
-                          style={{
-                            background:
-                              "linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%)",
-                          }}
-                        ></div>
-                        {/* Title at the bottom left */}
-                        <div className="absolute bottom-0 left-0 p-4 z-10">
-                          <h2 className="text-white text-lg font-bold">
-                            {collectionName[4]}
-                          </h2>
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                </div>
+              );})}
+                
+                
               </div>
             </div>
           </div>

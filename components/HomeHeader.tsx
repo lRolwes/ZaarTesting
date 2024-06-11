@@ -71,29 +71,29 @@ export const HomeHeader = () => {
     setIsMenuOpen(!isMenuOpen);
   };
   return (
-    <header className= {`fixed top-0 left-0 w-full border-dark-gray z-30 flex justify-between items-center px-8 pl-6 sm:pl-2 bg-black bg-opacity-20 filter ${isMenuOpen? " " : " backdrop-blur-md"}`}>
+    <header className= {`fixed top-0 left-0 w-full border-dark-gray z-30 flex justify-between items-center px-8 pl-6 sm:pl-2 bg-black bg-opacity-20   ${isMenuOpen? " " : " backdrop-blur-md"}`}>
       <div className="flex justify-between items-center p-3 px-0  pl-2 w-full">
         {/* Logo and Navigation */}
-        <div className="flex items-center justify-between md:space-x-4 text-sm z-1000">
+        <div className="flex items-center justify-between md:space-x-4 text-sm z-30">
           {isMenuOpen && (
-            <div className="space-y-3 fixed top-0 right-0 bottom-0 left-0 z-1000 w-full h-full bg-black flex flex-col items-center justify-center opacity-90 text-xl font-bold z-1000">
+            <div className="space-y-3 fixed top-0 right-0 bottom-0 left-0 z-30 w-full h-full bg-black flex flex-col items-center justify-center bg-opacity-90 text-xl font-bold z-30">
               {/* Your mobile navigation menu goes here */}
               <ConnectWallet />
-              <Link href="/" className={`${page=="/"? "text-white" : "text-yellow hover:text-hoveryellow transform "}`}>
+              <Link href="/" className={`${page=="/"? "text-white" : "text-yellow hover:text-hoveryellow "}`}>
                 <div className="p-4 ">HOME</div>
               </Link>
-              <Link href="/trade" className={`${page=="/trade"? "text-white" : "text-yellow hover:text-hoveryellow transform "}`}>
+              <Link href="/trade" className={`${page=="/trade"? "text-white" : "text-yellow hover:text-hoveryellow   "}`}>
                 <div className="p-4 ">TRADE</div>
               </Link>
-              <Link href="/migration" className={`${page=="/migration"? "text-white" : "text-yellow hover:text-hoveryellow transform "}`}>
+              <Link href="/migration" className={`${page=="/migration"? "text-white" : "text-yellow hover:text-hoveryellow   "}`}>
                 <div className="p-4 ">MIGRATE PRTC</div>
               </Link>
-              <Link href="/xp" className={`${page=="/xp"? "text-white" : "text-yellow hover:text-hoveryellow transform "}`}>
+              <Link href="/xp" className={`${page=="/xp"? "text-white" : "text-yellow hover:text-hoveryellow   "}`}>
                 <div className="p-4 ">EARN XP</div>
               </Link>
               <Link
                 href="https://t.me/ZaarTradingBot"
-                className="text-yellow hover:text-hoveryellow transform "
+                className="text-yellow hover:text-hoveryellow   "
               >
                 <div className="p-4 ">TELEGRAM TRADING</div>
               </Link>
@@ -122,24 +122,24 @@ export const HomeHeader = () => {
         <div className="lg:block hidden">
           <nav className="space-x-7 uppercase relative text-sm md:ml-3 font-l flex flex-row">
             <Link href="/trade" className="contain ">
-            <div className={`${page=="/trade"? "text-white " : "text-gray hover:text-hoveryellow transform  "}`}>
+            <div className={`${page=="/trade"? "text-white " : "text-gray hover:text-hoveryellow    "}`}>
               Trade
               </div>
             </Link>
             <Link href="/migration" className="contain ">
-            <div className={`${page=="/migration"? "text-white " : "text-gray hover:text-hoveryellow transform  "}`}>
+            <div className={`${page=="/migration"? "text-white " : "text-gray hover:text-hoveryellow    "}`}>
               Migrate PRTC
               </div>
             </Link>
             <Link href="/xp" >
-              <div className={`${page=="/xp"? "text-white " : "text-gray hover:text-hoveryellow transform  "}`}>  
+              <div className={`${page=="/xp"? "text-white " : "text-gray hover:text-hoveryellow    "}`}>  
               Earn XP
               </div>
             </Link>
             
           </nav>
         </div>
-        <div className="fixed top-2 left-1/2 transform -translate-x-1/2 flex flex-col w-[250px] md:w-[360px] text-base z-10 align-center item-center self-center" ref={wrapperRef}>
+        <div className="fixed top-2 left-1/2   -translate-x-1/2 flex flex-col w-[250px] md:w-[360px] text-base z-10 align-center item-center self-center" ref={wrapperRef}>
           <input type="text" placeholder="Search" onChange={handleInputChange} className="placeholder-gray-50 border-dark-gray-all border-l border-r border-t bg-black w-full px-4 py-2 rounded-sm bg-black text-white placeholder-gray-50 focus:outline-none ml-2" id="search-bar" autoComplete="off"/>
           <div className="relative">
           <div className="absolute ">
