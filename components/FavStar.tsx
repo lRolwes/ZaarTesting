@@ -67,16 +67,20 @@ export const FavStar = ({id, defaultStatus}:{id: string, defaultStatus: boolean}
     }
   };
   const [isFav, setIsFav] = useState<boolean>(defaultStatus);
-  
+  const [wallet, setWallet] = useState<string>("");
+  useEffect(() => {
+    let addr =  getAccount(config).address;
+    addr? setWallet(addr): null;
+  },[]);
   function handler() {
-    if(watchlist?.authorAddress){
+    if(getAccount(config).address){
     if (isFav) {
       watchlist.address = watchlist.address.filter(item => item !== id);
       remAddress(id, watchlist.address, watchlist.authorAddress);
       setIsFav(false);
     }
     else{
-      addAddress(id, watchlist?.address? watchlist.address : [], watchlist.authorAddress);
+      addAddress(id, watchlist?.address? watchlist.address : [], watchlist?.authorAddress? watchlist.authorAddress : wallet);
       setIsFav(true);
     }}
     else{

@@ -457,19 +457,9 @@ const AccountModal = ({
                 </div>
                 <div className="flex justify-center gap-2 md:items-end flex-col mt-5 sm:mt-0 md:text-xl sm:text-sm">
                   <div className="flex items-center">
-                      {/*<div className="flex flex-row mr-8">
-                        <Image
-                        alt="image"
-                        src="/images/xp.png"
-                        className="w-10 h-10"
-                        width={100}
-                        height={100}
-                    />
-                    <div className="text-4xl font-light tracking-wide ml-3">
-                      <span className="text-light-green">69</span>
-  </div>
-                      </div>*/}
+                      
                       <div className="flex flex-row w-full justify-center md:justify-right space-x-6 md:space-x-0  md:flex-col ml-4 md:space-y-2 justify-start">
+                        
                         <button
                           onClick={() => {
                             disconnect();
@@ -487,6 +477,18 @@ const AccountModal = ({
                         >
                           Close
                         </button>
+                        <div className="flex flex-row mr-8">
+                        <Image
+                        alt="image"
+                        src="/images/xp.png"
+                        className="w-10 h-10"
+                        width={100}
+                        height={100}
+                    />
+                    <div className="text-4xl font-light tracking-wide ml-3">
+                      <span className="text-light-green">69</span>
+                  </div>
+                      </div>
                     </div>
                   </div>
                   <div className="flex flex-row justify-between"></div>

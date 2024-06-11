@@ -1,27 +1,12 @@
 import type { NextPage } from "next";
 import Image from "next/image";
 import React from "react";
-import { useState, useEffect } from "react";
 import { Footer } from "../../components/Footer";
 import { HomeHeader } from "../../components/HomeHeader";
 import useBalance from "../../hooks/Balance";
-import { useAccount } from "wagmi";
 import useXP from "../../hooks/xpcalcs";
-const HeroContent = () => {
-  const { xPrtcBalance, refetchBalance } = useBalance();
+  const HeroContent = () => {
   const {xpcalcs} = useXP();
-  const { address } = useAccount();
-  const [rewards, setRewards] = useState(null);
-  const [xp, setXp] = useState(0);
-
-  useEffect(() => {
-    const url = `https://offchain-masterchef-e5a6ec82d362.herokuapp.com/rewards?address=${address ? address : "0x0000000000000000000000000000000000000000"}`;
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => setRewards(data.rewards))
-      .catch((error) => console.error("Error:", error));
-    }, [address]);
-    
 
   return (
     <div className="pb-0 flex content-center items-center justify-center bg-hero min-h-screen">
@@ -39,7 +24,7 @@ const HeroContent = () => {
             height={700}
           />
           <h1 className="text-3xl font-bold mb-3 text-white uppercase mt-3 mb-4">
-            Level up with Zaar XP {xpcalcs!=undefined ? Number(xpcalcs) : Number(0)}
+            Level up with Zaar XP 
           </h1>
 
           <section className="bg-black text-white py-3 bg-opacity-60 rounded-sm pb-0">
@@ -50,8 +35,8 @@ const HeroContent = () => {
                   <span className="text-white font-medium uppercase mr-2">
                     My XP
                   </span>
-                <span className="text-yellow font-bold gradient-yellow-orange filter blur">COMING SOON
-                    {/*{rewards?Math.round(rewards):0}*/}
+                <span className="text-yellow font-bold gradient-yellow-orange ">
+                {xpcalcs!=undefined ? Number(xpcalcs) : Number(0)}
                   </span>
                 </div>
                 <div className="flex flex-col items-center text-sm sm:text-xl ">
