@@ -169,6 +169,210 @@ export const prtcAddress = {
 export const prtcConfig = { address: prtcAddress, abi: prtcAbi } as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// StakingRewards
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const stakingRewardsAbi = [
+  {
+    type: 'constructor',
+    inputs: [
+      { name: '_prtc', internalType: 'contract IERC20', type: 'address' },
+      { name: '_weth', internalType: 'contract IERC20', type: 'address' },
+      { name: '_treasury', internalType: 'address', type: 'address' },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  { type: 'error', inputs: [], name: 'CannotStakeZeroTokens' },
+  { type: 'error', inputs: [], name: 'NoStakers' },
+  { type: 'error', inputs: [], name: 'NotStaked' },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'from', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'CapturedRewards',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'to', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'RewardsPayout',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'RewardsToTreasury',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'who', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'UserStaked',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'who', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'UserUnstaked',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'user', internalType: 'address', type: 'address' }],
+    name: 'balanceOf',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'claimRewards',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'amount', internalType: 'uint256', type: 'uint256' }],
+    name: 'distribute',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'user', internalType: 'address', type: 'address' }],
+    name: 'previewRewards',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'prtc',
+    outputs: [{ name: '', internalType: 'contract IERC20', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'rewardsPerStakedToken',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'amount', internalType: 'uint256', type: 'uint256' }],
+    name: 'stake',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'stakingRecords',
+    outputs: [
+      { name: 'stakedAmount', internalType: 'uint256', type: 'uint256' },
+      {
+        name: 'rewardsPerStakedTokenSnapshot',
+        internalType: 'uint256',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'totalStaked',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'treasury',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'unstake',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '_amount', internalType: 'uint256', type: 'uint256' }],
+    name: 'unstake',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'weth',
+    outputs: [{ name: '', internalType: 'contract IERC20', type: 'address' }],
+    stateMutability: 'view',
+  },
+] as const
+
+/**
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const stakingRewardsAddress = {
+  1: '0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7',
+} as const
+
+/**
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const stakingRewardsConfig = {
+  address: stakingRewardsAddress,
+  abi: stakingRewardsAbi,
+} as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Zaar
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -894,6 +1098,299 @@ export const useWatchPrtcTransferEvent =
     abi: prtcAbi,
     address: prtcAddress,
     eventName: 'Transfer',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakingRewardsAbi}__
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useReadStakingRewards = /*#__PURE__*/ createUseReadContract({
+  abi: stakingRewardsAbi,
+  address: stakingRewardsAddress,
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakingRewardsAbi}__ and `functionName` set to `"balanceOf"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useReadStakingRewardsBalanceOf =
+  /*#__PURE__*/ createUseReadContract({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    functionName: 'balanceOf',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakingRewardsAbi}__ and `functionName` set to `"previewRewards"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useReadStakingRewardsPreviewRewards =
+  /*#__PURE__*/ createUseReadContract({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    functionName: 'previewRewards',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakingRewardsAbi}__ and `functionName` set to `"prtc"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useReadStakingRewardsPrtc = /*#__PURE__*/ createUseReadContract({
+  abi: stakingRewardsAbi,
+  address: stakingRewardsAddress,
+  functionName: 'prtc',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakingRewardsAbi}__ and `functionName` set to `"rewardsPerStakedToken"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useReadStakingRewardsRewardsPerStakedToken =
+  /*#__PURE__*/ createUseReadContract({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    functionName: 'rewardsPerStakedToken',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakingRewardsAbi}__ and `functionName` set to `"stakingRecords"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useReadStakingRewardsStakingRecords =
+  /*#__PURE__*/ createUseReadContract({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    functionName: 'stakingRecords',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakingRewardsAbi}__ and `functionName` set to `"totalStaked"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useReadStakingRewardsTotalStaked =
+  /*#__PURE__*/ createUseReadContract({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    functionName: 'totalStaked',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakingRewardsAbi}__ and `functionName` set to `"treasury"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useReadStakingRewardsTreasury =
+  /*#__PURE__*/ createUseReadContract({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    functionName: 'treasury',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakingRewardsAbi}__ and `functionName` set to `"weth"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useReadStakingRewardsWeth = /*#__PURE__*/ createUseReadContract({
+  abi: stakingRewardsAbi,
+  address: stakingRewardsAddress,
+  functionName: 'weth',
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link stakingRewardsAbi}__
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useWriteStakingRewards = /*#__PURE__*/ createUseWriteContract({
+  abi: stakingRewardsAbi,
+  address: stakingRewardsAddress,
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link stakingRewardsAbi}__ and `functionName` set to `"claimRewards"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useWriteStakingRewardsClaimRewards =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    functionName: 'claimRewards',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link stakingRewardsAbi}__ and `functionName` set to `"distribute"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useWriteStakingRewardsDistribute =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    functionName: 'distribute',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link stakingRewardsAbi}__ and `functionName` set to `"stake"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useWriteStakingRewardsStake = /*#__PURE__*/ createUseWriteContract(
+  {
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    functionName: 'stake',
+  },
+)
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link stakingRewardsAbi}__ and `functionName` set to `"unstake"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useWriteStakingRewardsUnstake =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    functionName: 'unstake',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link stakingRewardsAbi}__
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useSimulateStakingRewards =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link stakingRewardsAbi}__ and `functionName` set to `"claimRewards"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useSimulateStakingRewardsClaimRewards =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    functionName: 'claimRewards',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link stakingRewardsAbi}__ and `functionName` set to `"distribute"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useSimulateStakingRewardsDistribute =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    functionName: 'distribute',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link stakingRewardsAbi}__ and `functionName` set to `"stake"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useSimulateStakingRewardsStake =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    functionName: 'stake',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link stakingRewardsAbi}__ and `functionName` set to `"unstake"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useSimulateStakingRewardsUnstake =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    functionName: 'unstake',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link stakingRewardsAbi}__
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useWatchStakingRewardsEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link stakingRewardsAbi}__ and `eventName` set to `"CapturedRewards"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useWatchStakingRewardsCapturedRewardsEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    eventName: 'CapturedRewards',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link stakingRewardsAbi}__ and `eventName` set to `"RewardsPayout"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useWatchStakingRewardsRewardsPayoutEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    eventName: 'RewardsPayout',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link stakingRewardsAbi}__ and `eventName` set to `"RewardsToTreasury"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useWatchStakingRewardsRewardsToTreasuryEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    eventName: 'RewardsToTreasury',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link stakingRewardsAbi}__ and `eventName` set to `"UserStaked"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useWatchStakingRewardsUserStakedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    eventName: 'UserStaked',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link stakingRewardsAbi}__ and `eventName` set to `"UserUnstaked"`
+ *
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7)
+ */
+export const useWatchStakingRewardsUserUnstakedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: stakingRewardsAbi,
+    address: stakingRewardsAddress,
+    eventName: 'UserUnstaked',
   })
 
 /**

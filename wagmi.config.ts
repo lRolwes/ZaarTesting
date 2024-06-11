@@ -13,18 +13,22 @@ export default defineConfig({
     ],
     plugins: [
         etherscan({
-            apiKey: process.env.ETHERSCAN_API_KEY!,
+            apiKey: "HFV1I6KYJZFJGPE9E3AKMG6IRH9YUZV97N",//process.env.ETHERSCAN_API_KEY!,
             chainId: mainnet.id,
             contracts: [
                 {
+                    name: "StakingRewards",
+                    address: {[mainnet.id]: "0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7",
+                }
+                },
+                {
                     name: "PRTC",
                     address: {[mainnet.id]: "0xb9098D3669A78e9AfE8b94a97290407400D9dA31",
-                },
+                }
                 },
                 {
                     name: "Zaar",
                     address: {
-                        
                         [mainnet.id]:
                             "0x95AC17CE4021417E25B8eDF807366fC3bE091B5E",
                     },

@@ -6,9 +6,10 @@ import { Footer } from "../../components/Footer";
 import { HomeHeader } from "../../components/HomeHeader";
 import useBalance from "../../hooks/Balance";
 import { useAccount } from "wagmi";
-import {xpcalcs} from "../../components/xpcalcs";
+import useXP from "../../hooks/xpcalcs";
 const HeroContent = () => {
   const { xPrtcBalance, refetchBalance } = useBalance();
+  const {xpcalcs} = useXP();
   const { address } = useAccount();
   const [rewards, setRewards] = useState(null);
   const [xp, setXp] = useState(0);
@@ -21,21 +22,6 @@ const HeroContent = () => {
       .catch((error) => console.error("Error:", error));
     }, [address]);
     
-    useEffect(() => {
-      async function getXp(){
-        try{
-        const xp = await xpcalcs("0x52cb712bE013B45208D1223d1dBC060Ee6b06B9a")
-        .then((data) => {
-          console.log(data); 
-          setXp(Number(data));
-        });
-      }catch(e){
-        setXp(0);
-      }
-      return;
-      }
-      getXp();
-    }, []);
 
   return (
     <div className="pb-0 flex content-center items-center justify-center bg-hero min-h-screen">
@@ -53,7 +39,7 @@ const HeroContent = () => {
             height={700}
           />
           <h1 className="text-3xl font-bold mb-3 text-white uppercase mt-3 mb-4">
-            Level up with Zaar XP {xp}
+            Level up with Zaar XP {xpcalcs!=undefined ? Number(xpcalcs) : Number(0)}
           </h1>
 
           <section className="bg-black text-white py-3 bg-opacity-60 rounded-sm pb-0">

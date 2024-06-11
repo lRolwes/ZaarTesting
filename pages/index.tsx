@@ -13,7 +13,7 @@ const HeroContent = () => {
   const [carouselImages, setCarouselImages] = useState(["url(/images/hero.jpg)", "url(images/Hero/zaar-hero-remilio.jpg)","url(images/Hero/zaar-hero-milady.jpg)", "url(images/Hero/zaar-hero-pudgys.png)", "url(images/Hero/zaar-hero-azuki.png)"]);
   const [carouselNames, setCarouselNames] = useState(["Zaar", "Redacted Remilio Babies", "Milady Maker", "Pudgy Penguins", "Azuki"]);
   const [carouselAddresses, setCarouselAddresses] = useState(["xp",  "0xd3d9ddd0cf0a5f0bfb8f7fceae075df687eaebab","0x5af0d9827e0c53e4799bb226655a1de152a425a5", "0xbd3531da5cf5857e7cfaa92426877b022e612cf8", "0xed5af388653567af2f388e6224dc7c4b3241c544"]);
-  const [carouselAuthors, setCarouselAuthors] = useState(["Zaar", "Remilia Collective", "Remelia Collective", "Pudgy Penguins", "Azuki" ]);
+  const [carouselAuthors, setCarouselAuthors] = useState(["Zaar", "Remilia Collective", "Remilia Collective", "Pudgy Penguins", "Azuki" ]);
   const [carouselVolumes, setCarouselVolumes] = useState([0, 0, 0, 0, 0]);
   const [carouselFloorPrices, setCarouselFloorPrices] = useState([0, 0, 0, 0, 0]);
   const [currentIndex, setCurrentIndex] = useState(0);
