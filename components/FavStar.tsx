@@ -13,8 +13,8 @@ const remAddress = async (
   addresses: string[],
   id: string,
 ): Promise<void> => {
-  await fetch(
-    `http://localhost:3000/api/remItem?address=${addresses.join(",")}&listId=${id}&remAddress=${remAddress}`,
+  const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
+  await fetch(`${baseUrl}/api/remItem?address=${addresses.join(",")}&listId=${id}&remAddress=${remAddress}`,
     {
       method: "PUT",
     }
@@ -25,8 +25,9 @@ const addAddress = async (
   addresses: string[],
   id: string
 ): Promise<void> => {
+  const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
   await fetch(
-    `http://localhost:3000/api/addItem?address=${addresses.join(",")}&listId=${id}&addAddress=${addAddress}`,
+    `${baseUrl}/api/addItem?address=${addresses.join(",")}&listId=${id}&addAddress=${addAddress}`,
     {
       method: "PUT",
     }
@@ -56,7 +57,8 @@ export const FavStar = ({id, defaultStatus}:{id: string, defaultStatus: boolean}
   }, [id]);
   const fetchData = async (ownerAddress:string): Promise<WatchList> => {
     try {
-      const response = await fetch(`http://localhost:3000/api/getWatchlist?ownerAddress=`+ownerAddress);
+      const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
+      const response = await fetch(`${baseUrl}/api/getWatchlist?ownerAddress=${ownerAddress}`);
       let userData: WatchList = await response.json();
       return userData;
     } catch (error) {
