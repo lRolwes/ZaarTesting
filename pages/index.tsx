@@ -7,61 +7,83 @@ import { Footer } from "../components/Footer";
 import { HomeHeader } from "../components/HomeHeader";
 import { useTrendingCollections } from "@reservoir0x/reservoir-kit-ui";
 import useTopCollections from "../hooks/TopCollections";
+import axios from "axios";
+
 const HeroContent = () => {
-  const { collectionName, collectionImage, collectionVolume, collectionFloorPrice } = useTopCollections();
-  const [currentImage, setCurrentImage] = useState(collectionImage[0]);
-  const [currentName, setCurrentName] = useState(collectionName[0]);
-  const [currentFloorValue, setCurrentFloorValue] = useState(
-    collectionFloorPrice[0]
-  );
-  const [currentVolume, setCurrentVolume] = useState(collectionVolume[0]);
+  const [carouselImages, setCarouselImages] = useState(["url(/images/hero.jpg)", "url(images/Hero/zaar-hero-remilio.jpg)","url(images/Hero/zaar-hero-milady.jpg)", "url(images/Hero/zaar-hero-pudgys.png)", "url(images/Hero/zaar-hero-azuki.png)"]);
+  const [carouselNames, setCarouselNames] = useState(["Zaar", "Redacted Remilio Babies", "Milady Maker", "Pudgy Penguins", "Azuki"]);
+  const [carouselAddresses, setCarouselAddresses] = useState(["xp",  "0xd3d9ddd0cf0a5f0bfb8f7fceae075df687eaebab","0x5af0d9827e0c53e4799bb226655a1de152a425a5", "0xbd3531da5cf5857e7cfaa92426877b022e612cf8", "0xed5af388653567af2f388e6224dc7c4b3241c544"]);
+  const [carouselAuthors, setCarouselAuthors] = useState(["Zaar", "Remilia Collective", "Remilia Collective", "Pudgy Penguins", "Azuki" ]);
+  const [carouselVolumes, setCarouselVolumes] = useState([0, 0, 0, 0, 0]);
+  const [carouselFloorPrices, setCarouselFloorPrices] = useState([0, 0, 0, 0, 0]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    async function carouselDataLookup() {
+      let index = 1;
+      let carouselFloors = [0, 0, 0, 0, 0];
+      let carouselVolumes = [0, 0, 0, 0, 0];
+      while(index<=4){
+      const options = {
+        method: "GET",
+        url: `https://api.reservoir.tools/collections/v7?id=${carouselAddresses[index]}`,
+        headers: {
+          //accept: "*/*",
+          "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
+        },
+      };
+      try {
+        const response = await axios.request(options);
+        carouselFloors[index] = response.data?.collections[0]?.floorAsk?.price?.amount?.decimal; // update the specific item at 'index'
+        carouselVolumes[index] = response.data?.collections[0]?.volume?.["1day"];
+        index = index+1;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    setCarouselFloorPrices(carouselFloors); // set the state with the new array      return response.data;
+    setCarouselVolumes(carouselVolumes);
+    return
+  }
+    carouselDataLookup();
+  }, [carouselAddresses]);
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const currentIndex = collectionImage.indexOf(currentImage);
-      const nextIndex = (currentIndex + 1) % 5;
-      setCurrentImage(collectionImage[nextIndex]);
-      setCurrentName(collectionName[nextIndex]);
-      setCurrentFloorValue(collectionFloorPrice[nextIndex]);
-      setCurrentVolume(collectionVolume[nextIndex]);
+
+      setCurrentIndex((currentIndex+1)%5);
+      
     }, 6000); // Change image every 3 seconds
     // Clean up function to clear the interval when the component unmounts
     return () => clearInterval(intervalId);
-  }, [
-    currentImage,
-    collectionImage,
-    currentName,
-    collectionName,
-    currentFloorValue,
-    collectionFloorPrice,
-    currentVolume,
-    collectionVolume,
-  ]);
+  }, [currentIndex]);
 
   return (
     <div id="landing">
       {/* Hero Section */}
       <div
         className="pt-32 pb-32 flex content-center items-center justify-center bg-hero min-h-screen"
-        style={{ minHeight: "75h" }}
+        style={{ minHeight: "50h" }}
       >
         <div
-        className="absolute left-0 right-0 w-full h-full bg-center bg-cover z-10"
+        className={`absolute left-0 right-0 w-full h-full bg-center bg-cover z-10 `}
         style={{
-          backgroundImage: "url('/images/hero.jpg')",
+          backgroundImage: carouselImages[currentIndex],
           backgroundSize: "cover",
           height: "100vh", // Set a fixed height
           width: "100vw", // Set a fixed width
         }}
-      ></div>
+      >
+      {currentIndex!=0? 
+      <div className="absolute w-full h-full bg-black bg-opacity-40"></div>
+      : null}
+      </div>
       {/* Gradient Overlay */}
 
       {/* Hero Content */}
-      <div className="container fixed relative z-20 mt-0 w-full">
+      {currentIndex==0 ?
+      <div className="container fixed relative h-[90%] z-20 mt-0 w-full ">
         <div className="text-center text-white flex flex-col justify-center items-center">
-          <span className="inline-block text-yellow bg-yellow bg-opacity-20 tracking-widest mb-3 px-6 py-1 rounded-full text-lg z-20">
-            <i className="fad fa-stars "></i> LAUNCHING SOON™
-          </span>
-          <div className="flex relative w-[400px] md:w-[45%] justify-center items-center h-auto z-20 ">
+          <div className="flex relative w-[400px] md:w-[35%] justify-center items-center h-auto z-20 ">
             <Image
               src="/images/logo-white.png"
               alt="logo"
@@ -71,37 +93,78 @@ const HeroContent = () => {
               height={600}
             />
           </div>
-          <h1 className="text-3xl font-bold mb-3 text-white uppercase mt-5 z-20">
+          <h1 className="text-lg md:text-xl font-bold mb-3 text-white uppercase mt-5 z-20">
             A full-featured mobile-friendly NFT marketplace
           </h1>
           <div className="flex justify-center space-x-8 mb-"></div>
-          <Link
-            href="/migration"
+          {/*<Link
+            href="/xp"
             className="inline-block bg-yellow hover:bg-whitish border-2 border-yellow hover:text-black text-black py-2 px-4 uppercase rounded-sm font-bold mb-20 hover:text-black"
           >
-            Migrate Now
+            Earn Rewards
+          </Link>*/}
+          
+          <Link href={`/xp`} >
+                <div className="inline-block bg-black bg-opacity-60 hover:opacity-100 text-white py-2 px-4 uppercase rounded-sm font-bold  hover:bg-white hover:text-black transition-colors duration-300 ease-in-out mb-10">
+                Earn Rewards
+                </div>
           </Link>
         </div>
       </div>
+      :
+      <div className="container pt-10 sm:pt-0 relative mx-auto z-20">
+            <div className="text-center text-white font-bold">
+                <h1 className="text-4xl text-white font-bold mb-3">{carouselNames[currentIndex]}</h1>
+                <p className="text-2xl mb-0 uppercase">{"BY "}{carouselAuthors[currentIndex]}</p>
+                <div className="flex justify-center space-x-8 mb-6">
+                    {/* Content */}
+                </div>
+                <Link href={`/${carouselAddresses[currentIndex]}`} >
+                <div className="inline-block bg-black bg-opacity-60 hover:opacity-100 text-white py-2 px-4 uppercase rounded-sm font-bold  hover:bg-white hover:text-black transition-colors duration-300 ease-in-out mb-10">View Collection
+                </div>
+                </Link>
+            </div>
+
+            {/* Data Section */}
+            <div className="flex justify-center items-center space-x-2 mb-20 ">
+                {/* Floor Price Column */}
+                <div className="text-center p-2 mt-0">
+                    <span className="text-light-gray text-md uppercase font-semibold">Buy Now</span>
+                    <div className="text-white text-lg font-bold mt-1 ">{carouselFloorPrices[currentIndex]} <i className="fab fa-ethereum fa-sm"></i></div>
+                </div>
+
+                {/* 1D Volume Column */}
+                <div className="text-center p-2">
+                    <span className="text-light-gray text-md uppercase font-semibold">24H Volume</span>
+                    <div className="text-white text-lg font-bold mt-1">{carouselVolumes[currentIndex].toFixed(2)}<i className="fab fa-ethereum fa-sm"></i></div>
+                </div>
+
+                {/* Third Data Column */}
+                <div className="text-center p-2">
+                    <span className="text-light-gray text-md uppercase font-semibold">Capsule APY</span>
+                    <div className="text-light-green text-lg font-bold mt-1">--</div>
+                </div>
+            </div>
+        </div>
+      }
         
- 
-
-
-
         {/* Boxes within Hero Image */}
-        <div className="absolute bottom-0 w-full z-20 pb-6 pr-2">
-          <div className="flex justify-center px-4">
-            <div className="flex overflow-x-scroll pb-0 hide-scroll-bar no-scrollbar snap-x snap-mandatory">
+        <div className="absolute bottom-0 w-full z-20 pr-2  mb-10">
+          <div className="flex justify-center px-4 h-full ">
+            <div className="flex overflow-x-scroll pb-0 hide-scroll-bar no-scrollbar snap-x snap-mandatory pt-2">
               <div className="flex flex-nowrap lg:mx-0">
                 {/* Each Box */}
                 {/* Apply the hover effect to this div to ensure the entire box moves */}
-                <div className="inline-block px-3 snap-start hover:-translate-y-2 transform transition duration-300 hero-box">
+                {[0,1,2,3,4].map((item)=>{
+                  return(
+                  <div key={item}>
+                  <Link  href={`/${carouselAddresses[item]}`} className="inline-block px-3 snap-start hover:-translate-y-2 transform transition duration-300 hero-box">
                   <div className="w-64 h-48 max-w-xs overflow-hidden rounded-lg shadow-md bg-white hover:shadow-lg transition-shadow duration-300 ease-in-out relative">
                     {/* Clickable area */}
-                    <a href="#" className="block w-full h-full">
+                    <div className="block w-full h-full">
                       <div
                         className="w-full h-full bg-cover bg-center"
-                        style={{ backgroundImage: collectionImage[0] }}
+                        style={{ backgroundImage: carouselImages[item] }}
                       >
                         {/* Gradient Overlay for better text visibility */}
                         <div
@@ -114,129 +177,17 @@ const HeroContent = () => {
                         {/* Title at the bottom left */}
                         <div className="absolute bottom-0 left-0 p-4 z-10">
                           <h2 className="text-white text-lg font-bold">
-                            {collectionName[0]}
+                            {carouselNames[item]}
                           </h2>
                         </div>
                       </div>
-                    </a>
+                    </div>
                   </div>
+                </Link>
                 </div>
-                {/* Repeat boxes as needed */}
-                <div className="inline-block px-3 snap-start hover:-translate-y-2 transform transition duration-300 hero-box">
-                  <div className="w-64 h-48 max-w-xs overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out relative">
-                    {/* Clickable area */}
-                    <a href="#" className="block w-full h-full">
-                      <div
-                        className="w-full h-full bg-cover bg-center"
-                        style={{
-                          backgroundImage: collectionImage[1] || "",
-                        }}
-                      >
-                        {/* Gradient Overlay for better text visibility */}
-                        <div
-                          className="absolute top-0 left-0 w-full h-full"
-                          style={{
-                            background:
-                              "linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%)",
-                          }}
-                        ></div>
-                        {/* Title at the bottom left */}
-                        <div className="absolute bottom-0 left-0 p-4 z-10">
-                          <h2 className="text-white text-lg font-bold">
-                            {collectionName[1]}
-                          </h2>
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                </div>
-                {/* Repeat boxes as needed */}
-                <div className="inline-block px-3 snap-start hover:-translate-y-2 transform transition duration-300 hero-box ">
-                  <div className="w-64 h-48 max-w-xs overflow-hidden rounded-lg shadow-md bg-white hover:shadow-lg transition-shadow duration-300 ease-in-out relative no-scrollbar">
-                    {/* Clickable area */}
-                    <a href="#" className="block w-full h-full ">
-                      <div
-                        className="w-full h-full bg-cover bg-center "
-                        style={{
-                          backgroundImage: collectionImage[2],
-                        }}
-                      >
-                        {/* Gradient Overlay for better text visibility */}
-                        <div
-                          className="absolute top-0 left-0 w-full h-full"
-                          style={{
-                            background:
-                              "linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%)",
-                          }}
-                        ></div>
-                        {/* Title at the bottom left */}
-                        <div className="absolute bottom-0 left-0 p-4 z-10">
-                          <h2 className="text-white text-lg font-bold">
-                            {collectionName[2]}
-                          </h2>
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                </div>
-                {/* Repeat boxes as needed */}
-                <div className="inline-block px-3 snap-start hover:-translate-y-2 transform transition duration-300 hero-box">
-                  <div className="w-64 h-48 max-w-xs overflow-hidden rounded-lg shadow-md bg-white hover:shadow-lg transition-shadow duration-300 ease-in-out relative">
-                    {/* Clickable area */}
-                    <a href="#" className="block w-full h-full">
-                      <div
-                        className="w-full h-full bg-cover bg-center"
-                        style={{
-                          backgroundImage: collectionImage[3],
-                        }}
-                      >
-                        {/* Gradient Overlay for better text visibility */}
-                        <div
-                          className="absolute top-0 left-0 w-full h-full"
-                          style={{
-                            background:
-                              "linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%)",
-                          }}
-                        ></div>
-                        {/* Title at the bottom left */}
-                        <div className="absolute bottom-0 left-0 p-4 z-10">
-                          <h2 className="text-white text-lg font-bold">
-                            {collectionName[3]}
-                          </h2>
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                </div>
-                {/* Repeat boxes as needed */}
-                <div className="inline-block px-3 snap-start hover:-translate-y-2 transform transition duration-300 hero-box">
-                  <div className="w-64 h-48 max-w-xs overflow-hidden rounded-lg shadow-md bg-white hover:shadow-lg transition-shadow duration-300 ease-in-out relative">
-                    {/* Clickable area */}
-                    <a href="#" className="block w-full h-full">
-                      <div
-                        className="w-full h-full bg-cover bg-center"
-                        style={{
-                          backgroundImage: collectionImage[4],
-                        }}
-                      >
-                        {/* Gradient Overlay for better text visibility */}
-                        <div
-                          className="absolute top-0 left-0 w-full h-full"
-                          style={{
-                            background:
-                              "linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%)",
-                          }}
-                        ></div>
-                        {/* Title at the bottom left */}
-                        <div className="absolute bottom-0 left-0 p-4 z-10">
-                          <h2 className="text-white text-lg font-bold">
-                            {collectionName[4]}
-                          </h2>
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                </div>
+              );})}
+                
+                
               </div>
             </div>
           </div>
@@ -251,18 +202,24 @@ const TableSection = () => {
     period: "24h",
     limit: 10,
   });
-  const [collectionImage, setImage] = useState([" "," "," "," "," "," "," "," "," ",]);
-  const [collectionName, setName] = useState([" "," "," "," "," "," "," "," "," ",]);
-  const [collectionVolume, setVolume] = useState([" "," "," "," "," "," "," "," "," ",]);
-  const [collectionFloorPrice, setFloorPrice] = useState([" "," "," "," "," "," "," "," "," ",]);
-  const [collectionTopBid, setTopBid] = useState([" "," "," "," "," "," "," "," "," ",]);
-  const [collection24HourPercentChange, set24HourPercentChange] = useState([" "," "," "," "," "," "," "," "," ",]);
-  const [collection24HourRawChange, set24HourRawChange] = useState([" "," "," "," "," "," "," "," "," ",]);
-  const [collectionOwners, setOwners] = useState([" "," "," "," "," "," "," "," "," ",]);
-  const [collectionPercentListed, setPercentListed] = useState([" "," "," "," "," "," "," "," "," ",]);
+  const [collectionId, setId] = useState<string[]>();
+  const [collectionImage, setImage] = useState([" "]);
+  const [collectionName, setName] = useState([" "]);
+  const [collectionVolume, setVolume] = useState([0]);
+  const [collectionFloorPrice, setFloorPrice] = useState([0]);
+  const [collectionTopBid, setTopBid] = useState([0]);
+  const [collection24HourPercentChange, set24HourPercentChange] = useState([0]);
+  const [collection24HourRawChange, set24HourRawChange] = useState([0]);
+  const [collectionOwners, setOwners] = useState([0]);
+  const [collectionSales, setSales] = useState([0]);
+  const [collectionPercentListed, setPercentListed] = useState([0]);
+  const [collectionOnSaleCount, setOnSaleCount] = useState(["0"]);
+  const [collectionTokenCount, setTokenCount] = useState(["0"]);
+
 
   useEffect(() => {
     if (collections != null) {
+      let ids = [];
       let images = [];
       let names = [];
       let volumes = [];
@@ -271,17 +228,39 @@ const TableSection = () => {
       let percentChanges = [];
       let rawChanges = [];
       let owners = [];
+      let sales = [];
       let percentListed = [];
-
-      for (let x = 0; x < 10; x++) {
-        images.push("url('" + collections?.[x].image + "')" || " ");
-        names.push(collections?.[x].name?.toString() || " ");
-        volumes.push(collections?.[x].volume?.toString() || " ");
-        floorPrices.push(collections?.[x].floorAsk?.price?.amount?.usd?.toString() || " ");
-        topBids.push(collections?.[x].topBid?.price?.toString() || "0");
-        percentChanges.push(collections?.[x].floorAskPercentChange?.toString()+"%" || "0");
-        owners.push(collections?.[x].ownerCount?.toString() || "0");
+      let tokenCount = [];
+      let onSaleCount = [];
+      for (let x = 0; x < 1000; x++) {
+        ids.push(collections?.[x]?.id || " ");
+        images.push("url('" + collections?.[x]?.image + "')" || " ");
+        names.push(collections?.[x]?.name?.toString() || " ");
+        volumes.push(Number(collections?.[x]?.volume?.toFixed(2)) || 0);
+        floorPrices.push(
+          collections?.[x]?.floorAsk?.price?.amount?.decimal || 0
+        );
+        topBids.push(collections?.[x]?.topBid?.price?.amount?.decimal || 0);
+        percentChanges.push(
+          Number(collections?.[x]?.floorAskPercentChange?.toFixed(2)) || 0
+        );
+        rawChanges.push(
+          (Number(collections?.[x]?.floorAskPercentChange) / 100) *
+          Number(collections?.[x]?.floorAsk?.price?.amount?.decimal) || 0
+        );
+        owners.push(collections?.[x]?.ownerCount || 0);
+        sales.push(collections?.[x]?.onSaleCount || 0);
+        percentListed.push(
+          Number(
+            (
+              (Number(collections?.[x]?.onSaleCount)/Number(collections?.[x]?.tokenCount))
+            ).toFixed(2)
+          ) || 0
+        );
+        tokenCount.push(collections?.[x]?.tokenCount?.toString() || "0");
+        onSaleCount.push(collections?.[x]?.onSaleCount?.toString() || "0");
       }
+      setId(ids);
       setImage(images);
       setName(names);
       setVolume(volumes);
@@ -289,7 +268,11 @@ const TableSection = () => {
       setTopBid(topBids);
       set24HourPercentChange(percentChanges);
       setOwners(owners);
-      console.log(collections);
+      setSales(sales);
+      set24HourRawChange(rawChanges);
+      setPercentListed(percentListed);
+      setTokenCount(tokenCount);
+      setOnSaleCount(onSaleCount);
     }
   }, [collections]);
   return (
@@ -316,563 +299,120 @@ const TableSection = () => {
         {/* Table */}
         <div className="overflow-x-auto rounded-lg">
           <div className="table-wrapper">
-            <table className="sticky-first-column w-full text-sm text-left text-white">
-              <thead className="text-xs uppercase text-gray">
-                <tr className="border-b border-dark-gray cursor-pointer">
-                  <th scope="col" className="px-6 py-3"></th>
-                  <th scope="col" className="px-6 py-3">
-                    Collection
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right">
-                    Capsule APY
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right">
-                    Floor Price
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right">
-                    Top Offer
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right">
-                    24H Change (%)
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right">
-                    24H Change (listed)
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right">
-                    24H Volume
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right">
-                    Owners
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right">
-                    % Listed
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* 1st row */}
-                <tr className="dark-gray-hover cursor-pointer">
-                  <td className="px-0 py-2 text-right text-green-500">
-                    <div className="flex items-center pl-2 max-w-50px">
-                      <div className="flex items-center text-xs font-medium text-white">
-                        <div className="w-5 h-12">
-                          <div
-                            role="button"
-                            tabIndex={0}
-                            className="flex items-center w-full h-full">
-                            <div className="flex items-center">
-                              <i className="far fa-star"></i>
+          <table className="sticky-first-column w-full text-sm text-left text-light-green z-10">
+                <thead className="max-h-[800px] text-s uppercase text-gray w-full z-1 whitespace-nowrap">
+                  <tr className="border-b border-dark-gray cursor-pointer">
+                    <th scope="col" className="px-6 pb-3"></th>
+                    <th scope="col" className="px-6 pb-3">
+                      Collection
+                    </th>
+                    <th scope="col" className="px-6 pb-3 text-right">
+                      Floor Price
+                    </th>
+                    <th scope="col" className="px-6 pb-3 text-right">
+                      Top Offer
+                    </th>
+                    <th scope="col" className="px-6 pb-3 text-right">
+                      24H Change (%)
+                    </th>
+                    <th scope="col" className="px-6 pb-3 text-right">
+                      24H Change (listed)
+                    </th>
+                    <th scope="col" className="px-6 pb-3 text-right">
+                      24H Volume
+                    </th>
+                    <th scope="col" className="px-6 pb-3 text-right">
+                      Sales
+                    </th>
+                    <th scope="col" className="px-6 pb-3 text-right">
+                      Capsule APY
+                    </th>
+                    <th scope="col" className="px-6 pb-3 text-right">
+                      Owners
+                    </th>
+                    <th scope="col" className="px-6 pb-3 text-right">
+                      % Listed
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="z-10">
+                  {collections?.map((item, index) => (
+                      <tr
+                        key={index}
+                        className="dark-gray-hover cursor-pointer w-full"
+                      >
+                        <td className="px-0 py-2 text-right text-green-500">
+                          <div className="flex items-center pl-2 max-w-50px">
+                            <div className="flex items-center justify-center text-xs font-medium text-light-green">
+                              <div className="w-5 h-12 flex items-center">
+                                <div
+                                  role="button"
+                                  tabIndex={0}
+                                  className="flex items-center w-full h-full"
+                                >
+                                  <div className="flex items-center ">
+                                  </div>
+                                </div>
+                              </div>
+                              <span className=" px-2 pl-0.5 !pr-0 text-gray flex items-center">
+                                {index + 1}
+                              </span>
                             </div>
                           </div>
-                        </div>
-                        <span className=" mt-[2px] px-2 pl-0.5 !pr-0">1</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 flex items-center">
-                    <div
-                      className="h-10 w-10 rounded-sm mr-4"
-                      style={{ 
-                        backgroundImage: collectionImage[0],
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat',
-                      }}
-                    />
-                    {collectionName[0]}
-                    <div className="inline-flex items-center ml-1 opacity-80">
-                      <span className="relative inline-flex items-center justify-center">
-                        {" "}
-                        {/* Adjust the angle here */}
-                        <span className="h-3 w-6 rounded-full shadow-lg flex items-center justify-center overflow-hidden">
-                          <span className="text-xs font-semibold text-black z-10">
-                            z
+                        </td>
+                        <td className="px-4 py-4 flex items-center">
+                          {collectionId && (
+                            <div className="flex flex-row items-center">  <Link href={`/${collectionId[index]}`}>
+                              <div
+                                className="h-10 w-10 rounded-sm mr-4"
+                                style={{
+                                  backgroundImage: collectionImage[index],
+                                  backgroundSize: "cover",
+                                  backgroundPosition: "center",
+                                  backgroundRepeat: "no-repeat",
+                                }}
+                              />
+                            </Link>
+                          
+                          <Link className="hover:text-hoveryellow w-52 truncate" href={`/${collectionId[index]}`}>
+                            {collectionName[index]}
+                          </Link>
+                          </div>)}
+                          <div className="inline-flex items-center ml-1 opacity-80"></div>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          {collectionFloorPrice[index]}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          {collectionTopBid[index]}
+                        </td>
+                        <td
+                          className={`px-6 py-4 text-right ${collection24HourPercentChange[index] > 0 ? "text-green-500" : "text-red"}`}
+                        >
+                          {collection24HourPercentChange[index]}%
+                        </td>
+                        <td className="px-6 py-4 text-right text-green-500">
+                          <span className="text-light-green">
+                            {collection24HourRawChange[index]?.toFixed(2)}
                           </span>
-                          <span
-                            className="absolute inset-0 bg-gradient-to-r from-red-500 via-red-400 to-yellow-500 rounded-full"
-                            style={{
-                              backgroundImage:
-                                "linear-gradient(to right, #ef4444 30%, #facc15 70%)",
-                            }}
-                          ></span>
-                        </span>
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right text-green-500">
-                    14.00%
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    {collectionFloorPrice[0]}
-                  </td>
-                  <td className="px-6 py-4 text-right">{collectionTopBid[0]}</td>
-                  <td className="px-6 py-4 text-right text-green-500">{collection24HourPercentChange[0]}</td>
-                  <td className="px-6 py-4 text-right text-green-500">
-                    <span className="text-white">+0</span> (0.00%)
-                  </td>
-                  <td className="px-6 py-4 text-right">{collectionVolume[0]}</td>
-                  <td className="px-6 py-4 text-right">
-                    {collectionOwners[0]} <span className="text-white">(0%)</span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    0/0.0k <span className="text-white">(0.0%)</span>
-                  </td>
-                </tr>
-                {/* 2nd row */}
-                <tr className="dark-gray-hover cursor-pointer">
-                  <td className="px-0 py-2 text-right text-green-500">
-                    <div className="flex items-center pl-2 max-w-50px">
-                      <div className="flex items-center text-xs font-medium text-white">
-                        <div className="w-5 h-12">
-                          <div
-                            role="button"
-                            tabIndex={0}
-                            className="flex items-center w-full h-full"
-                          >
-                            <div className="flex items-center">
-                              <i className="far fa-star"></i>
-                            </div>
-                          </div>
-                        </div>
-                        <span className=" mt-[2px] px-2 pl-0.5 !pr-0">2</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 flex items-center">
-                    <div
-                      className="h-10 w-10 rounded-sm mr-4"
-                      style={{ 
-                        backgroundImage: collectionImage[1],
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat',}}
-                    />
-                    {collectionName[1]}
-                    <div className="inline-flex items-center ml-1 opacity-80">
-                      <span className="relative inline-flex items-center justify-center">
-                        {" "}
-                        {/* Adjust the angle here */}
-                        <span className="h-3 w-6 rounded-full shadow-lg flex items-center justify-center overflow-hidden">
-                          <span className="text-xs font-semibold text-black z-10">
-                            z
-                          </span>
-                          <span
-                            className="absolute inset-0 bg-gradient-to-r from-red-500 via-red-400 to-yellow-500 rounded-full"
-                            style={{
-                              backgroundImage:
-                                "linear-gradient(to right, #ef4444 30%, #facc15 70%)",
-                            }}
-                          ></span>
-                        </span>
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right text-green-500">
-                    12.00%
-                  </td>
-                  <td className="px-6 py-4 text-right">6.12</td>
-                  <td className="px-6 py-4 text-right">6.09</td>
-                  <td className="px-6 py-4 text-right text-red-500">-4.38%</td>
-                  <td className="px-6 py-4 text-right text-red-500">
-                    <span className="text-white">-69</span> (4.22%)
-                  </td>
-                  <td className="px-6 py-4 text-right">3133.12</td>
-                  <td className="px-6 py-4 text-right">
-                    4,248 <span className="text-white">(42.2%)</span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    645/10k <span className="text-white">(6.4%)</span>
-                  </td>
-                </tr>
-                {/* 3rd row */}
-                <tr className="dark-gray-hover cursor-pointer">
-                  <td className="px-0 py-2 text-right text-green-500">
-                    <div className="flex items-center pl-2 max-w-50px">
-                      <div className="flex items-center text-xs font-medium text-white">
-                        <div className="w-5 h-12">
-                          <div
-                            role="button"
-                            tabIndex={0}
-                            className="flex items-center w-full h-full"
-                          >
-                            <div className="flex items-center">
-                              <i className="far fa-star"></i>
-                            </div>
-                          </div>
-                        </div>
-                        <span className=" mt-[2px] px-2 pl-0.5 !pr-0">3</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 flex items-center">
-                    <div className="flex items-center">
-                      <div
-                        className="h-10 w-10 rounded-sm mr-4"
-                        style={{ 
-                          backgroundImage: collectionImage[2],
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                          backgroundRepeat: 'no-repeat', }}
-                      />
-                      {collectionName[2]}
-                      <div className="inline-flex items-center ml-1 opacity-80">
-                        <span className="relative inline-flex items-center justify-center">
-                          {" "}
-                          {/* Adjust the angle here */}
-                          <span className="h-3 w-6 rounded-full shadow-lg flex items-center justify-center overflow-hidden">
-                            <span className="text-xs font-semibold text-black z-10">
-                              z
-                            </span>
-                            <span
-                              className="absolute inset-0 bg-gradient-to-r from-red-500 via-red-400 to-yellow-500 rounded-full"
-                              style={{
-                                backgroundImage:
-                                  "linear-gradient(to right, #ef4444 30%, #facc15 70%)",
-                              }}
-                            ></span>
-                          </span>
-                        </span>
-                      </div>
-                    </div>
-                  </td>
-
-                  <td className="px-6 py-4 text-right text-green-500">
-                    12.00%
-                  </td>
-                  <td className="px-6 py-4 text-right">18.70</td>
-                  <td className="px-6 py-4 text-right">18.66</td>
-                  <td className="px-6 py-4 text-right text-red-500">-3.70%</td>
-                  <td className="px-6 py-4 text-right text-green-500">
-                    <span className="text-white">+121</span> (5.32%)
-                  </td>
-                  <td className="px-6 py-4 text-right">3036.92</td>
-                  <td className="px-6 py-4 text-right">
-                    4,491 <span className="text-white">(51.1%)</span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    483/9k <span className="text-white">(5.36%)</span>
-                  </td>
-                </tr>
-                {/* 4th row */}
-                <tr className="dark-gray-hover cursor-pointer">
-                  <td className="px-0 py-2 text-right text-green-500">
-                    <div className="flex items-center pl-2 max-w-50px">
-                      <div className="flex items-center text-xs font-medium text-white">
-                        <div className="w-5 h-12">
-                          <div
-                            role="button"
-                            tabIndex={0}
-                            className="flex items-center w-full h-full"
-                          >
-                            <div className="flex items-center">
-                              <i className="far fa-star"></i>
-                            </div>
-                          </div>
-                        </div>
-                        <span className=" mt-[2px] px-2 pl-0.5 !pr-0">4</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 flex items-center">
-                    <div
-                      className="h-10 w-10 rounded-sm mr-4"
-                      style={{ 
-                        backgroundImage: collectionImage[3],
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat', }}
-                    />
-                    {collectionName[3]}
-                  </td>
-                  <td className="px-6 py-4 text-right text-green-500"></td>
-                  <td className="px-6 py-4 text-right">0.85</td>
-                  <td className="px-6 py-4 text-right">0.82</td>
-                  <td className="px-6 py-4 text-right text-red-500">20.70%</td>
-                  <td className="px-6 py-4 text-right text-green-500">
-                    <span className="text-white">+121</span> (5.32%)
-                  </td>
-                  <td className="px-6 py-4 text-right">3036.92</td>
-                  <td className="px-6 py-4 text-right">
-                    4,491 <span className="text-white">(51.1%)</span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    647/9.2k <span className="text-white">(7%)</span>
-                  </td>
-                </tr>
-                {/* 5th row */}
-                <tr className="dark-gray-hover cursor-pointer">
-                  <td className="px-0 py-2 text-right text-green-500">
-                    <div className="flex items-center pl-2 max-w-50px">
-                      <div className="flex items-center text-xs font-medium text-white">
-                        <div className="w-5 h-12">
-                          <div
-                            role="button"
-                            tabIndex={0}
-                            className="flex items-center w-full h-full"
-                          >
-                            <div className="flex items-center">
-                              <i className="far fa-star"></i>
-                            </div>
-                          </div>
-                        </div>
-                        <span className=" mt-[2px] px-2 pl-0.5 !pr-0">5</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 flex items-center">
-                    <div
-                      className="h-10 w-10 rounded-sm mr-4"
-                      style={{ 
-                        backgroundImage: collectionImage[4],
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat', }}
-                    />
-                    {collectionName[4]}
-                    <div className="inline-flex items-center ml-1 opacity-80">
-                      <span className="relative inline-flex items-center justify-center">
-                        {" "}
-                        {/* Adjust the angle here */}
-                        <span className="h-3 w-6 rounded-full shadow-lg flex items-center justify-center overflow-hidden">
-                          <span className="text-xs font-semibold text-black z-10">
-                            z
-                          </span>
-                          <span
-                            className="absolute inset-0 bg-gradient-to-r from-red-500 via-red-400 to-yellow-500 rounded-full"
-                            style={{
-                              backgroundImage:
-                                "linear-gradient(to right, #ef4444 30%, #facc15 70%)",
-                            }}
-                          ></span>
-                        </span>
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right text-green-500">
-                    10.50%
-                  </td>
-                  <td className="px-6 py-4 text-right">2.64</td>
-                  <td className="px-6 py-4 text-right">2.59</td>
-                  <td className="px-6 py-4 text-right text-green-500">
-                    12.35%
-                  </td>
-                  <td className="px-6 py-4 text-right text-green-500">
-                    <span className="text-white">+121</span> (5.32%)
-                  </td>
-                  <td className="px-6 py-4 text-right">194.84</td>
-                  <td className="px-6 py-4 text-right">
-                    5,487 <span className="text-white">(55%)</span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    497/10k<span className="text-white">(4.97%)</span>
-                  </td>
-                </tr>
-                {/* 6th row */}
-                <tr className="dark-gray-hover cursor-pointer">
-                  <td className="px-0 py-2 text-right text-green-500">
-                    <div className="flex items-center pl-2 max-w-50px">
-                      <div className="flex items-center text-xs font-medium text-white">
-                        <div className="w-5 h-12">
-                          <div
-                            role="button"
-                            tabIndex={0}
-                            className="flex items-center w-full h-full"
-                          >
-                            <div className="flex items-center">
-                              <i className="far fa-star"></i>
-                            </div>
-                          </div>
-                        </div>
-                        <span className=" mt-[2px] px-2 pl-0.5 !pr-0">6</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 flex items-center">
-                    <div
-                      className="h-10 w-10 rounded-sm mr-4"
-                      style={{ 
-                        backgroundImage: collectionImage[5],
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat', }}
-                    />
-                    {collectionName[5]}
-                    <div className="inline-flex items-center ml-1 opacity-80">
-                      <span className="relative inline-flex items-center justify-center">
-                        {" "}
-                        {/* Adjust the angle here */}
-                        <span className="h-3 w-6 rounded-full shadow-lg flex items-center justify-center overflow-hidden">
-                          <span className="text-xs font-semibold text-black z-10">
-                            z
-                          </span>
-                          <span
-                            className="absolute inset-0 bg-gradient-to-r from-red-500 via-red-400 to-yellow-500 rounded-full"
-                            style={{
-                              backgroundImage:
-                                "linear-gradient(to right, #ef4444 30%, #facc15 70%)",
-                            }}
-                          ></span>
-                        </span>
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right text-green-500">
-                    14.00%
-                  </td>
-                  <td className="px-6 py-4 text-right">26.75</td>
-                  <td className="px-6 py-4 text-right">26.31</td>
-                  <td className="px-6 py-4 text-right text-red-500">-0.56%</td>
-                  <td className="px-6 py-4 text-right text-green-500">
-                    <span className="text-white">+121</span> (5.32%)
-                  </td>
-                  <td className="px-6 py-4 text-right">2000.99</td>
-                  <td className="px-6 py-4 text-right">
-                    5,581 <span className="text-white">(56%)</span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    346/10k<span className="text-white">(3.46%)</span>
-                  </td>
-                </tr>
-                {/* 7th row */}
-                <tr className="dark-gray-hover cursor-pointer">
-                  <td className="px-0 py-2 text-right text-green-500">
-                    <div className="flex items-center pl-2 max-w-50px">
-                      <div className="flex items-center text-xs font-medium text-white">
-                        <div className="w-5 h-12">
-                          <div
-                            role="button"
-                            tabIndex={0}
-                            className="flex items-center w-full h-full"
-                          >
-                            <div className="flex items-center">
-                              <i className="far fa-star"></i>
-                            </div>
-                          </div>
-                        </div>
-                        <span className=" mt-[2px] px-2 pl-0.5 !pr-0">7</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 flex items-center">
-                    <div
-                      className="h-10 w-10 rounded-sm mr-4"
-                      style={{ 
-                        backgroundImage: collectionImage[6],
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat', }}
-                    />
-                    {collectionName[6]}
-                  </td>
-                  <td className="px-6 py-4 text-right text-green-500"></td>
-                  <td className="px-6 py-4 text-right">3.36</td>
-                  <td className="px-6 py-4 text-right">3.35</td>
-                  <td className="px-6 py-4 text-right text-red-500">-2.69%</td>
-                  <td className="px-6 py-4 text-right text-green-500">
-                    <span className="text-white">+121</span> (5.32%)
-                  </td>
-                  <td className="px-6 py-4 text-right">1188.79</td>
-                  <td className="px-6 py-4 text-right">
-                    2,653 <span className="text-white">(30%)</span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    430/9k<span className="text-white">(4.8%)</span>
-                  </td>
-                </tr>
-                {/* 8th row */}
-                <tr className="dark-gray-hover cursor-pointer">
-                  <td className="px-0 py-2 text-right text-green-500">
-                    <div className="flex items-center pl-2 max-w-50px">
-                      <div className="flex items-center text-xs font-medium text-white">
-                        <div className="w-5 h-12">
-                          <div
-                            role="button"
-                            tabIndex={0}
-                            className="flex items-center w-full h-full"
-                          >
-                            <div className="flex items-center">
-                              <i className="far fa-star"></i>
-                            </div>
-                          </div>
-                        </div>
-                        <span className=" mt-[2px] px-2 pl-0.5 !pr-0">8</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 flex items-center">
-                    <div
-                      className="h-10 w-10 rounded-sm mr-4"
-                      style={{ 
-                        backgroundImage: collectionImage[7],
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat', }}
-                    />
-                    {collectionName[7]}
-                  </td>
-                  <td className="px-6 py-4 text-right text-green-500"></td>
-                  <td className="px-6 py-4 text-right">1.81</td>
-                  <td className="px-6 py-4 text-right">1.80</td>
-                  <td className="px-6 py-4 text-right text-green-500">1.39%</td>
-                  <td className="px-6 py-4 text-right text-green-500">
-                    <span className="text-white">+121</span> (5.32%)
-                  </td>
-                  <td className="px-6 py-4 text-right">218.39</td>
-                  <td className="px-6 py-4 text-right">
-                    7,559 <span className="text-white">(30%)</span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    989/22k<span className="text-white">(4.59%)</span>
-                  </td>
-                </tr>
-                {/* 9th row */}
-                <tr className="dark-gray-hover cursor-pointer">
-                  <td className="px-0 py-2 text-right text-green-500">
-                    <div className="flex items-center pl-2 max-w-50px">
-                      <div className="flex items-center text-xs font-medium text-white">
-                        <div className="w-5 h-12">
-                          <div
-                            role="button"
-                            tabIndex={0}
-                            className="flex items-center w-full h-full"
-                          >
-                            <div className="flex items-center">
-                              <i className="far fa-star"></i>
-                            </div>
-                          </div>
-                        </div>
-                        <span className=" mt-[2px] px-2 pl-0.5 !pr-0">9</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 flex items-center">
-                    <div
-                      className="h-10 w-10 rounded-sm mr-4"
-                      style={{ 
-                        backgroundImage: collectionImage[8],
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat', }}
-                    />
-                    {collectionName[8]}
-                  </td>
-                  <td className="px-6 py-4 text-right text-green-500"></td>
-                  <td className="px-6 py-4 text-right">0.65</td>
-                  <td className="px-6 py-4 text-right">0.63</td>
-                  <td className="px-6 py-4 text-right text-green-500">3.86%</td>
-                  <td className="px-6 py-4 text-right text-green-500">
-                    <span className="text-white">+121</span> (5.32%)
-                  </td>
-                  <td className="px-6 py-4 text-right">23.65</td>
-                  <td className="px-6 py-4 text-right">
-                    5,633 <span className="text-white">(56%)</span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    413/10k<span className="text-white">(4.12%)</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          {collectionVolume[index]}
+                        </td>
+                        <td className="px-6 py-4 text-right text-light-green">
+                          {collectionSales[index]}
+                        </td>
+                        <td className="px-6 py-4 text-right text-green-500"> --</td>
+                        <td className="px-6 py-4 text-right">
+                          {collectionOwners[index]}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          {collectionOnSaleCount[index]}{"/"}{collectionTokenCount[index]}{"  ("}{collectionPercentListed[index]}%{")"}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
           </div>
         </div>
       </div>
@@ -890,25 +430,25 @@ const BottomSection = () => {
                 </div>
               </section>
               {/* Subtitle */}
-              <p className="text-lg sm:text-2xl mb-10 sm:mb-12 mt-10 sm:mt-12 text-white leading-10">
+              <p className="text-lg sm:text-2xl mb-10 sm:mb-12 mt-10 sm:mt-12 text-light-gray leading-10">
                 Ditch legacy trading. Trade faster than ever before on Zaar.
               </p>
               {/* Stats */}
               <div className="flex flex-wrap justify-center gap-12">
                 {/* Stat Block 1 */}
                 <div className="text-center">
-                    <p className="text-3xl font-bold mb-5 uppercase text-white">#1 in global<br/> liquidity</p>
-                    <p className="uppercase text-lg text-white">Zaar aggregates liquidity from<br/> all top platforms</p>
+                    <p className="text-3xl font-bold mb-5 uppercase text-yellow">#1 in global<br/> liquidity</p>
+                    <p className="uppercase text-lg text-light-gray">Zaar aggregates liquidity from<br/> all top platforms</p>
                 </div>
                 {/* Stat Block 2 */}
                 <div className="text-center">
-                  <p className="text-3xl font-bold mb-5 uppercase text-white">earn yield on your<br/>idle nfts</p>
-                  <p className="uppercase text-lg text-white">deposit to the nft capsule to earn<br/>ETH yield</p>
+                  <p className="text-3xl font-bold mb-5 uppercase text-yellow">earn yield on your<br/>idle nfts</p>
+                  <p className="uppercase text-lg text-light-gray">deposit to the nft capsule to earn<br/>ETH yield</p>
                 </div>
                 {/* Stat Block 3 */}
                 <div className="text-center">
-                    <p className="text-3xl font-bold mb-5 uppercase text-white">lock zaar to<br/> maximize yield</p>
-                    <p className="uppercase text-lg text-white">upgraded tokenomics model<br/> rewards high conviction holders</p>
+                    <p className="text-3xl font-bold mb-5 uppercase text-yellow">lock zaar to<br/> maximize yield</p>
+                    <p className="uppercase text-lg text-light-gray">upgraded tokenomics model<br/> rewards high conviction holders</p>
                 </div>
               </div>
             </div>
@@ -933,7 +473,7 @@ const BottomSection = () => {
                 <p className="text-lg sm:text-xl mb-8">Collect XP and earn rewards</p>
 
                 {/* CTA Button */}
-                <button className="bg-white text-black font-bold py-2 px-4 rounded-sm hover:bg-gray-200 transition duration-300 uppercase">
+                <button className="bg-white text-black font-bold py-2 px-4 rounded-sm hover:bg-hoveryellow transition duration-300 uppercase">
                     Start Earning
                 </button>
 

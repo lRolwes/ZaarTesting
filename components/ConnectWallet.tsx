@@ -2,7 +2,11 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Image from 'next/image';
 import React from "react";
+import {useAccount, useDisconnect, useBalance} from "wagmi";
+import {useState, useEffect} from "react";
+import AccountModal from "./profileComponents/AccountModal";
 export const ConnectWallet = () => {
+    const [modalOpen, setModalOpen] = useState(false);
     return (
     
     <ConnectButton.Custom>
@@ -39,7 +43,7 @@ export const ConnectWallet = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <button onClick={openConnectModal} type="button" className = "bg-yellow text-black font-bold p-2 px-5 rounded-sm hover:bg-white border-2 hover:border-yellow transition duration-500">
+                  <button onClick={openConnectModal} type="button" className = " bg-yellow text-black font-bold p-2 px-5 rounded-sm hover:bg-white border-2 transition duration-500">
                     Connect Wallet
                   </button>
                 );
@@ -87,7 +91,7 @@ export const ConnectWallet = () => {
                     {chain.name}
                   </button>
 
-                  <button onClick={openAccountModal} type="button" className="hover:text-whitish transition-colors duration-150">
+                  <button onClick={()=>{setModalOpen(!modalOpen)}} type="button" className="hover:text-whitish transition-colors duration-150">
                     {account.displayName}
                     {account.displayBalance
                       ? ` (${account.displayBalance})`
@@ -96,6 +100,7 @@ export const ConnectWallet = () => {
                 </div>
               );
             })()}
+            {modalOpen? <AccountModal setModalOpen={setModalOpen} balance={account?.displayBalance}/> : null}
           </div>
         );
       }}

@@ -4,9 +4,9 @@ import prisma from '../../lib/prisma';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 try {
-    const address = (req.query.address as string)?.split(",") || []; // Assuming the address is passed as a query parameter
-    const listId = req.query.listId?.toString(); // Assuming the address is passed as a query parameter
-    const remAddress = req.query.remAddress; // Assuming the address is passed as a query parameter
+    const address = (req.query.address as string)?.split(",") || []; 
+    const listId = req.query.listId?.toString(); 
+    const remAddress = req.query.remAddress; 
     let newArray = Array.isArray(address)? address.filter(item => item !== remAddress) : [];
 
     const data = await prisma.watch.update({

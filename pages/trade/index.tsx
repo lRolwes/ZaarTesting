@@ -2,31 +2,22 @@ import type { NextPage } from "next";
 import Image from "next/image";
 import React, { use, useEffect, useState } from "react";
 import Link from "next/link";
-import Head from "next/head";
 import { Footer } from "../../components/Footer";
 import { HomeHeader } from "../../components/HomeHeader";
 import { useTrendingCollections } from "@reservoir0x/reservoir-kit-ui";
-import useTopCollections from "../../hooks/TopCollections";
 import InfiniteScroll from "react-infinite-scroll-component";
-import prisma from '../../lib/prisma';
-import { GetStaticProps, GetServerSideProps } from "next"
-import Watchlist, { WatchlistProps } from "../../components/Watchlist"
 import Watch from "../../components/Watch";
 import { useAccount } from "wagmi";
-import { get } from "http";
-import { PrismaClient } from '@prisma/client';
-import { getSession } from 'next-auth/react';
-import { getToken } from 'next-auth/jwt';
 import { getAccount } from '@wagmi/core'
 import { config } from './../../config'
 import {FavStar} from './../../components/FavStar';
-const TableSection: React.FC<{WatchlistItems:WatchList[]}> = ({WatchlistItems}) => {
-  const watchlist: WatchList = WatchlistItems[0];
+const TableSection: React.FC<{WatchlistItems:WatchList}> = ({WatchlistItems}) => {
+  const watchlist: WatchList = WatchlistItems;
   const { data: collections } = useTrendingCollections({
     period: "24h",
     limit: 1000,
   });
-  const [collectionId, setId] = useState([" "]);
+  const [collectionId, setId] = useState<string[]>();
   const [collectionImage, setImage] = useState([" "]);
   const [collectionName, setName] = useState([" "]);
   const [collectionVolume, setVolume] = useState([0]);
@@ -55,32 +46,32 @@ const TableSection: React.FC<{WatchlistItems:WatchList[]}> = ({WatchlistItems}) 
       let tokenCount = [];
       let onSaleCount = [];
       for (let x = 0; x < 1000; x++) {
-        ids.push(collections?.[x].id || " ");
-        images.push("url('" + collections?.[x].image + "')" || " ");
-        names.push(collections?.[x].name?.toString() || " ");
-        volumes.push(Number(collections?.[x].volume?.toFixed(2)) || 0);
+        ids.push(collections?.[x]?.id || " ");
+        images.push("url('" + collections?.[x]?.image + "')" || " ");
+        names.push(collections?.[x]?.name?.toString() || " ");
+        volumes.push(Number(collections?.[x]?.volume?.toFixed(2)) || 0);
         floorPrices.push(
-          collections?.[x].floorAsk?.price?.amount?.decimal || 0
+          collections?.[x]?.floorAsk?.price?.amount?.decimal || 0
         );
-        topBids.push(collections?.[x].topBid?.price?.amount?.decimal || 0);
+        topBids.push(collections?.[x]?.topBid?.price?.amount?.decimal || 0);
         percentChanges.push(
-          Number(collections?.[x].floorAskPercentChange?.toFixed(2)) || 0
+          Number(collections?.[x]?.floorAskPercentChange?.toFixed(2)) || 0
         );
         rawChanges.push(
-          (Number(collections?.[x].floorAskPercentChange) / 100) *
-          Number(collections?.[x].floorAsk?.price?.amount?.decimal) || 0
+          (Number(collections?.[x]?.floorAskPercentChange) / 100) *
+          Number(collections?.[x]?.floorAsk?.price?.amount?.decimal) || 0
         );
-        owners.push(collections?.[x].ownerCount || 0);
-        sales.push(collections?.[x].onSaleCount || 0);
+        owners.push(collections?.[x]?.ownerCount || 0);
+        sales.push(collections?.[x]?.onSaleCount || 0);
         percentListed.push(
           Number(
             (
-              (Number(collections?.[x].onSaleCount)/Number(collections?.[x].tokenCount))
+              (Number(collections?.[x]?.onSaleCount)/Number(collections?.[x]?.tokenCount))
             ).toFixed(2)
           ) || 0
         );
-        tokenCount.push(collections?.[x].tokenCount?.toString() || "0");
-        onSaleCount.push(collections?.[x].onSaleCount?.toString() || "0");
+        tokenCount.push(collections?.[x]?.tokenCount?.toString() || "0");
+        onSaleCount.push(collections?.[x]?.onSaleCount?.toString() || "0");
       }
       setId(ids);
       setImage(images);
@@ -125,9 +116,9 @@ const TableSection: React.FC<{WatchlistItems:WatchList[]}> = ({WatchlistItems}) 
         >
 
           <div className="overflow-x-auto rounded-lg z-10">
-            <div className="table-wrapper">
-              <table className="sticky-first-column w-full text-sm text-left text-white z-10">
-                <thead className="max-h-[800px] text-s uppercase text-gray w-full z-1">
+            <div className="table-wrapper max-h-screen overflow-y-auto  no-scrollbar">
+              <table className="sticky-first-column w-full text-sm text-left text-light-green z-10">
+                <thead className="max-h-[800px] text-s uppercase text-gray w-full z-1 whitespace-nowrap">
                   <tr className="border-b border-dark-gray cursor-pointer">
                     <th scope="col" className="px-6 pb-3"></th>
                     <th scope="col" className="px-6 pb-3">
@@ -172,37 +163,42 @@ const TableSection: React.FC<{WatchlistItems:WatchList[]}> = ({WatchlistItems}) 
                       >
                         <td className="px-0 py-2 text-right text-green-500">
                           <div className="flex items-center pl-2 max-w-50px">
-                            <div className="flex items-center text-xs font-medium text-white">
-                              <div className="w-5 h-12">
+                            <div className="flex items-center justify-center text-xs font-medium text-light-green">
+                              <div className="w-5 h-12 flex items-center">
                                 <div
                                   role="button"
                                   tabIndex={0}
                                   className="flex items-center w-full h-full"
                                 >
-                                  <div className="flex items-center">
-                                    <FavStar watchlist={watchlist!=undefined ? watchlist : {address:[], authorAddress:""}} id={collectionId[index]} onWatchlist={false}/>
+                                  <div className="flex items-center ">
+                                    {collectionId?.[index]? <FavStar id={collectionId[index]} defaultStatus={false}/> :null}
                                   </div>
                                 </div>
                               </div>
-                              <span className=" mt-[2px] px-2 pl-0.5 !pr-0">
+                              <span className=" px-2 pl-0.5 !pr-0 text-gray flex items-center">
                                 {index + 1}
                               </span>
                             </div>
                           </div>
                         </td>
                         <td className="px-4 py-4 flex items-center">
-                          <Link href={`/${collectionId[index]}`}>
-                          <div
-                            className="h-10 w-10 rounded-sm mr-4"
-                            style={{
-                              backgroundImage: collectionImage[index],
-                              backgroundSize: "cover",
-                              backgroundPosition: "center",
-                              backgroundRepeat: "no-repeat",
-                            }}
-                          />
+                          {collectionId && (
+                            <div className="flex flex-row items-center">  <Link href={`/${collectionId[index]}`}>
+                              <div
+                                className="h-10 w-10 rounded-sm mr-4"
+                                style={{
+                                  backgroundImage: collectionImage[index],
+                                  backgroundSize: "cover",
+                                  backgroundPosition: "center",
+                                  backgroundRepeat: "no-repeat",
+                                }}
+                              />
+                            </Link>
+                          
+                          <Link className="hover:text-hoveryellow w-52 truncate" href={`/${collectionId[index]}`}>
+                            {collectionName[index]}
                           </Link>
-                          <Link className="hover:text-hoveryellow "href={`/${collectionId[index]}`}>{collectionName[index]}</Link>
+                          </div>)}
                           <div className="inline-flex items-center ml-1 opacity-80"></div>
                         </td>
                         <td className="px-6 py-4 text-right">
@@ -217,14 +213,14 @@ const TableSection: React.FC<{WatchlistItems:WatchList[]}> = ({WatchlistItems}) 
                           {collection24HourPercentChange[index]}%
                         </td>
                         <td className="px-6 py-4 text-right text-green-500">
-                          <span className="text-white">
+                          <span className="text-light-green">
                             {collection24HourRawChange[index]?.toFixed(2)}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
                           {collectionVolume[index]}
                         </td>
-                        <td className="px-6 py-4 text-right text-white">
+                        <td className="px-6 py-4 text-right text-light-green">
                           {collectionSales[index]}
                         </td>
                         <td className="px-6 py-4 text-right text-green-500"> --</td>
@@ -246,17 +242,18 @@ const TableSection: React.FC<{WatchlistItems:WatchList[]}> = ({WatchlistItems}) 
   );
 };
 
-const fetchData = async (): Promise<WatchList[]> => {
-  let userData: WatchList[] = [];
+const fetchData = async (): Promise<WatchList> => {
   try {
-    const response = await fetch(`http://localhost:3000/api/getWatchlist?`);
-    userData = await response.json();
-    //console.log('User data:', userData);
+    const account = getAccount(config);
+    const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
+
+    const response = await fetch(`${baseUrl}/api/getWatchlist?ownerAddress=`+account.address);
+    let userData: WatchList = await response.json();
     return userData;
   } catch (error) {
     console.error('Error fetching user data:', error);
     return (
-      [{ address: [], authorAddress: "" }]
+      { address: [], authorAddress: "" }
     );
   }
 };
@@ -269,22 +266,12 @@ type WatchList = {
 const Home: NextPage = () => {
   const [watchlist, setWatchlist] = useState(false);
   const { address } = useAccount();
-  const [WatchlistItems, setWatchlistItems]= useState<WatchList[]>([]);
+  const [WatchlistItems, setWatchlistItems]= useState<WatchList>({address:[], authorAddress:""});
 
   useEffect(() => {
     const loadData = async () => {
-      const TempWatchlistItems: WatchList[] = [];
       fetchData().then(data => {
-        //setWatchData(data);
-        for (let item of data){
-          if(item.authorAddress == (address? address.toString() : "")){
-            TempWatchlistItems.push(item);
-          }
-        }
-        if(TempWatchlistItems.length == 0){
-          TempWatchlistItems.push({address: [], authorAddress: address? address.toString() : ""});
-        }
-        setWatchlistItems(TempWatchlistItems);
+        setWatchlistItems(data);
       });
     }
     loadData();
