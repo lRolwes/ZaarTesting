@@ -3,7 +3,6 @@ import { etherscan, react } from "@wagmi/cli/plugins";
 import { erc20Abi } from "viem";
 import { sepolia, mainnet } from "wagmi/chains";
 
-
 export default defineConfig({
     out: "generated.ts",
     contracts: [
@@ -19,11 +18,8 @@ export default defineConfig({
             contracts: [
                 {
                     name: "PRTC",
-                    address: {
-                        
-                        [mainnet.id]:
-                            "0xb9098D3669A78e9AfE8b94a97290407400D9dA31",
-                    },
+                    address: {[mainnet.id]: "0xb9098D3669A78e9AfE8b94a97290407400D9dA31",
+                },
                 },
                 {
                     name: "Zaar",
