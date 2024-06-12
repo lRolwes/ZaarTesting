@@ -97,12 +97,7 @@ export const HomeHeader = () => {
               >
                 <div className="p-4 ">TELEGRAM TRADING</div>
               </Link>
-              <button
-                onClick={handleMenuButtonClick}
-                className="p-2 text-black bg-yellow hover:text-hoveryellow text-2xl rounded-md font-bold fixed top-4 right-5"
-              >
-                X
-              </button>
+              
             </div>
           )}
           <div className="ml-0">
@@ -211,9 +206,9 @@ export const HomeHeader = () => {
               <button
                 id="menu-btn"
                 onClick={handleMenuButtonClick}
-                className="p-2 focus:outline-none lg:hidden text-light-green border border-dark-gray-all hover:border-light-green-all rounded-sm transition-colors duration-150 lg:hidden"
+                className={` ${isMenuOpen? "fixed top-3 right-8 z-30 " : ""}p-2 focus:outline-none lg:hidden text-light-green border border-dark-gray-all hover:border-light-green-all rounded-sm transition-colors duration-150 lg:hidden`}
               >
-                <svg
+                {!isMenuOpen? <svg
                   className="h-6 w-6 text-yellow lg:hidden"
                   fill="currentColor"
                   stroke="currentColor"
@@ -228,6 +223,8 @@ export const HomeHeader = () => {
                     fill="yellow"
                   ></path>
                 </svg>
+                : 
+                <p className="px-2 font-bold text-yellow font-xl">X</p>}
               </button>
             </div>
           </div>

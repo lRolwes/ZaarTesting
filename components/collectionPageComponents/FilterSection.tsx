@@ -7,7 +7,7 @@ import { config } from "./../../config";
 import TokenCard from "./TokenCard";
 import DetailsModal from "./DetailsModal";
 
-type TokenType = {
+export type TokenType = {
   market: {
     floorAsk: {
       price: {
@@ -77,8 +77,6 @@ type TraitCategoryType = {
   attributeCount: number;
   values: TraitType[];
 };
-
-
 function FilterSection({ id, count }: { id: string; count: number }) {
     //stores raw token Data
     const [tokenData, setTokenData] = useState<TokenType[]>([]);
@@ -117,14 +115,16 @@ function FilterSection({ id, count }: { id: string; count: number }) {
       useState<string>("Most");
     //string to search for traits
     const [traitSearch, setTraitSearch] = useState("");
-  
     //Other filters
     const [sortOpen, setSortOpen] = useState(false);
     const [sort, setSort] = useState("floorAskPrice");
     const [sortDirection, setSortDirection] = useState("asc");
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState(false);
-    const [activeStatus, setActiveStatus] = useState("show_all");
+    const [statusFilter, setStatusFilter] = useState(false);
+    const [listedFilter, setListedFilter] = useState(false);
+    const [newFilter, setNewFilter] = useState(false);
+    const [offersFilter, setOffersFilter] = useState(false);
     const [price, setPrice] = useState(false);
     const [priceFloor, setPriceFloor] = useState(0);
     const [priceCeiling, setPriceCeiling] = useState(1000000);
@@ -145,8 +145,6 @@ function FilterSection({ id, count }: { id: string; count: number }) {
       MagicEden: true,
     });
     const [myItems, setMyItems] = useState(false);
-
-  
     //handler functions to help interact with filters
     const handleSearchInputChange = (
       event: React.ChangeEvent<HTMLInputElement>
@@ -163,7 +161,11 @@ function FilterSection({ id, count }: { id: string; count: number }) {
       setTraitSearch(value);
     };
     const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setActiveStatus(event.target.value);
+      setListedFilter(false);
+      setNewFilter(false);
+      setOffersFilter(false);
+      setStatusFilter(!statusFilter);
+
     };
     const handlePriceFloorChange = (
       event: React.ChangeEvent<HTMLInputElement>
@@ -238,7 +240,6 @@ function FilterSection({ id, count }: { id: string; count: number }) {
       setMarket(false);
       return;
     }
-  
     /*
     This function:
     - reverses the value of the changed trait filter
@@ -287,7 +288,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
     setSortDirection("asc");
     setSearch("");
     setStatus(false);
-    setActiveStatus("show_all");
+    setStatusFilter(false);
     setPrice(false);
     setPriceFloor(0);
     setPriceCeiling(1000000);
@@ -471,9 +472,11 @@ function FilterSection({ id, count }: { id: string; count: number }) {
   
     useEffect(() => {
       let nftData = tokenData;
-      if (activeStatus == "buy_now" && nftData.length > 0) {
+      if (statusFilter  && nftData.length > 0) {
         nftData = nftData.filter(
-          (item: TokenType) => item.market?.floorAsk?.price?.amount?.decimal > 0
+          (item: TokenType) => ((listedFilter && item.market?.floorAsk?.price?.amount?.decimal > 0) ||
+           (newFilter && item.market?.floorAsk?.validFrom > Date.now() - 604800000) || 
+           (offersFilter && item.market?.topBid?.price?.amount?.decimal > 0))
         );
       }
       if (!markets.OpenSea && nftData.length > 0) {
@@ -538,7 +541,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
       markets,
       traitFilterSelection,
       traitFilterApplied,
-      activeStatus,
+      listedFilter,
       myItems,
       account.address,
     ]);
@@ -651,7 +654,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                       }
                     }}
                   >
-                    <div className="w-full text-white cursor-pointer truncate border border-dark-gray-all rounded-sm flex justify-between items-center text-sm px-4 h-10 bg-black text-gray outline-none focus:outline-none h-10 text-white">
+                    <div className="w-full text-gray cursor-pointer truncate border border-dark-gray-all rounded-sm flex justify-between items-center text-sm px-4 h-10 bg-black text-gray outline-none focus:outline-none h-10 text-gray">
                       {sort == "floorAskPrice"
                         ? sortDirection == "asc"
                           ? "Lowest Price"
@@ -675,7 +678,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                   <div
                     className={` ${sortOpen ? " " : "hidden "} absolute w-50 mt-1 z-30`}
                   >
-                    <div className="bg-dark-gray mt-2 text-white rounded-sm shadow-lg">
+                    <div className="bg-dark-gray mt-2 text-gray rounded-sm shadow-lg">
                       {/* Dropdown Options */}
                       <button
                         onClick={() => {
@@ -769,28 +772,60 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                 className={`absolute dropdown-content w-full bg-light-gray z-30 w-full mt-1 ${status ? "" : "hidden"} z-30`}
               >
                 <div className="bg-gray text-light-green rounded-sm">
-                  <label className="block cursor-pointer px-4 py-2 pl-0">
-                    <input
-                      type="radio"
-                      name="statusMobile"
-                      value="buy_now"
-                      className=" ml-2 form-radio accent-yellow mr-2"
-                      onChange={handleStatusChange}
-                      checked={activeStatus === "buy_now"}
-                    />
-                    Buy Now
-                  </label>
                   <label className="bg-gray block cursor-pointer px-4 py-2 pl-0">
                     <input
                       type="radio"
                       name="statusMobile"
-                      value="show_all"
+                      value=" All"
                       className="ml-2 form-radio accent-yellow mr-2"
                       onChange={handleStatusChange}
-                      checked={activeStatus === "show_all"}
+                      checked={!statusFilter}
                     />
-                    Show All
+                    All
                   </label>
+                  <label className="block cursor-pointer px-4 py-2 pl-0">
+                    <input
+                      type="checkbox"
+                      name="statusMobile"
+                      value="listed"
+                      className=" ml-2 form-radio accent-yellow mr-2"
+                      onChange={()=>{
+                        setStatusFilter(true);
+                        setListedFilter(!listedFilter);
+                        }}
+                      checked={statusFilter && listedFilter}
+                    />
+                    Listed
+                  </label>
+                  <label className="block cursor-pointer px-4 py-2 pl-0">
+                    <input
+                      type="checkbox"
+                      name="statusMobile"
+                      value="new"
+                      className=" ml-2 form-radio accent-yellow mr-2"
+                      onChange={()=>{
+                        setStatusFilter(true);
+                        setNewFilter(!newFilter);
+                        }}
+                      checked={statusFilter && newFilter}
+                    />
+                    New
+                  </label>
+                  <label className="block cursor-pointer px-4 py-2 pl-0">
+                    <input
+                      type="checkbox"
+                      name="statusMobile"
+                      value="Has Offers"
+                      className=" ml-2 form-radio accent-yellow mr-2"
+                      onChange={()=>{
+                        setStatusFilter(true);
+                        setOffersFilter(!offersFilter);
+                        }}
+                      checked={offersFilter && offersFilter}
+                    />
+                    Has Offers
+                  </label>
+                  
                 </div>
               </div>
             </div>
@@ -1028,7 +1063,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                         type="text"
                         placeholder="Search for Traits"
                         onChange={handleTraitSearchInputChange}
-                        className="w-full px-3 py-2 bg-black focus:none text-white rounded-sm"
+                        className="w-full px-3 py-2 bg-black focus:none text-gray rounded-sm"
                         autoComplete="off"
                       ></input>
                     </div>
@@ -1222,7 +1257,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                     setStatus(true);
                   }
                 }}
-                className="cursor-pointer bg-black text-white border border-gray rounded px-4 flex justify-between items-center h-10"
+                className="cursor-pointer bg-black text-gray border border-gray rounded px-4 flex justify-between items-center h-10"
               >
                 Status
                 {status ? (
@@ -1239,23 +1274,57 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                     <input
                       type="radio"
                       name="status"
-                      value="buy_now"
+                      value="all"
                       className=" ml-2 form-radio accent-yellow mr-2"
                       onChange={handleStatusChange}
-                      checked={activeStatus === "buy_now"}
+                      checked={!statusFilter}
                     />
-                    Buy Now
+                    All
                   </label>
                   <label className="bg-gray block cursor-pointer px-4 py-2 pl-0">
                     <input
-                      type="radio"
+                      type="checkbox"
                       name="status"
-                      value="show_all"
+                      value="listed"
                       className="ml-2 form-radio accent-yellow mr-2"
-                      onChange={handleStatusChange}
-                      checked={activeStatus === "show_all"}
+                      onChange={
+                        ()=>{
+                          setListedFilter(!listedFilter);
+                          setStatusFilter(true);
+                        }}
+                      checked={listedFilter && statusFilter}
                     />
-                    Show All
+                    Listed
+                  </label>
+                  <label className="bg-gray block cursor-pointer px-4 py-2 pl-0">
+                    <input
+                      type="checkbox"
+                      name="status"
+                      value="new"
+                      className="ml-2 form-radio accent-yellow mr-2"
+                      onChange={
+                        ()=>{
+                          setNewFilter(!newFilter);
+                          setStatusFilter(true);
+                        }}
+                      checked={newFilter && statusFilter}
+                    />
+                    New
+                  </label>
+                  <label className="bg-gray block cursor-pointer px-4 py-2 pl-0">
+                    <input
+                      type="checkbox"
+                      name="status"
+                      value="has offers"
+                      className="ml-2 form-radio accent-yellow mr-2"
+                      onChange={
+                        ()=>{
+                          setOffersFilter(!offersFilter);
+                          setStatusFilter(true);
+                        }}
+                      checked={offersFilter && statusFilter}
+                    />
+                    Has Offers
                   </label>
                 </div>
               </div>
@@ -1272,7 +1341,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                     setPrice(true);
                   }
                 }}
-                className="cursor-pointer bg-black text-white border border-gray rounded py-2 px-4 flex justify-between items-center h-10 "
+                className="cursor-pointer bg-black text-gray border border-gray rounded py-2 px-4 flex justify-between items-center h-10 "
               >
                 Price
                 {price ? (
@@ -1328,7 +1397,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                     setRarity(true);
                   }
                 }}
-                className="cursor-pointer bg-black text-white border border-gray rounded py-2 px-4 flex justify-between items-center h-10 "
+                className="cursor-pointer bg-black text-gray border border-gray rounded py-2 px-4 flex justify-between items-center h-10 "
               >
                 Rarity
                 {rarity ? (
@@ -1384,7 +1453,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                     setMarket(true);
                   }
                 }}
-                className="cursor-pointer bg-black text-white border border-gray rounded py-2 px-4 flex justify-between items-center h-10 "
+                className="cursor-pointer bg-black text-gray border border-gray rounded py-2 px-4 flex justify-between items-center h-10 "
               >
                 Markets
                 {market ? (
@@ -1470,7 +1539,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                     setTraitsOpen(true);
                   }
                 }}
-                className="cursor-pointer  bg-black text-white border border-gray rounded py-2 px-4 flex justify-between items-center h-10 "
+                className="cursor-pointer  bg-black text-gray border border-gray rounded py-2 px-4 flex justify-between items-center h-10 "
               >
                 Traits
                 {traitsOpen ? (
@@ -1662,16 +1731,49 @@ function FilterSection({ id, count }: { id: string; count: number }) {
           <div className="flex-1">
             <div className="flex flex-row items-center flex-wrap md:ml-2 md:pl-2">
               <div
-                className={`${activeStatus == "buy_now" ? "block" : "hidden"} ml-2 text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center justify-center text-xs`}
+                className={`${statusFilter && listedFilter ? "block" : "hidden"} ml-2 text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center justify-center text-xs`}
               >
                 <span className="text-gray capitalize">Status</span>
                 <span className="capitalize text-light-green mr-1 ml-1">
-                  Buy Now
+                  Listed
                 </span>
                 <i
                   className="cursor-pointer font-bold"
                   onClick={() => {
-                    setActiveStatus("show_all");
+                    setListedFilter(false);
+                  }}
+                >
+                  X
+                </i>
+              </div>
+              <div
+                className={`${statusFilter && offersFilter ? "block" : "hidden"} ml-2 text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center justify-center text-xs`}
+              >
+                <span className="text-gray capitalize">Status</span>
+                <span className="capitalize text-light-green mr-1 ml-1">
+                  Has Offer
+                </span>
+                <i
+                  className="cursor-pointer font-bold"
+                  onClick={() => {
+                    setOffersFilter(false);
+                  }}
+                >
+                  X
+                </i>
+              </div>
+
+              <div
+                className={`${statusFilter && newFilter ? "block" : "hidden"} ml-2 text-gray px-2 rounded-sm bg-gray flex py-0.5 items-center justify-center text-xs`}
+              >
+                <span className="text-gray capitalize">Status</span>
+                <span className="capitalize text-light-green mr-1 ml-1">
+                  New
+                </span>
+                <i
+                  className="cursor-pointer font-bold"
+                  onClick={() => {
+                    setNewFilter(false);
                   }}
                 >
                   X
@@ -1941,6 +2043,13 @@ function FilterSection({ id, count }: { id: string; count: number }) {
           ) : (
             <div>Loading...</div>
           )}
+          <div className="flex justify-center">
+            <button 
+            onClick={()=>{moreDataLookup(continuation);}}
+            className ="p-2 bg-yellow hover:bg-hoveryellow text-black rounded-md mb-[200px] font-bold">
+              Load More Tokens
+            </button>
+            </div>
           {detailsModal && detailsToken ? (
             <DetailsModal setDetailsModal={setDetailsModal} nft={detailsToken} />
           ) : null}

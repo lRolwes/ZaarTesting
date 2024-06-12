@@ -12,3 +12,8 @@ model Watch {
   address       String[]
   authorAddress String   @id
 }
+
+model Xp {
+  rewards       Int
+  authorAddress String @id
+}

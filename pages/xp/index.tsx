@@ -7,6 +7,7 @@ import useBalance from "../../hooks/Balance";
 import useXP from "../../hooks/xpcalcs";
   const HeroContent = () => {
   const {xpcalcs} = useXP();
+  
 
   return (
     <div className="pb-0 flex content-center items-center justify-center bg-hero min-h-screen">

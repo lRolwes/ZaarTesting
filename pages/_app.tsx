@@ -32,7 +32,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       options={{
         chains: [{
           ...reservoirChains.mainnet,
-          /*...reservoirChains.sepolia,*/
           active: true,
           },
         ],

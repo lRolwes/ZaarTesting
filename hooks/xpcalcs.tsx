@@ -8,18 +8,29 @@ import {
 import{
   formatEther,
 } from "viem";
-
+import { getAccount } from '@wagmi/core'
+import { config } from './../config'
 const useXP = () => {
   const { address } = useAccount();
-  const {data: xpcalcs, refetch: refetchXpcalcs} = useReadStakingRewardsPreviewRewards(
-    {args: [address ? address: "0x0000000000000000000000000000000000000000"] });
+  const addr = getAccount(config).address;
+  const [rewards, setRewards] = useState(0);
+  const getRewards = async (): Promise<void> => {
+    //const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
 
-  function refetchXp() {
-    refetchXpcalcs();
-  }
+    const response = await fetch(
+      `/api/getRewards?ownerAddress=${addr}`
+    );
+    let userData= await response.json();
+    console.log(userData);
+    setRewards(userData?.rewards || 0);
+
+  };
+  useEffect(() => {
+    getRewards();
+  }, []);
 
   return {
-    xpcalcs
+    xpcalcs:rewards
   };
 };
 

@@ -10,7 +10,9 @@ import ActivitySection from "./ActivitySection";
 import BidSection from "./BidsPage";
 import OffersSection from "./OffersPage";
 import { TokenType } from "./TokenCard";
-
+import useXP from "../../hooks/xpcalcs";
+import { getAccount } from '@wagmi/core'
+import { config } from './../../config'
 const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
   const [items, setItems] = useState<TokenType[]>(userTokens);
   const [collections, setCollections] = useState<CollectionType[]>([]);
@@ -100,10 +102,10 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
     setCollectionSearch(value);
   };
   return (
-    <div className="w-full mx-auto px-2 lg:px-6 overflow-y-auto">
+    <div className="bg-dark-gray w-full mx-auto px-2 lg:px-6 overflow-y-auto">
       <div className=" flex py-3 gap-2 top-0 <lg:flex-col justify-between lg:items-center lg:sticky z-40 lg:-mr-6 mt-1">
         <div className="flex items-center gap-2">
-          <div className="border border-dark-gray-all h-10 px-2 relative flex items-center bg-black rounded-sm w-[271px]  w-52 max-w-full">
+          <div className="border border-dark-gray-all h-10 px-2 relative flex items-center bg-gray rounded-sm w-[271px]  w-52 max-w-full">
             <i className="far fa-search"></i>
             <label className="sr-only">Search items</label>
             <div className="flex-1 overflow-hidden">
@@ -125,7 +127,7 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
             <div className="p-2 rounded-full bg-yellow mr-2 "></div>
             <div className="-pt-[1px]">
               <div className="flex items-center py-0.5 gap-2 whitespace-nowrap">
-                <span className="-ml-1 text-xs text-gray dark:text-gray">
+                <span className="-ml-1 text-xs text-light-green dark:text-gray">
                   {userTokens.length} items
                 </span>
               </div>
@@ -141,7 +143,7 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
                 <div className="text-md text-light-green font-medium">
                   Collections
                 </div>
-                <div className="px-1 rounded-full flex bg-dark-gray h-6 text-xs p-1 text-gray w-6 items-center justify-center aspect-square">
+                <div className="px-1 rounded-full flex bg-gray h-6 text-xs p-1 text-gray w-6 items-center justify-center aspect-square">
                   {collections.length}
                 </div>
               </div>
@@ -149,7 +151,7 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
                 <div className="relative">
                   {/* Trigger */}
                   <button
-                    className=" space-x-2 bg-dark-gray border-dark-gray border-all border-2 flex text-light-green items-center font-dm-sans justify-between font-medium text-sm text-gray rounded-sm pl-3 pr-2 cursor-pointer h-10  mr-4"
+                    className=" space-x-2 bg-gray border-dark-gray border-all border-2 flex text-light-green items-center font-dm-sans justify-between font-medium text-sm text-gray rounded-sm pl-3 pr-2 cursor-pointer h-10  mr-4"
                     onClick={() => {
                       setSortDropdownOpen(!sortDropdownOpen);
                     }}
@@ -186,7 +188,7 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
               </div>
             </div>
             <div className="px-3 py-2">
-              <div className="border border-dark-gray-all h-10 px-2 relative flex items-center bg-black rounded-sm w-full">
+              <div className="border border-dark-gray-all h-10 px-2 relative flex items-center bg-gray rounded-sm w-full">
                 <i className="far fa-search"></i>
                 <label className="sr-only">Search Collections</label>
                 <div className="flex-1 overflow-hidden">
@@ -226,7 +228,7 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
                               <Link
                                 key={index}
                                 href={`/${collection.id}`}
-                                className="border-2-b border-black flex hover:bg-slate-800 cursor-pointer px-3 h-14 items-center py-2.5 justify-between"
+                                className="w-full border-2-b border-gray flex hover:bg-slate-800 cursor-pointer px-3 h-14 items-center py-2.5 justify-between"
                               >
                                 <div className="min-w-0 flex items-center gap-2">
                                   <div className="-mb-.5">
@@ -248,14 +250,19 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
                                     </div>
                                   </div>
                                   <div className="min-w-0 flex flex-col gap-.5">
-                                    <div className="min-w-0 flex items-center gap-1.5 leading-5">
+                                    <div className="min-w-[175px] flex items-center gap-1.5 leading-5">
                                       <div className="overflow-hidden">
                                         <Link
                                           className="hover:text-yellow-400 w-full text-light-green"
                                           href="#"
                                         >
                                           <div className="truncate">
-                                            {collection.name}
+                                            {collection.name.length > 18
+                                              ? collection.name.substring(
+                                                  0,
+                                                  18
+                                                ) + "..."
+                                              : collection.name}
                                           </div>
                                         </Link>
                                       </div>
@@ -313,7 +320,7 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
               />
             ))}
           </div>
-          {detailsModalOpen && (detailsModalNft != undefined)? (
+          {detailsModalOpen && detailsModalNft != undefined ? (
             <DetailsModal
               setDetailsModal={setDetailsModalOpen}
               nft={detailsModalNft}
@@ -378,6 +385,7 @@ const AccountModal = ({
   const [navigationPage, setNavigationPage] = useState("items");
   const [totalCollectionValue, setTotalCollectionValue] = useState(0);
 
+  const { xpcalcs } = useXP();
   /*useEffect(() => {
     const url = `https://offchain-masterchef-e5a6ec82d362.herokuapp.com/rewards?address=${account.address ? account.address : "0x0000000000000000000000000000000000000000"}`;
     fetch(url)
@@ -394,8 +402,9 @@ const AccountModal = ({
           "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
         },
       };
+      const addr = getAccount(config).address;
       const res = await fetch(
-        `https://api.reservoir.tools/users/0x7b04a23862d02dbea5cd75c9bf196b059c894146/tokens/v10?includeTopBid=true&includeLastSale=true&includeAttributes=true`,
+        `https://api.reservoir.tools/users/${addr}/tokens/v10?includeTopBid=true&includeLastSale=true&includeAttributes=true`,
         options
       );
       const data = await res.json();
@@ -457,37 +466,37 @@ const AccountModal = ({
                 </div>
                 <div className="flex justify-center gap-2 md:items-end flex-col mt-5 sm:mt-0 md:text-xl sm:text-sm">
                   <div className="flex items-center">
-                      
-                      <div className="flex flex-row w-full justify-center md:justify-right space-x-6 md:space-x-0  md:flex-col ml-4 md:space-y-2 justify-start">
-                        
-                        <button
-                          onClick={() => {
-                            disconnect();
-                            setModalOpen(false);
-                          }}
-                          className="text-yellow border border-1 border-yellow-all hover:bg-yellow  hover:text-dark-gray uppercase p-1 md:p-2 md:w-[150px]"
-                        >
-                          Disconnect
-                        </button>
-                        <button
-                          onClick={() => {
-                            setModalOpen(false);
-                          }}
-                          className="text-yellow border border-1 border-yellow-all hover:bg-yellow  hover:text-dark-gray uppercase p-1 md:p-2 md:w-[150px]"
-                        >
-                          Close
-                        </button>
-                        <div className="flex flex-row mr-8">
+                    <div className="flex flex-row w-full justify-center md:justify-right space-x-6 md:space-x-0  md:flex-col ml-4 md:space-y-2 justify-start">
+                      <button
+                        onClick={() => {
+                          disconnect();
+                          setModalOpen(false);
+                        }}
+                        className="text-gray-300 bg-transparent hover:text-white border border-gray-600 hover:border-white rounded p-1 text-sm w-[80px]"
+                      >
+                        Disconnect
+                      </button>
+                      <button
+                        onClick={() => {
+                          setModalOpen(false);
+                        }}
+                        className="text-gray-300 bg-transparent hover:text-white border border-gray-600 hover:border-white rounded p-1 text-sm w-[80px]"
+                      >
+                        Close
+                      </button>
+                      <div className="flex flex-row mr-8 align-center items-center justify-center">
                         <Image
-                        alt="image"
-                        src="/images/xp.png"
-                        className="w-10 h-10"
-                        width={100}
-                        height={100}
-                    />
-                    <div className="text-4xl font-light tracking-wide ml-3">
-                      <span className="text-light-green">69</span>
-                  </div>
+                          alt="image"
+                          src="/images/xp.png"
+                          className="w-8 h-8"
+                          width={100}
+                          height={100}
+                        />
+                        <div className="text-2xl font-light tracking-wide ml-3">
+                          <span className="text-light-green">
+                            {xpcalcs != undefined ? Number(xpcalcs) : Number(0)}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -569,13 +578,19 @@ const AccountModal = ({
             </div>
             {navigationPage == "items" ? (
               <ItemsPage userTokens={userTokens} />
-            ) : (navigationPage == "activity" ?
+            ) : navigationPage == "activity" ? (
               <ActivitySection
-                id={"0x7b04a23862d02dbea5cd75c9bf196b059c894146"}
+                id={getAccount(config).address ? getAccount(config).address : "0x000000"}
               />
-              : (navigationPage == "offers" ? (<OffersSection id={"0x7b04a23862d02dbea5cd75c9bf196b059c894146"} />) : 
-              (navigationPage == "bids" ? (<BidSection id={"0x7b04a23862d02dbea5cd75c9bf196b059c894146"} />) : <></>)
-            ))}
+            ) : navigationPage == "offers" ? (
+              <OffersSection
+                id={getAccount(config).address ? getAccount(config).address : "0x000000"}
+              />
+            ) : navigationPage == "bids" ? (
+              <BidSection id={getAccount(config).address ? getAccount(config).address : "0x000000"} />
+            ) : (
+              <></>
+            )}
           </div>
         </div>
         {/*<div className="flex justify-between items-center">

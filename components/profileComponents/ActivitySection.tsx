@@ -224,20 +224,20 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
     }, [activityData, search, listing, bid, mint, transfer, sale, markets]);
   
     return (
-      <div className="">
-        <div className="container-fluid mx-auto">
+      <div className="bg-dark-gray">
+        <div className="container-fluid mx-auto ">
           <div className="bg-dark-gray text-light-green">
             {/* Activity Header */}
-            <div className="bg-gray flex items-center justify-between">
+            <div className="bg-dark-gray flex items-center justify-between">
               <div className="flex-1 pt-3 pb-2 md:pt-3 md:pb-2 flex gap-2  md:mx-6 z-40 px-6 md:px-0">
                 <div className="flex-col-reverse sm:flex-row-reverse lg:flex-row flex w-full gap-1.5 items-center lg:justify-between">
                   <div className="relative w-full sm:max-w-90">
                     <div className="relative max-w-[350px]">
-                      <div className="bg-black flex items-center rounded-sm border border-dark-gray h-10 w-full">
+                      <div className="bg-gray flex items-center rounded-sm border border-dark-gray h-10 w-full">
                         <input
                           placeholder="Search for items"
                           type="text"
-                          className="bg-black text-sm w-full outline-none px-2.5 text-gray placeholder-gray-500"
+                          className="bg-gray text-sm w-full outline-none px-2.5 text-gray placeholder-gray-500"
                           onChange={handleSearchInputChange}
                         />
                       </div>
@@ -437,7 +437,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                   {/* Event filter */}
                   <div className="relative">
                     <div
-                      className="border bg-black rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1"
+                      className="border bg-gray rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1"
                       onClick={() => {
                         setEventsDropdown(!eventsDropdown);
                         setMarketsDropdown(false);
@@ -517,7 +517,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                   {/* Market filter */}
                   <div className="relative">
                     <div
-                      className="border bg-black  rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1"
+                      className="border bg-gray  rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1"
                       onClick={() => {
                         setMarketsDropdown(!marketsDropdown);
                         setEventsDropdown(false);
@@ -600,7 +600,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-wrap ml-6 sm:ml-4 md:pl-2">
+          <div className="bg-dark-gray flex items-center gap-2 flex-wrap ml-6 sm:ml-4 md:pl-2">
             {!markets.Blur ||
               !markets.LooksRare ||
               !markets.MagicEden ||
@@ -801,29 +801,29 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
             </div>
           </div>
   
-          <div className="flex items-center gap-2 flex-wrap ml-2 mr-2 md:ml-6 md:pl-1 md:mr-8 mt-3">
+          <div className="bg-dark-gray flex items-center gap-2 flex-wrap ml-2 mr-2 md:ml-6 md:pl-1 md:mr-8 mt-3">
             {/*Table*/}
-            <div className="bg-black overflow-x-auto rounded-lg w-full min-h-[500px] ">
+            <div className="bg-gray overflow-x-auto rounded-lg w-full min-h-[500px] ">
               <div className="table-wrapper max-h-screen overflow-y-auto no-scrollbar">
-                <table className="sticky-first-column not-sticky-second-column sticky-header w-full text-sm text-left text-light-green">
-                  <thead className=" whitespace-nowrap z-40 sticky top-0 text-xs uppercase text-gray">
-                    <tr className="border-b border-dark-gray cursor-pointer">
-                      <th scope="col" className="px-6 py-3">
+                <table className="bg-gray sticky-first-column not-sticky-second-column sticky-header w-full text-sm text-left text-light-green">
+                  <thead className=" whitespace-nowrap z-40 sticky top-0 text-xs uppercase text-light-gray bg-gray">
+                    <tr className="border-b border-dark-gray cursor-pointer text-light-gray bg-gray">
+                      <th scope="col" className="px-6 py-3 bg-gray">
                         Event
                       </th>
-                      <th scope="col" className="px-6 py-3 text-left ">
+                      <th scope="col" className="px-6 py-3 text-left  bg-gray">
                         Item
                       </th>
-                      <th scope="col" className="px-6 py-3 text-right">
+                      <th scope="col" className="px-6 py-3 text-right bg-gray">
                         Value
                       </th>
-                      <th scope="col" className="px-6 py-3 text-right">
+                      <th scope="col" className="px-6 py-3 text-right bg-gray">
                         From
                       </th>
-                      <th scope="col" className="px-6 py-3 text-right">
+                      <th scope="col" className="px-6 py-3 text-right bg-gray">
                         To
                       </th>
-                      <th scope="col" className="px-6 py-3 text-right">
+                      <th scope="col" className="px-6 py-3 text-right bg-gray">
                         Time
                       </th>
                     </tr>
