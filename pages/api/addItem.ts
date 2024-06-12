@@ -2,9 +2,12 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import prisma from '../../lib/prisma';
 import { create } from 'domain';
+import initializeCors from 'nextjs-cors';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-try {
+    await initializeCors(req, res); // Initialize CORS
+
+    try {
     let address = (req.query.address as string)?.split(",") || []; // Assuming the address is passed as a query parameter
     const listId = req.query.listId?.toString(); // Assuming the address is passed as a query parameter
     const addAddress = req.query.addAddress?.toString() ?? ''; // Assuming the address is passed as a query parameter and providing a default value
