@@ -247,7 +247,7 @@ const fetchData = async (): Promise<WatchList> => {
     const account = getAccount(config);
     //const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
 
-    const response = await fetch(`/api/getWatchlist?ownerAddress=`+account.address);
+    const response = await fetch(`https://zaar.market/api/getWatchlist?ownerAddress=`+account.address);
     let userData: WatchList = await response.json();
     return userData;
   } catch (error) {
