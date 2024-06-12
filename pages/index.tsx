@@ -165,7 +165,7 @@ const HeroContent = () => {
                       <div
                         className="w-full h-full bg-cover bg-center"
                         style={
-                          { backgroundImage:`${item!=0 ? carouselImages[item] : "url(/images/Use_Zaar_Earn_Xp.png)"}` }
+                          { backgroundImage:`${item!=0 ? carouselImages[item] : "url(/images/Use_Zaar_Earn_XP.png)"}` }
                         }
                       >
                         {/* Gradient Overlay for better text visibility */}
