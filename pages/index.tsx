@@ -164,7 +164,9 @@ const HeroContent = () => {
                     <div className="block w-full h-full">
                       <div
                         className="w-full h-full bg-cover bg-center"
-                        style={{ backgroundImage: carouselImages[item] }}
+                        style={
+                          { backgroundImage:`${item!=0 ? carouselImages[item] : "url(/images/Use_Zaar_Earn_Xp.png)"}` }
+                        }
                       >
                         {/* Gradient Overlay for better text visibility */}
                         <div
@@ -177,7 +179,7 @@ const HeroContent = () => {
                         {/* Title at the bottom left */}
                         <div className="absolute bottom-0 left-0 p-4 z-10">
                           <h2 className="text-white text-lg font-bold">
-                            {carouselNames[item]}
+                            {item==0? "Learn More" : carouselNames[item]}
                           </h2>
                         </div>
                       </div>
