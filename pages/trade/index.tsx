@@ -245,9 +245,9 @@ const TableSection: React.FC<{WatchlistItems:WatchList}> = ({WatchlistItems}) =>
 const fetchData = async (): Promise<WatchList> => {
   try {
     const account = getAccount(config);
-    const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
+    //const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
 
-    const response = await fetch(`${baseUrl}/api/getWatchlist?ownerAddress=`+account.address);
+    const response = await fetch(`/api/getWatchlist?ownerAddress=`+account.address);
     let userData: WatchList = await response.json();
     return userData;
   } catch (error) {

@@ -15,10 +15,10 @@ const useXP = () => {
   const addr = getAccount(config).address;
   const [rewards, setRewards] = useState(0);
   const getRewards = async (): Promise<void> => {
-    const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
+    //const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
 
     const response = await fetch(
-      `${baseUrl}/api/getRewards?ownerAddress=${addr}`
+      `/api/getRewards?ownerAddress=${addr}`
     );
     let userData= await response.json();
     console.log(userData);
