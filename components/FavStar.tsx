@@ -26,12 +26,12 @@ const addAddress = async (
   id: string
 ): Promise<void> => {
   const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
-  await fetch(
+  /*await fetch(
     `${baseUrl}/api/seedData`,
     {
       method: "PUT",
     }
-  );
+  );*/
   await fetch(
     `${baseUrl}/api/addItem?address=${addresses.join(",")}&listId=${id}&addAddress=${addAddress}`,
     {
