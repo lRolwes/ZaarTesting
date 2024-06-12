@@ -1,7 +1,7 @@
 import { defineConfig } from "@wagmi/cli";
 import { etherscan, react } from "@wagmi/cli/plugins";
 import { erc20Abi } from "viem";
-import { sepolia, mainnet } from "wagmi/chains";
+import {mainnet } from "wagmi/chains";
 
 export default defineConfig({
     out: "generated.ts",
@@ -18,7 +18,7 @@ export default defineConfig({
             contracts: [
                 {
                     name: "StakingRewards",
-                    address: {[mainnet.id]: "0xEE9Bf5aAdBfb8E7E7dD4098915043edd36cE26f7",
+                    address: {[mainnet.id]: "0x944330f3D4A425BEB9A24B8BAdd054f7B749e2f8",
                 }
                 },
                 {

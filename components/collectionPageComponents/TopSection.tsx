@@ -164,7 +164,7 @@ const TopSection = ({ collectionData }: { collectionData: CollectionData }) => {
                     )}
                   </div>
                 </div>
-                <div className="text-sm text-gray-400 mt-1 uppercase space-x-2">
+                <div className="flex flew-row flex-nowrap text-sm text-gray-400 mt-1 uppercase space-x-2">
                   {collectionData?.contractKind?.substring(0, 3) == "erc" ? (
                     <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
                       Ethereum

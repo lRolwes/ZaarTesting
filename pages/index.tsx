@@ -81,7 +81,7 @@ const HeroContent = () => {
 
       {/* Hero Content */}
       {currentIndex==0 ?
-      <div className="container fixed relative h-[90%] z-20 mt-0 w-full ">
+      <div className="container fixed relative z-20 mt-10 w-full mb-[150px]">
         <div className="text-center text-white flex flex-col justify-center items-center">
           <div className="flex relative w-[400px] md:w-[35%] justify-center items-center h-auto z-20 ">
             <Image
@@ -286,13 +286,11 @@ const TableSection = () => {
           </h1>
           <p className="text-sm text-white leading-6 ml-2">
             Aggregated from over{" "}
-            <a
+            <div
               className="border-dashed !cursor-pointer"
-              target="_blank"
-              href="#"
             >
-              169 marketplaces
-            </a>
+              100 marketplaces
+            </div>
             .
           </p>
         </header>
@@ -302,35 +300,35 @@ const TableSection = () => {
           <table className="sticky-first-column w-full text-sm text-left text-light-green z-10">
                 <thead className="max-h-[800px] text-s uppercase text-gray w-full z-1 whitespace-nowrap">
                   <tr className="border-b border-dark-gray cursor-pointer">
-                    <th scope="col" className="px-6 pb-3"></th>
-                    <th scope="col" className="px-6 pb-3">
+                    <th scope="col" className="px-2 py-3"></th>
+                    <th scope="col" className="px-2 py-3">
                       Collection
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-2 py-3 text-right">
                       Floor Price
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-2 py-3 text-right">
                       Top Offer
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-2 py-3 text-right">
                       24H Change (%)
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-2 py-3 text-right">
                       24H Change (listed)
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-2 py-3 text-right">
                       24H Volume
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-2 py-3 text-right">
                       Sales
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-2 py-3 text-right">
                       Capsule APY
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-2 py-3 text-right">
                       Owners
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-2 py-3 text-right">
                       % Listed
                     </th>
                   </tr>

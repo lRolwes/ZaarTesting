@@ -64,7 +64,7 @@ const BidSection = ({ id }: { id: string | undefined }) => {
   useEffect(() => {
     async function bidLookup() {
         let bidItems = [];
-        let lookupString = `https://api.reservoir.tools/users/0xd7286b84669761ed8cc8cf2f4fb795c7d26831a4/bids/v1?type=token`;
+        let lookupString = `https://api.reservoir.tools/users/${id}/bids/v1?type=token`;
         const options = {
             method: "GET",
             headers: {
@@ -92,11 +92,11 @@ const BidSection = ({ id }: { id: string | undefined }) => {
   
 
   return (
-    <div className="">
+    <div className="bg-dark-gray">
       <div className="container-fluid mx-auto">
         <div className="bg-dark-gray text-light-green">
           {/* Activity Header */}
-          <div className="bg-gray flex items-center justify-between">
+          <div className="flex items-center justify-between">
             <div className="flex-1 pt-3 pb-2 md:pt-3 md:pb-2 flex gap-2  md:mx-6 z-3 px-6 md:px-0">
               <div className="flex-col-reverse sm:flex-row-reverse lg:flex-row flex w-full gap-1.5 items-center lg:justify-between">
                 <div className="relative w-full sm:max-w-90">
@@ -111,32 +111,32 @@ const BidSection = ({ id }: { id: string | undefined }) => {
         
         <div className="flex items-center gap-2 flex-wrap ml-2 mr-2 md:ml-6 md:pl-1 md:mr-8 mt-3">
           {/*Table*/}
-          <div className="bg-black overflow-x-auto rounded-lg w-full min-h-[500px] ">
+          <div className="bg-gray overflow-x-auto rounded-lg w-full min-h-[500px] ">
             <div className="table-wrapper max-h-screen overflow-y-auto no-scrollbar">
               <table className="sticky-first-column not-sticky-second-column sticky-header w-full text-sm text-left text-light-green">
-                <thead className=" whitespace-nowrap z-50 sticky top-0 text-xs uppercase text-gray">
-                  <tr className="border-b border-dark-gray cursor-pointer">
-                    <th scope="col" className="px-6 py-3">
+                <thead className=" whitespace-nowrap z-50 sticky top-0 text-xs uppercase text-light-gray bg-gray">
+                  <tr className="border-b border-dark-gray cursor-pointer bg-gray">
+                    <th scope="col" className="px-6 py-3  bg-gray">
                       Offer
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left ">
+                    <th scope="col" className="px-6 py-3 text-left  bg-gray">
                       Unit Price
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right">
+                    <th scope="col" className="px-6 py-3 text-right bg-gray">
                       USD Unit Price
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right">
+                    <th scope="col" className="px-6 py-3 text-right bg-gray">
                       Quantity
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right">
+                    <th scope="col" className="px-6 py-3 text-right bg-gray">
                       Expiration
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right">
+                    <th scope="col" className="px-6 py-3 text-right bg-gray">
                       Recieved
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right">
+                    <th scope="col" className="px-6 py-3 text-right bg-gray">
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right">
+                    <th scope="col" className="px-6 py-3 text-right bg-gray">
                     </th>
                   </tr>
                 </thead>

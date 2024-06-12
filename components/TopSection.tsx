@@ -9,6 +9,9 @@ export const TopSection = () => {
   return (
     <div className={`w-full z-50 mt-[65px] md:mt-[55px] contain py-4 bg-dark-gray bg-gradient-to-b from-yellow/15 to-transparent `}> 
       <div className="flex flex-col text-xs items-center justify-center space-y-2">
+        <p className="text-xl text-white">PRTC MIGRATION</p>
+        <p className="text-base ">Protectorate Protocol is now Zaar.</p>
+        <p className="text-base flex flex-center text-center"> PRTC holders must migrate their tokens to ZAAR to avoid having the tokens burned in the future</p>
         <div className="text-sm font-bold text-gray uppercase">
           Your Wallet Balance
         </div>{" "}

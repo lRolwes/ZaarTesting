@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { BuyModal, BidModal, ListModal} from "@reservoir0x/reservoir-kit-ui";
 import PriceChart from "./PriceChart";
-
 type TokenType = {
   market: {
     floorAsk: {
@@ -220,11 +219,9 @@ const DetailsModal = ({
   
     return (
       <div>
-        <div className="w-screen h-screen fixed top-0 left-0 bg-black opacity-60 z-40"></div>
+        <div className="fixed top-0 left-0 w-screen h-screen fixed top-0 left-0 bg-black opacity-60 z-40"></div>
         {/*view NFT modal*/}
-        <div
-          id="modal-view-nft"
-          className="fixed z-50 w-[80%] h-[90vh] top-0 left-1/2 transform -translate-x-1/2  opacity-100"
+        <div className="fixed z-50 w-[80%] h-[4/5] block top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-2/3 "
         >
           <div className="flex flex-col">
             {/* Modal Header */}

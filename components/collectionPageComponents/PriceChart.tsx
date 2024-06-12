@@ -35,7 +35,7 @@ const PriceChart = ({ prices, dates }: {prices:number[], dates: number[]}) => {
     };
   
     return (
-      <div className="h-[300px]">
+      <div className="h-[200px]">
         <Line data={data} />
       </div>
     );

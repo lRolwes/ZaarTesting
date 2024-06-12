@@ -3,8 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { BuyModal, BidModal } from "@reservoir0x/reservoir-kit-ui";
 import PriceChart from "./PriceChart";
-
-type TokenType = {
+export type TokenType = {
   market: {
     floorAsk: {
       price: {
@@ -197,9 +196,8 @@ const DetailsModal = ({
       <div>
         <div className="w-screen h-screen fixed top-0 left-0 bg-black opacity-60 z-40"></div>
         {/*view NFT modal*/}
-        <div
-          className="fixed z-50 w-[80%] h-[90%] pb-4 mb-4 top-0 left-1/2 transform -translate-x-1/2  opacity-100"
-        >
+        <div className="fixed z-50 w-[80%] h-[4/5] block top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
+        
           <div className="flex flex-col">
             {/* Modal Header */}
             <div className="bg-dark-gray p-2 flex justify-end items-center rounded-sm">
@@ -497,7 +495,7 @@ const DetailsModal = ({
                       width={500}
                       height={500}
                       alt="NFT Image"
-                      className="object-cover mb-3 rounded-sm w-full responsive"
+                      className="object-cover mb-3 rounded-sm w-full responsive max-h-[350px]"
                       src={
                         nft.token.image
                           ? nft.token.image

@@ -106,7 +106,7 @@ function TokenCard({
     const [isHovered, setIsHovered] = useState(false);
 
     return (
-      <div onMouseEnter={()=>{setIsHovered(true);}} onMouseLeave={()=>{setIsHovered(false);}} className="bg-dark-gray h-[450px] text-white rounded-xl flex flex-col  group relative overflow-hidden">
+      <div onMouseEnter={()=>{setIsHovered(true);}} onMouseLeave={()=>{setIsHovered(false);}} className="bg-gray h-[450px] text-white rounded-xl flex flex-col  group relative overflow-hidden">
         <div className="px-3 py-1.5 ">
           <span className="text-light-green text-xs font-medium">
             Rarity #{nft.token.rarityScore}

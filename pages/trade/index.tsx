@@ -120,35 +120,35 @@ const TableSection: React.FC<{WatchlistItems:WatchList}> = ({WatchlistItems}) =>
               <table className="sticky-first-column w-full text-sm text-left text-light-green z-10">
                 <thead className="max-h-[800px] text-s uppercase text-gray w-full z-1 whitespace-nowrap">
                   <tr className="border-b border-dark-gray cursor-pointer">
-                    <th scope="col" className="px-6 pb-3"></th>
-                    <th scope="col" className="px-6 pb-3">
+                    <th scope="col" className="px-4 pb-3"></th>
+                    <th scope="col" className="px-4 pb-3">
                       Collection
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-4 pb-3 text-right">
                       Floor Price
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-4 pb-3 text-right">
                       Top Offer
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-4 pb-3 text-right">
                       24H Change (%)
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-4 pb-3 text-right">
                       24H Change (listed)
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-4 pb-3 text-right">
                       24H Volume
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-4 pb-3 text-right">
                       Sales
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-4 pb-3 text-right">
                       Capsule APY
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-4 pb-3 text-right">
                       Owners
                     </th>
-                    <th scope="col" className="px-6 pb-3 text-right">
+                    <th scope="col" className="px-4 pb-3 text-right">
                       % Listed
                     </th>
                   </tr>
@@ -247,7 +247,7 @@ const fetchData = async (): Promise<WatchList> => {
     const account = getAccount(config);
     const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
 
-    const response = await fetch(`zaar-hjpttcbff-protectorate.vercel.app/api/getWatchlist?ownerAddress=`+account.address);
+    const response = await fetch(`${baseUrl}/api/getWatchlist?ownerAddress=`+account.address);
     let userData: WatchList = await response.json();
     return userData;
   } catch (error) {
