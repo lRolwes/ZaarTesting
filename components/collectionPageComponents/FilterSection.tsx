@@ -2029,7 +2029,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
           {/* NFT Cards Section */}
           {filteredTokenData ? (
             
-            <div className="z-20 min-h-[500px] mb-[50px] grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4 px-2 py-4">
+            <div className="z-20 min-h-[500px] mb-[50px] grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 2xl:grid-cols-8 gap-4 px-2 py-4">
               {filteredTokenData.map((nft) => (
                 <TokenCard
                   setDetailsModal={setDetailsModal}

@@ -91,6 +91,9 @@ export const HomeHeader = () => {
               <Link href="/xp" className={`${page=="/xp"? "text-white" : "text-yellow hover:text-hoveryellow   "}`}>
                 <div className="p-4 ">EARN XP</div>
               </Link>
+              <Link href="https://swap.defillama.com/?chain=ethereum&from=0x0000000000000000000000000000000000000000&to=0x95ac17ce4021417e25b8edf807366fc3be091b5e" className={`text-yellow hover:text-hoveryellow `}>
+                <div className="p-4 ">Buy $ZAAR</div>
+              </Link>
               <Link
                 href="https://t.me/ZaarTradingBot"
                 className="text-yellow hover:text-hoveryellow   "
@@ -131,7 +134,11 @@ export const HomeHeader = () => {
               Earn XP
               </div>
             </Link>
-            
+            <Link href="https://swap.defillama.com/?chain=ethereum&from=0x0000000000000000000000000000000000000000&to=0x95ac17ce4021417e25b8edf807366fc3be091b5e" >
+              <div className={`text-gray hover:text-hoveryellow`}>  
+              Buy $ZAAR
+              </div>
+            </Link>
           </nav>
         </div>
         <div className="fixed top-2 left-1/2   -translate-x-1/2 flex flex-col w-[250px] md:w-[360px] text-base z-10 align-center item-center self-center" ref={wrapperRef}>

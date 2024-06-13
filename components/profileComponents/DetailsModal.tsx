@@ -221,7 +221,7 @@ const DetailsModal = ({
       <div>
         <div className="fixed top-0 left-0 w-screen h-screen fixed top-0 left-0 bg-black opacity-60 z-40"></div>
         {/*view NFT modal*/}
-        <div className="fixed z-50 w-[80%] h-[4/5] block top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-2/3 "
+        <div className="fixed z-50 max-w-[80%] h-[4/5] block top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-2/3 "
         >
           <div className="flex flex-col">
             {/* Modal Header */}
@@ -266,7 +266,7 @@ const DetailsModal = ({
                       <div className=" flex items-center">
                         {/* Rarity Ranking */}
                         <span className="mr-2 bg-gray text-gray text-xs font-semibold px-2.5 py-0.5 rounded">
-                          #{nft.token?.rarityScore}
+                          #{Number(nft.token?.rarityScore).toFixed(0)}
                         </span>
                       </div>
                       <div className="text-gray mt-4">
@@ -460,7 +460,7 @@ const DetailsModal = ({
                       width={500}
                       height={500}
                       alt="NFT Image"
-                      className="object-cover mb-3 rounded-sm w-full responsive"
+                      className="object-contain mb-3 rounded-sm w-full responsive"
                       src={
                         nft.token.image
                           ? nft.token.image

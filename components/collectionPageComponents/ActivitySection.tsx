@@ -921,22 +921,26 @@ const ActivitySection = ({ id }: { id: string }) => {
                               </div>
                             </td>
                             <td className="px-6 py-4 text-right">
-                              {item.timestamp
+                            {item.timestamp
                                 ? (() => {
-                                  const diffInMinutes = Math.floor(
-                                    (new Date().getTime() -
-                                      new Date(
-                                        item.timestamp * 1000
-                                      ).getTime()) /
-                                    (1000 * 60)
-                                  );
-                                  if (diffInMinutes < 60) {
-                                    return diffInMinutes + "M ago";
-                                  } else {
-                                    return (
-                                      Math.floor(diffInMinutes / 60) + "H ago"
+                                    const diffInMinutes = Math.floor(
+                                        (new Date().getTime() -
+                                            new Date(
+                                                item.timestamp * 1000
+                                            ).getTime()) /
+                                        (1000 * 60)
                                     );
-                                  }
+                                    if (diffInMinutes < 60) {
+                                        return diffInMinutes + "M ago";
+                                    } else if (diffInMinutes < 60 * 24) {
+                                        return (
+                                            Math.floor(diffInMinutes / 60) + "H ago"
+                                        );
+                                    } else {
+                                        return (
+                                            Math.floor(diffInMinutes / (60 * 24)) + "D ago"
+                                        );
+                                    }
                                 })()
                                 : null}
                               <br />
