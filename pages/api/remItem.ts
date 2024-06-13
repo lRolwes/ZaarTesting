@@ -39,4 +39,4 @@ const allowCors = (fn: (req: NextApiRequest, res: NextApiResponse) => Promise<vo
   }
 }
 
-module.exports = allowCors(handler);
+export default allowCors(handler);
