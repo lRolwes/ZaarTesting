@@ -46,15 +46,15 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
     if (sort == "Alphabetical") {
       tempItems = items.sort((a, b) => {
         if (a?.token?.name != null && b?.token?.name != null) {
-          return a.token.name.localeCompare(b.token.name);
+          return a.token.name.localeCompare(b.token?.name);
         }
         return 0;
       });
     } else {
       tempItems = items.sort(
         (a, b) =>
-          b.token.floorAsk.price.amount.decimal -
-          a.token.floorAsk.price.amount.decimal
+          b.token?.floorAsk?.price?.amount?.decimal -
+          a.token?.floorAsk?.price?.amount?.decimal
       );
     }
     if (search == "") {
@@ -222,7 +222,7 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
                       aria-label="scrollable content h-[100%] overflow-hidden;"
                     >
                       <div className="simplebar-content p-0">
-                        <div className="flex flex-col divide-y absolute h-[375px] no-scrollbar overflow-y-auto ">
+                        <div className="flex flex-col divide-y absolute max-h-[500px] min-h-[375px] no-scrollbar overflow-y-auto ">
                           {filteredCollections.map((collection, index) => {
                             return (
                               <Link
@@ -257,8 +257,8 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
                                           href="#"
                                         >
                                           <div className="truncate">
-                                            {collection.name.length > 18
-                                              ? collection.name.substring(
+                                            {collection.name?.length > 18
+                                              ? collection?.name?.substring(
                                                   0,
                                                   18
                                                 ) + "..."
@@ -309,7 +309,7 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
           <div className="border-r-1 border-gray-300 min-h-[calc(100vh_-_8rem)] h-full"></div>
         </div>
         <div className="flex-1 w-full">
-          <div className=" h-[500px] overflow-y-auto no-scrollbar grid grid-cols-2 lg:grid-cols-3 gap-2 ml-2 ">
+          <div className=" min-h-[500px] max-h-[600px] overflow-y-auto no-scrollbar grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-2 ml-2 ">
             {filteredItems.map((item, index) => (
               <TokenCard
                 key={index}
@@ -402,20 +402,41 @@ const AccountModal = ({
           "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
         },
       };
+      let userTokens = [];
+      let continuation = null;
       const addr = getAccount(config).address;
+      //const addr = "0x18cad576b06730ce61b98f0ab4b63da84f8ac13e";
       const res = await fetch(
         `https://api.reservoir.tools/users/${addr}/tokens/v10?includeTopBid=true&includeLastSale=true&includeAttributes=true`,
         options
       );
-      const data = await res.json();
-      console.log(data);
+      let data = await res.json();
+      userTokens = data.tokens;
+      continuation = data.continuation;
+      while(continuation!=null){
+        const addr = getAccount(config).address;
+        //const addr = "0x18cad576b06730ce61b98f0ab4b63da84f8ac13e";
+        const res = await fetch(
+          `https://api.reservoir.tools/users/${addr}/tokens/v10?includeTopBid=true&includeLastSale=true&includeAttributes=true&continuation=${continuation}`,
+          options
+        );
+        data = await res.json();
+        userTokens = userTokens.concat(data.tokens);
+        continuation = data.continuation;
+        //console.log(continuation);
+        //console.log(data.tokens);
+      }
+
+      //console.log(data);
       let sum = 0;
-      for (let tok of data.tokens) {
-        console.log(tok?.token?.floorAsk?.price?.amount?.decimal);
-        sum += tok?.token?.floorAsk?.price?.amount?.decimal;
+      for (let tok of userTokens) {
+        //console.log(tok?.token?.floorAsk?.price?.amount?.decimal);
+        if(tok?.token?.floorAsk?.price?.amount?.decimal && tok?.token?.floorAsk?.price?.amount?.decimal>0){
+          sum += tok?.token?.floorAsk?.price?.amount?.decimal;
+        }
       }
       setTotalCollectionValue(Number(sum.toFixed(2)));
-      setUserTokens(data.tokens);
+      setUserTokens(userTokens);
 
       return;
     }
@@ -424,9 +445,9 @@ const AccountModal = ({
 
 
   return (
-    <div className=" block w-full h-full overflow-y-auto">
-      <div className="w-full absolute bg-black top-0 left-0 opacity-70 w-screen h-screen z-40 "></div>
-      <div className="z-40 w-4/5 h-9/10 absolute bg-gray block text-yellow absolute top-0 left-1/2 transform -translate-x-1/2  rounded-lg shadow-lg overflow-y:auto">
+    <div className=" block w-full h-full overflow-y-auto" >
+      <div onClick={() => setModalOpen(false)}  className="w-full absolute bg-black top-0 left-0 opacity-70 w-screen h-screen z-40 "></div>
+      <div onClick={(e) => e.stopPropagation()} className="z-40 w-4/5 h-9/10 absolute bg-gray block text-yellow absolute top-0 left-1/2 transform -translate-x-1/2  rounded-lg shadow-lg overflow-y:auto">
         <div className=" w-full container-fluid py-6 pt-0">
           <div className="  flex flex-col w-full ">
             <div className="bg-dark-gray w-full">

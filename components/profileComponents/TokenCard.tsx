@@ -106,10 +106,10 @@ function TokenCard({
     const [isHovered, setIsHovered] = useState(false);
 
     return (
-      <div onMouseEnter={()=>{setIsHovered(true);}} onMouseLeave={()=>{setIsHovered(false);}} className="bg-gray h-[450px] text-white rounded-xl flex flex-col  group relative overflow-hidden">
+      <div onMouseEnter={()=>{setIsHovered(true);}} onMouseLeave={()=>{setIsHovered(false);}} className="bg-gray max-h-[450px] max-w-[250px] min-h-[200px] text-white rounded-xl flex flex-col  group relative overflow-hidden">
         <div className="px-3 py-1.5 ">
           <span className="text-light-green text-xs font-medium">
-            Rarity #{nft.token.rarityScore}
+            Rarity #{Number(nft.token.rarityScore).toFixed(0)}
           </span>
         </div>
         <div className="flex-1 relative flex justify-center items-center">
@@ -148,7 +148,7 @@ function TokenCard({
             >
               {nft.token?.floorAsk?.price?.amount?.decimal?.toString()} ETH
             </button>
-            <a
+            <div
               id="btn"
               className="border font-medium text-xs text-light-green border-dark-gray-all rounded hover:bg-gray hover:text-white hover:border-gray-400 px-1.5 h-6 flex items-center cursor-pointer"
               onClick={() => {
@@ -157,7 +157,7 @@ function TokenCard({
               }}
             >
               Details
-            </a>
+            </div>
           </div>
           <div className="flex justify-between">
             <div className="text-xs -mx-3 mb-2 px-3 py-1 text-light-green flex items-center">
