@@ -13,8 +13,8 @@ const remAddress = async (
   addresses: string[],
   id: string,
 ): Promise<void> => {
-  //const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
-  await fetch(`http://www.zaar.market/api/remItem?address=${addresses.join(",")}&listId=${id}&remAddress=${remAddress}`,
+  //const baseUrl = process.env.REACT_APP_API_BASE_URL || 'https://localhost:3000';
+  await fetch(`https://www.zaar.market/api/remItem?address=${addresses.join(",")}&listId=${id}&remAddress=${remAddress}`,
     {
       method: "PUT",
     }
@@ -25,7 +25,7 @@ const addAddress = async (
   addresses: string[],
   id: string
 ): Promise<void> => {
-  //const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
+  //const baseUrl = process.env.REACT_APP_API_BASE_URL || 'https://localhost:3000';
   /*await fetch(
     `${baseUrl}/api/seedData`,
     {
@@ -33,7 +33,7 @@ const addAddress = async (
     }
   );*/
   await fetch(
-    `http://www.zaar.market/api/addItem?address=${addresses.join(",")}&listId=${id}&addAddress=${addAddress}`,
+    `https://www.zaar.market/api/addItem?address=${addresses.join(",")}&listId=${id}&addAddress=${addAddress}`,
     {
       method: "PUT",
     }
@@ -63,8 +63,8 @@ export const FavStar = ({id, defaultStatus}:{id: string, defaultStatus: boolean}
   }, [id]);
   const fetchData = async (ownerAddress:string): Promise<WatchList> => {
     try {
-      //const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
-      const response = await fetch(`http://www.zaar.market/api/getWatchlist?ownerAddress=${ownerAddress}`);
+      //const baseUrl = process.env.REACT_APP_API_BASE_URL || 'https://localhost:3000';
+      const response = await fetch(`https://www.zaar.market/api/getWatchlist?ownerAddress=${ownerAddress}`);
       let userData: WatchList = await response.json();
       return userData;
     } catch (error) {
@@ -108,7 +108,7 @@ export const FavStar = ({id, defaultStatus}:{id: string, defaultStatus: boolean}
           width="15px"
           version="1.1"
           id="Layer_1"
-          xmlns="http://www.w3.org/2000/svg"
+          xmlns="https://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
         >
           <g>
