@@ -421,16 +421,7 @@ const AccountModal = ({
     }
     fetchUserTokens();
   }, [account.address]);
-  useEffect(() => {
-    async function getUserTokens() {
-      const url = `https://offchain-masterchef-e5a6ec82d362.herokuapp.com/rewards?address=${account.address ? account.address : "0x0000000000000000000000000000000000000000"}`;
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => setRewards(data.rewards))
-        .catch((error) => console.error("Error:", error));
-    }
-    getUserTokens();
-  }, [account.address]);
+
 
   return (
     <div className=" block w-full h-full overflow-y-auto">
