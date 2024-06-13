@@ -18,7 +18,7 @@ const useXP = () => {
     //const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
 
     const response = await fetch(
-      `/api/getRewards?ownerAddress=${addr}`
+      `https://www.zaar.market/api/getRewards?ownerAddress=${addr}`
     );
     let userData= await response.json();
     console.log(userData);

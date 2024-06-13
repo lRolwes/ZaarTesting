@@ -14,7 +14,7 @@ const remAddress = async (
   id: string,
 ): Promise<void> => {
   //const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
-  await fetch(`https://zaar.market/api/remItem?address=${addresses.join(",")}&listId=${id}&remAddress=${remAddress}`,
+  await fetch(`https://www.zaar.market/api/remItem?address=${addresses.join(",")}&listId=${id}&remAddress=${remAddress}`,
     {
       method: "PUT",
     }
@@ -33,7 +33,7 @@ const addAddress = async (
     }
   );*/
   await fetch(
-    `https://zaar.market/api/addItem?address=${addresses.join(",")}&listId=${id}&addAddress=${addAddress}`,
+    `https://www.zaar.market/api/addItem?address=${addresses.join(",")}&listId=${id}&addAddress=${addAddress}`,
     {
       method: "PUT",
     }
@@ -64,7 +64,7 @@ export const FavStar = ({id, defaultStatus}:{id: string, defaultStatus: boolean}
   const fetchData = async (ownerAddress:string): Promise<WatchList> => {
     try {
       //const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
-      const response = await fetch(`https://zaar.market/api/getWatchlist?ownerAddress=${ownerAddress}`);
+      const response = await fetch(`https://www.zaar.market/api/getWatchlist?ownerAddress=${ownerAddress}`);
       let userData: WatchList = await response.json();
       return userData;
     } catch (error) {
