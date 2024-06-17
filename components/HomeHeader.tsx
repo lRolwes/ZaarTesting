@@ -146,61 +146,61 @@ export const HomeHeader = () => {
           <div className="relative">
           <div className="absolute ">
 
-            {searching && <Link href={`/${searchData[0]?.id? searchData[0].id:""}`} onClick={()=>{setSearching(false);}} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+            {searching && searchData[0] && <Link href={`/${searchData[0]?.id? searchData[0].id:""}`} onClick={()=>{setSearching(false);}} className="text-light-green hover:text-light-green w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
                       <div
                         className="h-10 w-10 rounded-sm mr-4 "
                         style={{ 
-                          backgroundImage: searchData[0].image? `url(${searchData[0].image})` : "url(/images/logo-3d.png)",
+                          backgroundImage: searchData[0]?.image? `url(${searchData[0].image})` : "url(/images/logo-3d.png)",
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
                           backgroundRepeat: 'no-repeat',
                         }}
                       />
-                       {searchData[0].name? searchData[0].name: " "} </Link>}
-                       {searching && <Link href={`/${searchData[1].id}`} onClick={()=>{setSearching(false);}} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px]  flex flex-row  items-center hover:bg-gray border-l border-r border-t border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+                       {searchData[0]?.name? searchData[0].name: " "} </Link>}
+                       {searching && searchData[1] && <Link href={`/${searchData[1]?.id}`} onClick={()=>{setSearching(false);}} className="text-light-green hover:text-light-green  w-[200px] md:w-[360px]  flex flex-row  items-center hover:bg-gray border-l border-r border-t border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
                       <div
                         className="h-10 w-10 rounded-sm mr-4 "
                         style={{ 
-                          backgroundImage: searchData[1].image? `url(${searchData[1].image})` : "url(/images/logo-3d.png)",
+                          backgroundImage: searchData[1]?.image? `url(${searchData[1].image})` : "url(/images/logo-3d.png)",
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
                           backgroundRepeat: 'no-repeat',
                         }}
                       />
-                       {searchData[1].name? searchData[1].name: " "} </Link>}
-                       {searching && <Link href={`/${searchData[2].id}`} onClick={()=>{setSearching(false);}} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+                       {searchData[1]?.name? searchData[1].name: " "} </Link>}
+                       {searching && searchData[2] && <Link href={`/${searchData[2]?.id}`} onClick={()=>{setSearching(false);}} className="text-light-green hover:text-light-green w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
                       <div
                         className="h-10 w-10 rounded-sm mr-4"
                         style={{ 
-                          backgroundImage: searchData[2].image? `url(${searchData[2].image})` : "url(/images/logo-3d.png)",
+                          backgroundImage: searchData[2]?.image? `url(${searchData[2].image})` : "url(/images/logo-3d.png)",
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
                           backgroundRepeat: 'no-repeat',
                         }}
                       />
-                       {searchData[2].name? searchData[2].name: " "} </Link>}
-                       {searching && <Link href={`/${searchData[3].id}`} onClick={()=>{setSearching(false);}} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+                       {searchData[2]?.name? searchData[2].name: " "} </Link>}
+                       {searching && searchData[3] && <Link href={`/${searchData[3]?.id}`} onClick={()=>{setSearching(false);}} className="text-light-green hover:text-light-green w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
                       <div
                         className="h-10 w-10 rounded-sm mr-4 "
                         style={{ 
-                          backgroundImage: searchData[3].image? `url(${searchData[3].image})` : "url(/images/logo-3d.png)",
+                          backgroundImage: searchData[3]?.image? `url(${searchData[3].image})` : "url(/images/logo-3d.png)",
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
                           backgroundRepeat: 'no-repeat',
                         }}
                       />
-                       {searchData[3].name? searchData[3].name: " "} </Link>}
-                       {searching && <Link href={`/${searchData[4].id}`} onClick={()=>{setSearching(false);}} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-1 border-l border-r border-t border-b border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+                       {searchData[3]?.name? searchData[3].name: " "} </Link>}
+                       {searching && searchData[4] && <Link href={`/${searchData[4]?.id}`} onClick={()=>{setSearching(false);}} className="text-light-green hover:text-light-green w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-1 border-l border-r border-t border-b border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
                       <div
                         className="h-10 w-10 rounded-sm mr-4 "
                         style={{ 
-                          backgroundImage: searchData[4].image? `url(${searchData[4].image})` : "url(/images/logo-3d.png)",
+                          backgroundImage: searchData[4]?.image? `url(${searchData[4].image})` : "url(/images/logo-3d.png)",
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
                           backgroundRepeat: 'no-repeat',
                         }}
                       />
-                       {searchData[4].name? searchData[4].name: " "} </Link>}
+                       {searchData[4]?.name? searchData[4].name: " "} </Link>}
             
             </div>
             </div>

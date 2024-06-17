@@ -286,12 +286,7 @@ const TableSection = () => {
             Trending Collections
           </h1>
           <div className="text-sm text-white leading-6 ml-2">
-            Aggregated from over{" "}
-            <div
-              className="border-dashed !cursor-pointer"
-            >
-              100 marketplaces
-            </div>
+            Aggregated from over 100 marketplaces
             
           </div>
         </header>

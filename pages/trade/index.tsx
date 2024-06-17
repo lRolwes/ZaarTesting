@@ -290,15 +290,35 @@ const Home: NextPage = () => {
               <button
                 onClick={() => setWatchlist(false)}
                 aria-current="page"
-                className={`hover:text-white px-3 py-2 font-medium text-sm rounded-t-md text-yellow ${!watchlist ? " border-b-2 border-yellow " : "border-transparent"}  focus:outline-none shadow active`}
+                className={` px-3 py-2 font-medium text-sm rounded-t-md  ${!watchlist ? " border-b-2 border-yellow text-yellow" : "border-transparent text-gray hover:text-white"}  focus:outline-none shadow active`}
               >
                 <i className="fal fa-books"></i> COLLECTIONS
               </button>
               <button
                 onClick={() => setWatchlist(true)}
-                className={`px-3 py-2 font-medium text-sm rounded-t-md text-yellow hover:text-white ${watchlist ? " border-b-2 border-yellow " : "border-transparent"} focus:outline-none`}
+                className={`px-3 py-2 font-medium text-sm rounded-t-md text-yellow flex flex-row space-x-2  ${watchlist ? " border-b-2 border-yellow text-yellow" : "border-transparent text-gray hover:text-white"} focus:outline-none`}
               >
-                <i className="far fa-star"></i> WATCHLIST
+                <svg
+          fill={watchlist? "#e3bf00" : "#929292"}
+          height="15px"
+          width="15px"
+          version="1.1"
+          id="Layer_1"
+          xmlns="https://www.w3.org/2000/svg"
+          viewBox="0 0 512 512"
+          className="mr-2"
+        >
+          <g>
+            <g>
+              <path
+                d="M492.867,181.444l-149.825-21.785L276.014,23.861c-8.187-16.59-31.844-16.589-40.031,0l-67.026,135.799L19.133,181.445
+			c-18.306,2.662-25.615,25.158-12.369,38.071l108.408,105.682L89.592,474.44c-3.125,18.232,16.012,32.136,32.386,23.528
+			l132.475-70.452l134.025,70.451c17.914,8.607,37.051-5.296,33.926-23.528l-25.578-149.241l108.409-105.685
+			C518.482,206.601,511.173,184.105,492.867,181.444z"
+              />
+            </g>
+          </g>
+        </svg> WATCHLIST
               </button>
             </nav>
           </div>

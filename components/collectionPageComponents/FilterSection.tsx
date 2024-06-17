@@ -599,7 +599,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
       }
   
       setFilteredTokenData(nftData);
-      if (nftData.length < 50 && continuation != null) {
+      if (nftData.length < 50 && continuation != null && search=="") {
         console.log(continuation);
         queryMoreData(continuation);
         setContinuation(null);
@@ -1046,9 +1046,9 @@ function FilterSection({ id, count }: { id: string; count: number }) {
               </div>
               {/* Dropdown Content */}
               <div
-                className={`absolute bg-dark-gray dropdown-content w-full z-30 mt-1 ${market ? "block" : "hidden"}`}
+                className={`absolute bg-dark-gray dropdown-content w-full z-30 mt-2 ${market ? "block" : "hidden"}`}
               >
-                <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
+                <div className="text-light-green rounded-sm shadow-lg">
                   {/* Market Options with additional data */}
                   <label className="block cursor-pointer px-4 py-2">
                     <input
@@ -1133,7 +1133,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
               {/* Dropdown Content */}
               <div
                 id="traits-dropdown"
-                className={`z-30 ${traitsOpen ? "block" : "hidden"} absolute mt-1  bg-dark-gray border-gray-all rounded-sm shadow-lg w-full h-[330px]`}
+                className={`z-30 ${traitsOpen ? "block" : "hidden"} absolute mt-1  bg-dark-gray border-dark-gray-all rounded-sm shadow-lg w-full h-[330px]`}
               >
                 <div className="p-4 h-full">
                   {/* Search and Rarity Filter */}
@@ -1193,7 +1193,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                     </div>
                     <div className="w-[400px] h-[250px] p-2 overflow-y-auto text-sm text-light-gray border-dark-gray-l no-scrollbar">
                       {traitData.map((thisTraitCategory) => (
-                        <div key={thisTraitCategory.key} className="text-white">
+                        <div key={thisTraitCategory.key} className="text-light-green">
                           {selectedTraitCategory == "all" ||
                             selectedTraitCategory == thisTraitCategory.key ? (
                             <div>
@@ -1207,7 +1207,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                                       ],
                                   }));
                                 }}
-                                className="text-white py-4 text-lg flex flex-row justify-between"
+                                className="text-light-green py-4 text-sm flex flex-row justify-between border-dark-gray"
                               >
                                 {thisTraitCategory.key}
   
@@ -1544,9 +1544,9 @@ function FilterSection({ id, count }: { id: string; count: number }) {
               </div>
               {/* Dropdown Content */}
               <div
-                className={`absolute bg-gray dropdown-content w-[200px] z-30 mt-1 ${market ? "block" : "hidden"}`}
+                className={`absolute dropdown-content w-[200px] z-30 mt-2 ${market ? "block" : "hidden"}`}
               >
-                <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
+                <div className="bg-dark-gray text-light-green rounded-sm shadow-lg">
                   {/* Market Options with additional data */}
                   <label className="block cursor-pointer px-4 py-2">
                     <input
@@ -1631,7 +1631,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
               {/* Dropdown Content */}
               <div
                 id="traits-dropdown"
-                className={`z-30 ${traitsOpen ? "block" : "hidden"} absolute mt-3 right-0 mt-1  bg-dark-gray border-gray-all rounded-sm shadow-lg w-[500px] h-[330px]`}
+                className={`z-30 ${traitsOpen ? "block" : "hidden"} absolute mt-3 right-0 mt-1  bg-dark-gray border-dark-gray-all rounded-sm shadow-lg w-[500px] h-[330px]`}
               >
                 <div className="p-4 h-full">
                   {/* Search and Rarity Filter */}
@@ -1666,8 +1666,8 @@ function FilterSection({ id, count }: { id: string; count: number }) {
   
                   {/* Tabbed Content with Scrollable Sections */}
                   <div className="absolute flex h-full">
-                    <div className="w-[100px] bg-dark-gray p-0 pt-2 pr-2 overflow-y-auto max-h-[260px] no-scrollbar">
-                      <ul className="text-sm text-light-gray ">
+                    <div className="w-[100px] bg-dark-gray p-0 pt-2 pr-2 overflow-y-auto max-h-[260px] no-scrollbar  border-dark-gray-r">
+                      <ul className="text-sm text-light-gray">
                         <li
                           className={`p-2 hover:bg-gray cursor-pointer ${selectedTraitCategory == "all" ? "bg-gray text-yellow" : ""}`}
                           onClick={() => {
@@ -1689,13 +1689,13 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                         ))}
                       </ul>
                     </div>
-                    <div className="w-[400px] h-[250px] p-2 overflow-y-auto text-sm text-light-gray border-dark-gray-l no-scrollbar">
+                    <div className="w-[370px] h-[250px] p-2 overflow-y-auto text-sm text-light-gray border-dark-gray-l no-scrollbar">
                       {traitData.map((thisTraitCategory) => (
-                        <div key={thisTraitCategory.key} className="text-white">
+                        <div key={thisTraitCategory.key} className="text-light-green">
                           {selectedTraitCategory == "all" ||
                             selectedTraitCategory == thisTraitCategory.key ? (
                             <div>
-                              <span
+                              <div
                                 onClick={() => {
                                   setTraitCategoryDropdown((prevState) => ({
                                     ...prevState,
@@ -1705,16 +1705,16 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                                       ],
                                   }));
                                 }}
-                                className="text-white py-4 text-lg flex flex-row justify-between"
+                                className="text-light-green border-dark-gray py-4 text-sm flex flex-row justify-between "
                               >
                                 {thisTraitCategory.key}
   
                                 {traitCategoryDropdown[thisTraitCategory.key] ? (
-                                  <FaChevronUp className="text-gray-400 mr-4 align-right" />
+                                  <FaChevronUp className="text-light-green mr-4 align-right" />
                                 ) : (
-                                  <FaChevronDown className="text-gray-400 mr-4 align-right" />
+                                  <FaChevronDown className="text-light-green mr-4 align-right" />
                                 )}
-                              </span>
+                              </div>
                               {traitCategoryDropdown[thisTraitCategory.key] ? (
                                 <ul className="text-md text-white bg-black w-full py-2">
                                   {thisTraitCategory.values?.map(
@@ -1802,7 +1802,6 @@ function FilterSection({ id, count }: { id: string; count: number }) {
           <div className="pl-6">
             <div className="flex items-center">
               <div className="pr-1 inline-flex items-center justify-center rounded-full w-[10px] h-[10px] bg-yellow" />
-
               <span className="text-xs text-gray mr-2 ml-2">
                 {filteredTokenData.length>=100? "100+ " : filteredTokenData.length} results
               </span>

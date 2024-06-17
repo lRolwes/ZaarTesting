@@ -1,10 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+//import { faBook } from "@fortawesome/free-solid-svg-icons";
+
 import React from "react";
 import { useAccount, useDisconnect, useBalance } from "wagmi";
 import { useState, useEffect } from "react";
 import TokenCard from "./TokenCard";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaBook } from "react-icons/fa";
 import DetailsModal from "./DetailsModal";
 import ActivitySection from "./ActivitySection";
 import BidSection from "./BidsPage";
@@ -140,8 +142,9 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
           <div className="hidden sm:block text-sm <xl:hidden sticky top-16 flex-shrink-0 max-h-[calc(100vh_-_12rem)] w-80">
             <div className="flex items-center justify-between">
               <div className="gap-2 flex items-center px-3 py-2.5">
-                <div className="text-md text-light-green font-medium">
-                  Collections
+                <div className="text-md text-light-green font-medium flex flex-row space-x-2">
+                  <FaBook/>
+                  <p className="ml-2">Collections</p>
                 </div>
                 <div className="px-1 rounded-full flex bg-gray h-6 text-xs p-1 text-gray w-6 items-center justify-center aspect-square">
                   {collections.length}

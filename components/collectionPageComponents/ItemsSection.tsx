@@ -33,12 +33,12 @@ const ItemsSection = ({
         {/* Description */}
         <div className="w-full flex flex-col">
           <p
-            className={`w-1/2 lg:max-w-[600px] md:flex-1 md:mr-4 text-gray ${isTextExpanded || collectionData.description.length<201 ? "" : "line-clamp-2"}`}
+            className={`w-1/2 lg:max-w-[600px] md:flex-1 md:mr-4 text-gray ${isTextExpanded || collectionData.description.length<100 ? "" : "line-clamp-1"}`}
           >
             {collectionData.description}
           </p>
           <div
-            className={`${collectionData.description.length <200? " hidden " : " "}text-white cursor-pointer `}
+            className={`${collectionData.description.length <100? " hidden " : " "}text-white cursor-pointer `}
             onClick={() => setIsTextExpanded(!isTextExpanded)}
           >
             {isTextExpanded ? "Show less" : "Show more"}
