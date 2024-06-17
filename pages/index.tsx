@@ -88,7 +88,7 @@ const HeroContent = () => {
               src="/images/logo-white.png"
               alt="logo"
               className="fixed rounded-sm z-20 item-center relative"
-              layout="responsive"
+              style={{ objectFit: "cover", width: "100%", height: "100%" }}
               width={600}
               height={600}
             />
@@ -218,7 +218,6 @@ const TableSection = () => {
   const [collectionOnSaleCount, setOnSaleCount] = useState(["0"]);
   const [collectionTokenCount, setTokenCount] = useState(["0"]);
 
-
   useEffect(() => {
     if (collections != null) {
       let ids = [];
@@ -286,15 +285,15 @@ const TableSection = () => {
           <h1 className="font-medium text-white font-medium text-xl uppercase ml-2">
             Trending Collections
           </h1>
-          <p className="text-sm text-white leading-6 ml-2">
+          <div className="text-sm text-white leading-6 ml-2">
             Aggregated from over{" "}
             <div
               className="border-dashed !cursor-pointer"
             >
               100 marketplaces
             </div>
-            .
-          </p>
+            
+          </div>
         </header>
         {/* Table */}
         <div className="overflow-x-auto rounded-lg">

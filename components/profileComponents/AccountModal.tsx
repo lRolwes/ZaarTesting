@@ -102,7 +102,7 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
     setCollectionSearch(value);
   };
   return (
-    <div className="bg-dark-gray w-full mx-auto px-2 lg:px-6 overflow-y-auto">
+    <div className="bg-dark-gray w-full mx-auto px-2 lg:px-6  max-h-[500px]">
       <div className=" flex py-3 gap-2 top-0 <lg:flex-col justify-between lg:items-center lg:sticky z-40 lg:-mr-6 mt-1">
         <div className="flex items-center gap-2">
           <div className="border border-dark-gray-all h-10 px-2 relative flex items-center bg-gray rounded-sm w-[271px]  w-52 max-w-full">
@@ -333,24 +333,7 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
     </div>
   );
 };
-const ActivityPage = () => {
-  return <div>Page</div>;
-};
 
-type TraitType = {
-  key: string;
-  value: string;
-  tokenCount: number;
-  count: number;
-  floorAskPrice: {
-    amount: {
-      decimal: number;
-      usd: number;
-    };
-  };
-  sampleImages: string[];
-  floorAskPrices: number[];
-};
 
 type CollectionType = {
   id: string;
@@ -380,19 +363,11 @@ const AccountModal = ({
 }) => {
   const account = useAccount();
   const { disconnect } = useDisconnect();
-  const [rewards, setRewards] = useState(null);
   const [userTokens, setUserTokens] = useState([]);
   const [navigationPage, setNavigationPage] = useState("items");
   const [totalCollectionValue, setTotalCollectionValue] = useState(0);
-
   const { xpcalcs } = useXP();
-  /*useEffect(() => {
-    const url = `https://offchain-masterchef-e5a6ec82d362.herokuapp.com/rewards?address=${account.address ? account.address : "0x0000000000000000000000000000000000000000"}`;
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => setRewards(data.rewards))
-      .catch((error) => console.error("Error:", error));
-  }, [account.address]);*/
+
   useEffect(() => {
     async function fetchUserTokens() {
       const options = {
@@ -423,8 +398,6 @@ const AccountModal = ({
         data = await res.json();
         userTokens = userTokens.concat(data.tokens);
         continuation = data.continuation;
-        //console.log(continuation);
-        //console.log(data.tokens);
       }
 
       //console.log(data);
@@ -445,14 +418,14 @@ const AccountModal = ({
 
 
   return (
-    <div className=" block w-full h-full overflow-y-auto" >
-      <div onClick={() => setModalOpen(false)}  className="w-full absolute bg-black top-0 left-0 opacity-70 w-screen h-screen z-40 "></div>
-      <div onClick={(e) => e.stopPropagation()} className="z-40 w-4/5 h-9/10 absolute bg-gray block text-yellow absolute top-0 left-1/2 transform -translate-x-1/2  rounded-lg shadow-lg overflow-y:auto">
-        <div className=" w-full container-fluid py-6 pt-0">
-          <div className="  flex flex-col w-full ">
-            <div className="bg-dark-gray w-full">
-              <div className=" flex p-2 md:pt-6 md:pb-3 md:px-6 pl-5 justify-between gap-2 md:flex-row flex-col bg-dark-gray h-full w-full bg-gradient-to-b from-yellow/15 to-transparent">
-                <div className="flex flex-row items-center gap-4 w-full">
+    <div className="absolute top-0 left-0 w-screen h-screen" >
+      <div onClick={() => setModalOpen(false)}  className=" absolute bg-black top-0 left-0 opacity-70 w-screen h-screen z-40 "></div>
+      <div onClick={(e) => e.stopPropagation()} className="fixed z-40 w-4/5 max-h-4/5 bg-dark-gray block text-yellow top-10 left-1/2 transform -translate-x-1/2  rounded-lg shadow-lg ">
+        <div className="w-full py-6 pt-0  rounded-t-lg ">
+          <div className="  flex flex-col w-full rounded-t-lg ">
+            <div className=" w-full ">
+              <div className="rounded-t-lg flex p-2 md:pt-6 md:pb-3 md:px-6 pl-5 justify-between gap-2 md:flex-row flex-col bg-dark-gray h-full w-full bg-gradient-to-b from-yellow/15 to-transparent">
+                <div className="flex flex-row items-center gap-4 w-full rounded-t-lg">
                   <div className="rounded-lg flex-shrink-0 rounded-full relative overflow-hidden width-[65px] h-[65px]">
                     <Image
                       alt="jokerfrog.eth"
@@ -475,6 +448,22 @@ const AccountModal = ({
                       </div>
                     </div>
                   </div>
+                  <div>
+                  <div className="ml-4 flex flex-row mr-8 align-center items-center justify-center">
+                        <Image
+                          alt="image"
+                          src="/images/xp.png"
+                          className="w-8 h-8"
+                          width={100}
+                          height={100}
+                        />
+                        <div className="text-2xl font-light tracking-wide ml-3">
+                          <span className="text-light-green">
+                            {xpcalcs != undefined ? Number(xpcalcs) : Number(0)}
+                          </span>
+                        </div>
+                      </div>
+                  </div>
                 </div>
                 <div className="flex justify-center gap-2 md:items-end flex-col mt-5 sm:mt-0 md:text-xl sm:text-sm">
                   <div className="flex items-center">
@@ -496,20 +485,7 @@ const AccountModal = ({
                       >
                         Close
                       </button>
-                      <div className="flex flex-row mr-8 align-center items-center justify-center">
-                        <Image
-                          alt="image"
-                          src="/images/xp.png"
-                          className="w-8 h-8"
-                          width={100}
-                          height={100}
-                        />
-                        <div className="text-2xl font-light tracking-wide ml-3">
-                          <span className="text-light-green">
-                            {xpcalcs != undefined ? Number(xpcalcs) : Number(0)}
-                          </span>
-                        </div>
-                      </div>
+                      
                     </div>
                   </div>
                   <div className="flex flex-row justify-between"></div>

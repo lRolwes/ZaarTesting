@@ -310,6 +310,13 @@ function FilterSection({ id, count }: { id: string; count: number }) {
     setMyItems(false);
         return;
     }
+    useEffect(() => {
+      setTokenData([]);
+      
+    }, [
+      id,
+    ]);
+
     async function moreDataLookup(cont: string | null) {
       let lookupString = `https://api.reservoir.tools/tokens/v7?collection=${id}`;
       if (search != "") {
@@ -428,7 +435,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
           }
         }
         lookupString +=
-          "&includeTopBid=true&includeLastSale=true&includeAttributes=true&limit=100";
+          "&includeTopBid=true&includeLastSale=true&includeAttributes=true&limit=16";
         const options = {
           method: "GET",
           url: `${lookupString}`,
@@ -440,8 +447,8 @@ function FilterSection({ id, count }: { id: string; count: number }) {
           const response = await axios.request(options);
           const data = response.data;
           setContinuation(response.data.continuation);
-          console.log(continuation);
-          console.log(response.data);
+          //console.log(continuation);
+          //console.log(response.data);
           return data.tokens;
         } catch (error) {
           console.error(error);
@@ -458,7 +465,6 @@ function FilterSection({ id, count }: { id: string; count: number }) {
       }
     }, [
       id,
-      count,
       search,
       sort,
       sortDirection,
@@ -472,6 +478,76 @@ function FilterSection({ id, count }: { id: string; count: number }) {
   
     useEffect(() => {
       let nftData = tokenData;
+      async function queryMoreData(cont: string | null) {
+        let lookupString = `https://api.reservoir.tools/tokens/v7?collection=${id}`;
+        if (search != "") {
+          lookupString += `&tokenName=${search}`;
+        }
+        if (activePriceFloor > 0) {
+          lookupString += `&minFloorAskPrice=${activePriceFloor}`;
+        }
+        if (activePriceCeiling < 10000) {
+          lookupString += `&maxFloorAskPrice=${activePriceCeiling}`;
+        }
+        if (
+          activeRarityFloor >= 1 &&
+          activePriceFloor <= 0 &&
+          activePriceCeiling >= 10000
+        ) {
+          lookupString += `&minRarityRank=${activeRarityFloor}`;
+        }
+        if (
+          activeRarityCeiling < 10000 &&
+          activePriceFloor <= 0 &&
+          activePriceCeiling >= 10000
+        ) {
+          lookupString += `&maxRarityRank=${activeRarityCeiling}`;
+        }
+        if (sort == "floorAskPrice") {
+          lookupString += "&sortBy=floorAskPrice";
+        }
+        if (sort == "rarity") {
+          lookupString += "&sortBy=rarity";
+        }
+        if (sort == "listedAt") {
+          lookupString += "&sortBy=listedAt";
+        }
+        if (sortDirection == "desc") {
+          lookupString += "&sortDirection=desc";
+        }
+        if (traitFilterApplied) {
+          for (let attribute in traitFilterSelection) {
+            if (traitFilterSelection[attribute]) {
+              let parts = attribute.split(":");
+              lookupString += `&attributes[${parts[0]}]=${parts[1]}`;
+            }
+          }
+        }
+        lookupString +=
+          "&includeTopBid=true&includeLastSale=true&includeAttributes=true&limit=100";
+        if (cont != null) {
+          lookupString += `&continuation=${cont}`;
+        }
+    
+        const options = {
+          method: "GET",
+          url: `${lookupString}`,
+          headers: {
+            "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
+          },
+        };
+        try {
+          const response = await axios.request(options);
+          const data = response.data;
+          console.log(response.data);
+          setContinuation(response.data.continuation);
+          setTokenData((prevData) => [...prevData, ...data.tokens]);
+          return;
+        } catch (error) {
+          console.error(error);
+          return;
+        }
+      }
       if (statusFilter  && nftData.length > 0) {
         nftData = nftData.filter(
           (item: TokenType) => ((listedFilter && item.market?.floorAsk?.price?.amount?.decimal > 0) ||
@@ -525,12 +601,16 @@ function FilterSection({ id, count }: { id: string; count: number }) {
       setFilteredTokenData(nftData);
       if (nftData.length < 50 && continuation != null) {
         console.log(continuation);
-        moreDataLookup(continuation);
+        queryMoreData(continuation);
         setContinuation(null);
       }
     }, [
-      tokenData,
       id,
+      tokenData,
+      continuation,
+      offersFilter,
+      statusFilter,
+      newFilter,
       search,
       sort,
       sortDirection,
@@ -1724,7 +1804,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
               <div className="pr-1 inline-flex items-center justify-center rounded-full w-[10px] h-[10px] bg-yellow" />
 
               <span className="text-xs text-gray mr-2 ml-2">
-                {filteredTokenData.length==100? filteredTokenData.length+"+" : filteredTokenData.length} results
+                {filteredTokenData.length>=100? "100+" : filteredTokenData.length} {id} results
               </span>
             </div>
           </div>
@@ -2029,7 +2109,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
           {/* NFT Cards Section */}
           {filteredTokenData ? (
             
-            <div className="z-20 min-h-[500px] mb-[50px] grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 2xl:grid-cols-8 gap-4 px-2 py-4">
+            <div className="z-20 min-h-[500px] mb-[50px] grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 4xl:grid-cols-8 gap-4 px-2 py-4">
               {filteredTokenData.map((nft) => (
                 <TokenCard
                   setDetailsModal={setDetailsModal}
