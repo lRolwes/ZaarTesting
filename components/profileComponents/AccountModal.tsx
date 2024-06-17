@@ -312,7 +312,7 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
           <div className="border-r-1 border-gray-300 min-h-[calc(100vh_-_8rem)] h-full"></div>
         </div>
         <div className="flex-1 w-full">
-          <div className=" min-h-[500px] max-h-[600px] overflow-y-auto no-scrollbar grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-2 ml-2 ">
+          <div className=" min-h-[500px] max-h-[600px] overflow-y-auto no-scrollbar grid grid-cols-2 lg:grid-cols-4 4xl:grid-cols-5 gap-2 ml-2 ">
             {filteredItems.map((item, index) => (
               <TokenCard
                 key={index}
@@ -382,8 +382,8 @@ const AccountModal = ({
       };
       let userTokens = [];
       let continuation = null;
-      const addr = getAccount(config).address;
-      //const addr = "0x18cad576b06730ce61b98f0ab4b63da84f8ac13e";
+      //const addr = getAccount(config).address;
+      const addr = "0x18cad576b06730ce61b98f0ab4b63da84f8ac13e";
       const res = await fetch(
         `https://api.reservoir.tools/users/${addr}/tokens/v10?includeTopBid=true&includeLastSale=true&includeAttributes=true`,
         options
@@ -392,8 +392,8 @@ const AccountModal = ({
       userTokens = data.tokens;
       continuation = data.continuation;
       while(continuation!=null){
-        const addr = getAccount(config).address;
-        //const addr = "0x18cad576b06730ce61b98f0ab4b63da84f8ac13e";
+        //const addr = getAccount(config).address;
+        const addr = "0x18cad576b06730ce61b98f0ab4b63da84f8ac13e";
         const res = await fetch(
           `https://api.reservoir.tools/users/${addr}/tokens/v10?includeTopBid=true&includeLastSale=true&includeAttributes=true&continuation=${continuation}`,
           options
