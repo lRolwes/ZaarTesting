@@ -1804,7 +1804,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
               <div className="pr-1 inline-flex items-center justify-center rounded-full w-[10px] h-[10px] bg-yellow" />
 
               <span className="text-xs text-gray mr-2 ml-2">
-                {filteredTokenData.length>=100? "100+" : filteredTokenData.length} {id} results
+                {filteredTokenData.length>=100? "100+ " : filteredTokenData.length} results
               </span>
             </div>
           </div>
