@@ -93,7 +93,7 @@ export const ConnectWallet = () => {
                   <button onClick={()=>{setModalOpen(!modalOpen)}} type="button" className="hover:text-whitish transition-colors duration-150 text-sm">
                     {account.displayName}
                     {account.displayBalance
-                      ? ` (${account.displayBalance})`
+                      ? <span className="text-gray">` (${account.displayBalance})`</span>
                       : ''}
                   </button>
                 </div>

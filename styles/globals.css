@@ -87,7 +87,7 @@ a:hover {
   border-top: 1px solid #303030;
   border-right: 1px solid #303030;
 }
-
+#search-bar::placeholder { color: #5d5d5d; }
 .sticky-header {
   position: sticky;
   top: 0;

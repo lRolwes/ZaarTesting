@@ -107,7 +107,7 @@ const TraitsSection = ({ id }: { id: string }) => {
                         }}
                       />
                       <div className="ml-4 flex flex-col mr-4">
-                        <div className=" whitespace-normal mr-2 text-[18px] font-bold text-blue min-w-[150px] max-w-[200px]">{trait.value}</div>
+                        <div className="text-base whitespace-normal mr-2  font-bold text-blue min-w-[150px] max-w-[200px]">{trait.value}</div>
                         <div className="text-gray text-sm">{trait.floorAskPrices[0]}</div>
                         <div className="text-gray text-sm">{trait.tokenCount}</div>
                       </div>

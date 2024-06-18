@@ -3,6 +3,8 @@ import Image from "next/image";
 import React from "react";
 import { Footer } from "../../components/Footer";
 import { HomeHeader } from "../../components/HomeHeader";
+import Head from 'next/head';
+
 import useBalance from "../../hooks/Balance";
 import useXP from "../../hooks/xpcalcs";
   const HeroContent = () => {
@@ -11,6 +13,9 @@ import useXP from "../../hooks/xpcalcs";
 
   return (
     <div className="pb-0 flex content-center items-center justify-center bg-hero min-h-screen">
+      <Head>
+      <title>Zaar - XP</title>
+    </Head>
       <div className="fixed absolute w-full h-full bg-center bg-cover z-10">
         <Image src="/images/bg-xp.jpg" alt="" layout="fill" objectFit="cover" />
       </div>

@@ -2,6 +2,8 @@ import type { NextPage } from "next";
 import Image from "next/image";
 import React, { use, useEffect, useState } from "react";
 import Link from "next/link";
+import Head from "next/head";
+
 import { Footer } from "../../components/Footer";
 import { HomeHeader } from "../../components/HomeHeader";
 import { useTrendingCollections } from "@reservoir0x/reservoir-kit-ui";
@@ -280,6 +282,9 @@ const Home: NextPage = () => {
 
   return (
     <div className="overflow-y-hidden">
+      <Head>
+      <title>Zaar - Trade</title>
+    </Head>
       <main id="landing" className="font-secondary">
         <HomeHeader />
         <div className="container-fluid mx-auto px-4 py-6 z-1000 mt-[50px]">

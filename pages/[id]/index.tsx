@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import TopSection from "../../components/collectionPageComponents/TopSection";
 import NavSection from "../../components/collectionPageComponents/NavSection";
+import Head from "next/head";
 
 export default function Home() {
   const router = useRouter();
@@ -55,6 +56,9 @@ export default function Home() {
   
   return (
     <div className="overflow-y-hidden">
+      <Head>
+      <title>Zaar - Collection</title>
+    </Head>
       <main id="landing" className="font-secondary mt-[70px]">
         <HomeHeader />
         <div>

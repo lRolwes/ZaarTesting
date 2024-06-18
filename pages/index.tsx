@@ -497,6 +497,9 @@ const BottomSection = () => {
 const Home: NextPage = () => {
   return (
     <div className="overflow-y-hidden overflow-x-hidden">
+    <Head>
+      <title>Zaar: a full-featured mobile-friendly NFT marketplace</title>
+    </Head>
       <main id="landing" className="font-secondary">
         <HomeHeader />
         <HeroContent />

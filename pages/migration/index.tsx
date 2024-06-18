@@ -10,6 +10,9 @@ import { Migration } from '../../components/Migration';
 const Home: NextPage = () => {
   return (
     <div>
+      <Head>
+      <title>Zaar - Migrate</title>
+    </Head>
       <main className='bg-black'> 
                 <HomeHeader/>
                 <TopSection/>
