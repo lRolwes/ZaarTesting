@@ -83,7 +83,7 @@ const HeroContent = () => {
       {currentIndex==0 ?
       <div className="container fixed relative z-20 mt-10 w-full mb-[150px]">
         <div className="text-center text-white flex flex-col justify-center items-center">
-          <div className="flex relative w-[400px] md:w-[35%] justify-center items-center h-auto z-20 ">
+          <div className="flex relative w-[300px] md:w-[25%] justify-center items-center h-auto z-20 ">
             <Image
               src="/images/logo-white.png"
               alt="logo"

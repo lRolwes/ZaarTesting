@@ -1,19 +1,21 @@
 import Image from "next/image";
 import Link from "next/link";
 //import { faBook } from "@fortawesome/free-solid-svg-icons";
+
 import React from "react";
 import { useAccount, useDisconnect, useBalance } from "wagmi";
 import { useState, useEffect } from "react";
-import TokenCard from "./TokenCard";
+import TokenCard from "./../..//components/profileComponents/TokenCard";
 import { FaChevronDown, FaChevronUp, FaBook } from "react-icons/fa";
-import DetailsModal from "./DetailsModal";
-import ActivitySection from "./ActivitySection";
-import BidSection from "./BidsPage";
-import OffersSection from "./OffersPage";
-import { TokenType } from "./TokenCard";
+import DetailsModal from "./../../components/profileComponents/DetailsModal";
+import ActivitySection from "./../../components/profileComponents/ActivitySection";
+import BidSection from "./../../components/profileComponents/BidsPage";
+import OffersSection from "./../../components/profileComponents/OffersPage";
+import { TokenType } from "./../../components/profileComponents/TokenCard";
 import useXP from "../../hooks/xpcalcs";
 import { getAccount } from '@wagmi/core'
 import { config } from './../../config'
+import { HomeHeader } from "./../../components/HomeHeader";
 const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
   const [items, setItems] = useState<TokenType[]>(userTokens);
   const [collections, setCollections] = useState<CollectionType[]>([]);
@@ -37,7 +39,7 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
     } else {
       setFilteredCollections(
         collections.filter((col) =>
-          col.name.toLowerCase().includes(collectionSearch.toLowerCase())
+          col?.name?.toLowerCase().includes(collectionSearch.toLowerCase())
         )
       );
     }
@@ -103,8 +105,8 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
     setCollectionSearch(value);
   };
   return (
-    <div className="bg-dark-gray w-full mx-auto px-2 lg:px-6  max-h-[500px]">
-      <div className=" flex py-3 gap-2 top-0 <lg:flex-col justify-between lg:items-center lg:sticky z-40 lg:-mr-6 mt-1">
+    <div className="bg-dark-gray w-full mx-auto px-2 lg:px-6  ">
+      <div className=" flex py-3 gap-2 top-0 <lg:flex-col justify-between lg:items-center lg:sticky z-10 lg:-mr-6 mt-1">
         <div className="flex items-center gap-2">
           <div className="border border-dark-gray-all h-10 px-2 relative flex items-center bg-gray rounded-sm w-[271px]  w-52 max-w-full">
             <i className="far fa-search"></i>
@@ -164,7 +166,7 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
 
                   {/* Dropdown Content */}
                   <div
-                    className={`${sortDropdownOpen ? "block " : "hidden "} absolute w-50 mt-1 z-40`}
+                    className={`${sortDropdownOpen ? "block " : "hidden "} absolute w-50 mt-1 z-10`}
                   >
                     <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
                       {/* Dropdown Options */}
@@ -356,13 +358,7 @@ type CollectionType = {
     };
   };
 };
-const AccountModal = ({
-  setModalOpen,
-  balance,
-}: {
-  setModalOpen: (arg0: boolean) => void;
-  balance: string | undefined;
-}) => {
+export const AccountModal = () => {
   const account = useAccount();
   const { disconnect } = useDisconnect();
   const [userTokens, setUserTokens] = useState([]);
@@ -420,13 +416,12 @@ const AccountModal = ({
 
 
   return (
-    <div className="absolute top-0 left-0 w-screen h-screen" >
-      <div onClick={() => setModalOpen(false)}  className=" absolute bg-black top-0 left-0 opacity-70 w-screen h-screen z-40 "></div>
-      <div onClick={(e) => e.stopPropagation()} className="fixed z-40 w-4/5 max-h-4/5 bg-dark-gray block text-yellow top-10 left-1/2 transform -translate-x-1/2  rounded-lg shadow-lg ">
-        <div className="w-full py-6 pt-0  rounded-t-lg ">
+      <div  className="pt-[75px] bg-dark-gray h-full w-screen bg-gradient-to-b from-yellow/15 to-transparent z-10  block text-yellow ">
+        <HomeHeader/>
+        <div className="w-full py-6 pt-0 rounded-t-lg ">
           <div className="  flex flex-col w-full rounded-t-lg ">
             <div className=" w-full ">
-              <div className="rounded-t-lg flex p-2 md:pt-6 md:pb-3 md:px-6 pl-5 justify-between gap-2 md:flex-row flex-col bg-dark-gray h-full w-full bg-gradient-to-b from-yellow/15 to-transparent">
+              <div className="rounded-t-lg flex p-2 md:pt-6 md:pb-3 md:px-6 pl-5 justify-between gap-2 md:flex-row flex-col">
                 <div className="flex flex-row items-center gap-4 w-full rounded-t-lg">
                   <div className="rounded-lg flex-shrink-0 rounded-full relative overflow-hidden width-[65px] h-[65px]">
                     <Image
@@ -470,7 +465,7 @@ const AccountModal = ({
                 <div className="flex justify-center gap-2 md:items-end flex-col mt-5 sm:mt-0 md:text-xl sm:text-sm">
                   <div className="flex items-center">
                     <div className="flex flex-row w-full justify-center md:justify-right space-x-6 md:space-x-0  md:flex-col ml-4 md:space-y-2 justify-start">
-                      <button
+                      {/*<button
                         onClick={() => {
                           disconnect();
                           setModalOpen(false);
@@ -486,15 +481,15 @@ const AccountModal = ({
                         className="text-gray-300 bg-transparent hover:text-white border border-gray-600 hover:border-white rounded p-1 text-sm w-[80px]"
                       >
                         Close
-                      </button>
+                      </button>*/}
                       
                     </div>
                   </div>
                   <div className="flex flex-row justify-between"></div>
                 </div>
               </div>
-              <div className="  z-40 flex lg:top-0 pl-5  -mx-5 lg:-mx-6 ">
-                <div className=" flex-1 z-40 lg:mx-6 flex items-center uppercase justify-between flex-wrap-reverse">
+              <div className="  z-10 flex lg:top-0 pl-5  -mx-5 lg:-mx-6 ">
+                <div className=" flex-1 z-10 lg:mx-6 flex items-center uppercase justify-between flex-wrap-reverse">
                   <div
                     data-simplebar="init"
                     className="scroll-container-body inline-block w-full max-w-full sm:w-130 xl:w-148"
@@ -598,7 +593,6 @@ const AccountModal = ({
           <p className="text-sm text-gray-500">{rewards? rewards: "0"}</p>
         </div>
      </div>*/}
-      </div>
     </div>
   );
 };

@@ -71,7 +71,7 @@ export const HomeHeader = () => {
     setIsMenuOpen(!isMenuOpen);
   };
   return (
-    <header className= {`fixed top-0 left-0 w-full border-dark-gray z-30 flex justify-between items-center p-4 px-8 pl-6 sm:pl-2 sm:pl-2 bg-black bg-opacity-20   ${isMenuOpen? " " : " backdrop-blur-md"}`}>
+    <header className= {`fixed top-0 left-0 w-full border-dark-gray z-30 flex justify-between items-center p-2 px-8 pl-6 sm:pl-2 sm:pl-2 bg-black bg-opacity-20   ${isMenuOpen? " " : " backdrop-blur-md"}`}>
       <div className="flex justify-between items-center  w-full">
         {/* Logo and Navigation */}
         <div className="flex items-center justify-between md:space-x-4 text-sm z-30">
@@ -142,10 +142,10 @@ export const HomeHeader = () => {
           </nav>
         </div>
         <div className="fixed top-3 left-1/2   -translate-x-1/2 flex flex-col w-[250px] md:w-[360px] text-base z-10 align-center item-center self-center" ref={wrapperRef}>
-          <input type="text" placeholder="Search" onChange={handleInputChange} className="placeholder-gray-50 border-dark-gray-all   bg-black w-full px-4 py-2 bg-black text-white placeholder-gray-50 focus:outline-none" id="search-bar" autoComplete="off"/>
+          <input type="text" placeholder="Search" onChange={handleInputChange} className="placeholder-gray-50 border-1 border-dark-gray-all  bg-black w-full px-4 py-2 bg-black text-white placeholder-gray-50 focus:outline-none" id="search-bar" autoComplete="off"/>
           <div className="relative">
-          <div className="absolute w-full  text-sm divide-y divide-dark-gray border-x border-b border-dark-gray">
-            {searching && searchData[0] && <Link href={`/${searchData[0]?.id? searchData[0].id:""}`} onClick={()=>{setSearching(false);}} className="  text-light-green hover:text-light-green w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray  bg-black w-full px-4 py-2  bg-black text-white focus:outline-none" >
+          <div className={`absolute w-full  text-sm  ${searching? " divide-y divide-dark-gray border-b-1 border-x border-dark-gray" : " "}   `}>
+            {searching && searchData[0] && <Link href={`/${searchData[0]?.id? searchData[0].id:""}`} onClick={()=>{setSearching(false);}} className="  text-light-green hover:text-light-green flex flex-row  items-center hover:bg-gray  bg-black w-full px-4 py-2  bg-black text-white " >
                       <div
                         className="h-7 w-7  mr-4 "
                         style={{ 
@@ -156,7 +156,7 @@ export const HomeHeader = () => {
                         }}
                       />
                        {searchData[0]?.name? searchData[0].name: " "} </Link>}
-                       {searching && searchData[1] && <Link href={`/${searchData[1]?.id}`} onClick={()=>{setSearching(false);}} className="  text-light-green hover:text-light-green  w-[200px] md:w-[360px]  flex flex-row  items-center hover:bg-gray   bg-black w-full px-4 py-2 bg-black text-white focus:outline-none" >
+                       {searching && searchData[1] && <Link href={`/${searchData[1]?.id}`} onClick={()=>{setSearching(false);}} className="  text-light-green hover:text-light-green flex flex-row  items-center hover:bg-gray   bg-black w-full px-4 py-2 bg-black text-white" >
                       <div
                         className="h-7 w-7  mr-4 "
                         style={{ 
@@ -167,7 +167,7 @@ export const HomeHeader = () => {
                         }}
                       />
                        {searchData[1]?.name? searchData[1].name: " "} </Link>}
-                       {searching && searchData[2] && <Link href={`/${searchData[2]?.id}`} onClick={()=>{setSearching(false);}} className="text-light-green hover:text-light-green w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray bg-black w-full px-4 py-2 bg-black text-white focus:outline-none" >
+                       {searching && searchData[2] && <Link href={`/${searchData[2]?.id}`} onClick={()=>{setSearching(false);}} className="text-light-green hover:text-light-green  flex flex-row  items-center hover:bg-gray bg-black w-full px-4 py-2 bg-black text-white " >
                       <div
                         className="h-7 w-7 mr-4"
                         style={{ 
@@ -178,7 +178,7 @@ export const HomeHeader = () => {
                         }}
                       />
                        {searchData[2]?.name? searchData[2].name: " "} </Link>}
-                       {searching && searchData[3] && <Link href={`/${searchData[3]?.id}`} onClick={()=>{setSearching(false);}} className="text-light-green hover:text-light-green w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray  bg-black w-full px-4 py-2 bg-black text-white focus:outline-none" >
+                       {searching && searchData[3] && <Link href={`/${searchData[3]?.id}`} onClick={()=>{setSearching(false);}} className="text-light-green hover:text-light-green flex flex-row  items-center hover:bg-gray  bg-black w-full px-4 py-2 bg-black text-white " >
                       <div
                         className="h-7 w-7 mr-4 "
                         style={{ 
@@ -189,7 +189,7 @@ export const HomeHeader = () => {
                         }}
                       />
                        {searchData[3]?.name? searchData[3].name: " "} </Link>}
-                       {searching && searchData[4] && <Link href={`/${searchData[4]?.id}`} onClick={()=>{setSearching(false);}} className="text-light-green hover:text-light-green w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray bg-black w-full px-4 py-2 bg-black text-white focus:outline-none" >
+                       {searching && searchData[4] && <Link href={`/${searchData[4]?.id}`} onClick={()=>{setSearching(false);}} className="text-light-green hover:text-light-green flex flex-row  items-center hover:bg-gray bg-black w-full px-4 py-2 bg-black text-white " >
                       <div
                         className="h-7 w-7   mr-4 "
                         style={{ 
@@ -212,7 +212,7 @@ export const HomeHeader = () => {
               <button
                 id="menu-btn"
                 onClick={handleMenuButtonClick}
-                className={` ${isMenuOpen? "fixed top-3 right-8 z-30 " : ""}p-2 focus:outline-none lg:hidden text-light-green border border-dark-gray-all hover:border-light-green-all rounded-sm transition-colors duration-150 lg:hidden`}
+                className={` ${isMenuOpen? "fixed top-3 right-8 z-30 " : ""} p-2 focus:outline-none lg:hidden text-light-green border border-dark-gray-all hover:border-light-green-all rounded-sm transition-colors duration-150 lg:hidden`}
               >
                 {!isMenuOpen? <svg
                   className="h-6 w-6 text-yellow lg:hidden"

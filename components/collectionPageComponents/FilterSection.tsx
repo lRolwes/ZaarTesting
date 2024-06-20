@@ -1317,7 +1317,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                     type="text"
                     placeholder="Search for tokens"
                     onChange={handleSearchInputChange}
-                    className=" border-2 border-dark-gray border-l border-r border-t bg-black w-full px-4 py-2 rounded-sm bg-black text-white placeholder-gray-50 focus:outline-none lg:ml-2 h-10"
+                    className=" border-1 border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white placeholder-gray-50 focus:outline-none lg:ml-2 h-10"
                     autoComplete="off"
                   />
                 </div>

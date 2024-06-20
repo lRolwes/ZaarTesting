@@ -87,7 +87,7 @@ function TokenCard({
           </span>
         </div>
         <div className="flex-1 relative flex justify-center items-center">
-          <div className="object-cover w-[350px] h-[260px] bg-gray-200 overflow-hidden">
+          <div className="object-cover w-[350px] max-h-[260px] bg-gray-200 overflow-hidden">
             {nft.token.image != " " ? (
               <Image
                 src={

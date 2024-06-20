@@ -164,23 +164,27 @@ const TopSection = ({ collectionData }: { collectionData: CollectionData }) => {
                     )}
                   </div>
                 </div>
-                <div className="flex flew-row text-sm text-gray-400 mt-1 uppercase space-x-2 overflow-x-scroll no-scrollbar">
-                  {collectionData?.contractKind?.substring(0, 3) == "erc" ? (
-                    <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
-                      Ethereum
+                <div className="flex flex-col md:flex-row text-sm text-gray-400 mt-1 uppercase md:space-x-1 overflow-x-scroll no-scrollbar">
+                  <div className="flex flex-row space-x-1">
+                      {collectionData?.contractKind?.substring(0, 3) == "erc" ? (
+                      <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
+                        Ethereum
+                      </span>
+                    ) : (
+                      <div />
+                    )}
+                    <span className="flex flex-row items-center flex-nowrap whitespace-nowrap cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm  h-5 bg-gray uppercase mt-1">
+                      {collectionData?.tokenCount} ITEMS
                     </span>
-                  ) : (
-                    <div />
-                  )}
-                  <span className="flex flex-row items-center flex-nowrap whitespace-nowrap cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm  h-5 bg-gray uppercase mt-1">
-                    {collectionData?.tokenCount} ITEMS
-                  </span>
-                  <span className="cursor-default whitespace-nowrap text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
-                    MINTED {age}Y AGO
-                  </span>
-                  <span className="cursor-default text-xs whitespace-nowrap font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
-                    {Number(collectionData?.royalties?.bps) / 100}% CREATOR FEE
-                  </span>
+                    <span className="cursor-default whitespace-nowrap text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
+                      MINTED {age}Y AGO
+                    </span>
+                  </div>
+                  <div>
+                    <span className="cursor-default text-xs whitespace-nowrap font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase mt-1">
+                      {Number(collectionData?.royalties?.bps) / 100}% CREATOR FEE
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
