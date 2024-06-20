@@ -4,6 +4,7 @@ import Image from 'next/image';
 import React from "react";
 import {useAccount, useDisconnect, useBalance} from "wagmi";
 import {useState, useEffect} from "react";
+import Link from "next/link";
 import AccountModal from "./profileComponents/AccountModal";
 export const ConnectWallet = () => {
     const [modalOpen, setModalOpen] = useState(false);
@@ -100,7 +101,7 @@ export const ConnectWallet = () => {
                         <div className="truncate text-yellow-400">{account.displayName}</div>
                     </button>
                     <div className="absolute left-0 translate-x-[-65px] w-[calc(100%+65px)] bg-black border border-dark-gray-all rounded-sm shadow-lg transition-opacity duration-300 invisible group-hover:visible opacity-0 group-hover:opacity-100 z-20 uppercase">
-                        <a href="/profile" className="block px-4 py-3 text-sm text-light-green border-b border-dark-gray hover:bg-gray-900 hover:text-white"><i className="far fa-user-alt text-gray mr-2"></i>Profile</a>
+                        <Link href="/profile" className="block px-4 py-3 text-sm text-light-green border-b border-dark-gray hover:bg-gray-900 hover:text-white"><i className="far fa-user-alt text-gray mr-2"></i>Profile</Link>
                        {/*} <a href="#" className="block px-4 py-3 text-sm text-light-green border-b border-dark-gray hover:bg-gray-900 hover:text-white"><i className="fal fa-eye text-gray mr-2"></i>Watchlist</a>*/}
                        {/*} <a href="settings.html" className="block px-4 py-3 text-sm text-light-green border-b border-dark-gray hover:bg-gray-900 hover:text-white"><i className="far fa-cog text-gray mr-2"></i>Settings</a>*/}
                         <div onClick={()=>{disconnect();}}  className="hover:cursor-pointer block px-4 py-3 text-sm text-light-green hover:bg-gray-900 hover:text-white"><i className="fas fa-sign-out text-gray mr-2"></i>Log Out</div>
