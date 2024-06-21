@@ -224,20 +224,20 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
     }, [activityData, search, listing, bid, mint, transfer, sale, markets]);
   
     return (
-      <div className="bg-dark-gray">
+      <div className="bg-black">
         <div className="container-fluid mx-auto ">
-          <div className="bg-dark-gray text-light-green">
+          <div className="bg-black text-light-green">
             {/* Activity Header */}
-            <div className="bg-dark-gray flex items-center justify-between">
+            <div className="bg-black flex items-center justify-between">
               <div className="flex-1 pt-3 pb-2 md:pt-3 md:pb-2 flex gap-2  md:mx-6 z-40 px-6 md:px-0">
                 <div className="flex-col-reverse sm:flex-row-reverse lg:flex-row flex w-full gap-1.5 items-center lg:justify-between">
                   <div className="relative w-full sm:max-w-90">
                     <div className="relative max-w-[350px]">
-                      <div className="bg-gray flex items-center rounded-sm border border-dark-gray h-10 w-full">
+                      <div className="bg-black flex items-center rounded-sm border border-dark-gray h-10 w-full">
                         <input
                           placeholder="Search for items"
                           type="text"
-                          className="bg-gray text-sm w-full outline-none px-2.5 text-gray placeholder-gray-500"
+                          className="bg-black text-sm w-full outline-none px-2.5 text-gray placeholder-gray-500"
                           onChange={handleSearchInputChange}
                         />
                       </div>
@@ -247,7 +247,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                 {/* Additional filters for larger screens */}
                 <div className="block lg:hidden w-[200px]" >
                   <button
-                    className="w-full flex justify-center text-center  bg-dark-gray border items-center rounded-sm flex cursor-pointer font-medium border-dark-gray-all h-10 text-sm text-light-gray items-center whitespace-nowrap truncate px-1"
+                    className="w-full flex justify-center text-center  bg-black border items-center rounded-sm flex cursor-pointer font-medium border-dark-gray-all h-10 text-sm text-light-gray items-center whitespace-nowrap truncate px-1"
                     onClick={() => { setFiltersOpen(!filtersOpen) }}
                   >
                     Filters
@@ -281,7 +281,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                         <div
                           className={`dropdown-content w-full z-40 ml-4 mr-4 ${eventsDropdown ? "block" : "hidden"}`}
                         >
-                          <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
+                          <div className="bg-black mt-2 text-light-green rounded-sm shadow-lg">
                             {/* Market Options with additional data */}
                             <label className="block cursor-pointer px-4 py-2">
                               <input
@@ -360,7 +360,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                     <div
                       className={`dropdown-content z-40 mt-1 ${marketsDropdown ? "block" : "hidden"}`}
                     >
-                      <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
+                      <div className="bg-black mt-2 text-light-green rounded-sm shadow-lg">
                         {/* Market Options with additional data */}
                         <label className="block cursor-pointer px-4 py-2">
                           <input
@@ -423,7 +423,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                     </div>
                     <div className ='w-full'>
                       <button
-                        className="ml-4 mt-4 w-[95%] mr-4 p-4 Text white bg-gray hover:bg-white hover:text-black"
+                        className="ml-4 mt-4 w-[95%] mr-4 p-4 Text white bg-black hover:bg-white hover:text-black"
                         onClick={()=>{resetFilters();}}>
                         Clear Filters
                       </button>
@@ -437,7 +437,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                   {/* Event filter */}
                   <div className="relative">
                     <div
-                      className="border bg-gray rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1"
+                      className="border bg-black rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1"
                       onClick={() => {
                         setEventsDropdown(!eventsDropdown);
                         setMarketsDropdown(false);
@@ -453,7 +453,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                     <div
                       className={`absolute right-0 dropdown-content w-[200px] z-40 mt-1 ${eventsDropdown ? "block" : "hidden"}`}
                     >
-                      <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
+                      <div className="bg-black mt-2 text-light-green rounded-sm shadow-lg">
                         {/* Market Options with additional data */}
                         <label className="block cursor-pointer px-4 py-2">
                           <input
@@ -517,7 +517,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                   {/* Market filter */}
                   <div className="relative">
                     <div
-                      className="border bg-gray  rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1"
+                      className="border bg-black  rounded-sm flex justify-between cursor-pointer font-medium border-dark-gray-all h-10 text-sm pl-2 text-gray items-center whitespace-nowrap truncate pr-1"
                       onClick={() => {
                         setMarketsDropdown(!marketsDropdown);
                         setEventsDropdown(false);
@@ -533,7 +533,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                     <div
                       className={`absolute right-0 dropdown-content w-[200px] z-40 mt-1 ${marketsDropdown ? "block" : "hidden"}`}
                     >
-                      <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
+                      <div className="bg-black mt-2 text-light-green rounded-sm shadow-lg">
                         {/* Market Options with additional data */}
                         <label className="block cursor-pointer px-4 py-2">
                           <input
@@ -600,7 +600,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
               </div>
             </div>
           </div>
-          <div className="bg-dark-gray flex items-center gap-2 flex-wrap ml-6 sm:ml-4 md:pl-2">
+          <div className="bg-black flex items-center gap-2 flex-wrap ml-6 sm:ml-4 md:pl-2">
             {!markets.Blur ||
               !markets.LooksRare ||
               !markets.MagicEden ||
@@ -609,7 +609,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
               !markets.SudoSwap ? (
               <div className="flex flex-row gap-2">
                 {markets.Blur ? (
-                  <button className="text-gray px-2 rounded-sm bg-dark-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+                  <button className="text-gray px-2 rounded-sm bg-black flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
                     <span className="text-gray capitalize">Market</span>
                     <span className="capitalize text-light-green mr-1 ml-1">
                       Blur
@@ -627,7 +627,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                   </button>
                 ) : null}
                 {markets.OpenSea ? (
-                  <button className="text-gray px-2 rounded-sm bg-dark-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+                  <button className="text-gray px-2 rounded-sm bg-black flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
                     <span className="text-gray capitalize">Market</span>
                     <span className="capitalize text-light-green mr-1 ml-1">
                       OpenSea
@@ -645,7 +645,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                   </button>
                 ) : null}
                 {markets.LooksRare ? (
-                  <button className="text-gray px-2 rounded-sm bg-dark-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+                  <button className="text-gray px-2 rounded-sm bg-black flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
                     <span className="text-gray capitalize">Market</span>
                     <span className="capitalize text-light-green mr-1 ml-1">
                       LooksRare
@@ -663,7 +663,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                   </button>
                 ) : null}
                 {markets.NFTX ? (
-                  <button className="text-gray px-2 rounded-sm bg-dark-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+                  <button className="text-gray px-2 rounded-sm bg-black flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
                     <span className="text-gray capitalize">Market</span>
                     <span className="capitalize text-light-green mr-1 ml-1">
                       NFTX
@@ -681,7 +681,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                   </button>
                 ) : null}
                 {markets.SudoSwap ? (
-                  <button className="text-gray px-2 rounded-sm bg-dark-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+                  <button className="text-gray px-2 rounded-sm bg-black flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
                     <span className="text-gray capitalize">Market</span>
                     <span className="capitalize text-light-green mr-1 ml-1">
                       SudoSwap
@@ -699,7 +699,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                   </button>
                 ) : null}
                 {markets.MagicEden ? (
-                  <button className="text-gray px-2 rounded-sm bg-dark-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+                  <button className="text-gray px-2 rounded-sm bg-black flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
                     <span className="text-gray capitalize">Market</span>
                     <span className="capitalize text-light-green mr-1 ml-1">
                       MagicEden
@@ -719,7 +719,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
               </div>
             ) : null}
             {sale && !(listing && sale && transfer && mint && bid) ? (
-              <button className="text-gray px-2 rounded-sm bg-dark-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+              <button className="text-gray px-2 rounded-sm bg-black flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
                 <span className="text-gray capitalize">Event</span>
                 <span className="capitalize text-light-green mr-1 ml-1">
                   Sale
@@ -734,7 +734,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
               </button>
             ) : null}
             {listing && !(listing && sale && transfer && mint && bid) ? (
-              <button className="text-gray px-2 rounded-sm bg-dark-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+              <button className="text-gray px-2 rounded-sm bg-black flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
                 <span className="text-gray capitalize">Event</span>
                 <span className="capitalize text-light-green mr-1 ml-1">
                   Listing
@@ -749,7 +749,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
               </button>
             ) : null}
             {transfer && !(listing && sale && transfer && mint && bid) ? (
-              <button className="text-gray px-2 rounded-sm bg-dark-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+              <button className="text-gray px-2 rounded-sm bg-black flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
                 <span className="text-gray capitalize">Event</span>
                 <span className="capitalize text-light-green mr-1 ml-1">
                   Transfer
@@ -764,7 +764,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
               </button>
             ) : null}
             {mint && !(listing && sale && transfer && mint && bid) ? (
-              <button className="text-gray px-2 rounded-sm bg-dark-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+              <button className="text-gray px-2 rounded-sm bg-black flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
                 <span className="text-gray capitalize">Event</span>
                 <span className="capitalize text-light-green mr-1 ml-1">
                   Mint
@@ -779,7 +779,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
               </button>
             ) : null}
             {bid && !(listing && sale && transfer && mint && bid) ? (
-              <button className="text-gray px-2 rounded-sm bg-dark-gray flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
+              <button className="text-gray px-2 rounded-sm bg-black flex py-0.5 items-center text-xs cursor-pointer hover:text-gray-600">
                 <span className="text-gray capitalize">Event</span>
                 <span className="capitalize text-light-green mr-1 ml-1">Bid</span>
                 <span
@@ -801,29 +801,29 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
             </div>
           </div>
   
-          <div className="bg-dark-gray flex items-center gap-2 flex-wrap ml-2 mr-2 md:ml-6 md:pl-1 md:mr-8 mt-3">
+          <div className="bg-black flex items-center gap-2 flex-wrap ml-2 mr-2 md:ml-6 md:pl-1 md:mr-8 mt-3">
             {/*Table*/}
-            <div className="bg-gray overflow-x-auto rounded-lg w-full min-h-[500px] ">
+            <div className="bg-black overflow-x-auto rounded-lg w-full min-h-[500px] ">
               <div className="table-wrapper max-h-screen overflow-y-auto no-scrollbar">
-                <table className="bg-gray sticky-first-column not-sticky-second-column sticky-header w-full text-sm text-left text-light-green">
-                  <thead className=" whitespace-nowrap z-40 sticky top-0 text-xs uppercase text-light-gray bg-gray">
-                    <tr className="border-b border-dark-gray cursor-pointer text-light-gray bg-gray">
-                      <th scope="col" className="px-6 py-3 bg-gray">
+                <table className="bg-black sticky-first-column not-sticky-second-column sticky-header w-full text-sm text-left text-light-green">
+                  <thead className=" whitespace-nowrap z-40 sticky top-0 text-xs uppercase text-light-gray bg-black">
+                    <tr className="border-b border-dark-gray cursor-pointer text-light-gray bg-black">
+                      <th scope="col" className="px-6 py-3 bg-black">
                         Event
                       </th>
-                      <th scope="col" className="px-6 py-3 text-left  bg-gray">
+                      <th scope="col" className="px-6 py-3 text-left  bg-black">
                         Item
                       </th>
-                      <th scope="col" className="px-6 py-3 text-right bg-gray">
+                      <th scope="col" className="px-6 py-3 text-right bg-black">
                         Value
                       </th>
-                      <th scope="col" className="px-6 py-3 text-right bg-gray">
+                      <th scope="col" className="px-6 py-3 text-right bg-black">
                         From
                       </th>
-                      <th scope="col" className="px-6 py-3 text-right bg-gray">
+                      <th scope="col" className="px-6 py-3 text-right bg-black">
                         To
                       </th>
-                      <th scope="col" className="px-6 py-3 text-right bg-gray">
+                      <th scope="col" className="px-6 py-3 text-right bg-black">
                         Time
                       </th>
                     </tr>
@@ -837,7 +837,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                             className="dark-gray-hover cursor-pointer"
                           >
                             <td className="px-4 py-4 flex items-center">
-                              <div className="bg-black border border-dark-gray-all w-[30px] h-[30px] mr-2 flex items-center justify-center rounded-lg shadow-md hover:bg-gray-800">
+                              <div className="bg-black border border-dark-gray-all w-[30px] h-[30px] mr-2 flex items-center justify-center rounded-lg shadow-md hover:bg-black-800">
                                 {item.order?.source?.icon && (
                                   <Image
                                     width={160}
@@ -879,7 +879,7 @@ const ActivitySection = ({ id }: { id: string | undefined }) => {
                                         </div>
                                       </div>
                                       <div className="inline-block">
-                                        <div className="bg-gray rounded-md h-5 px-2 inline-flex items-center justify-center">
+                                        <div className="bg-black rounded-md h-5 px-2 inline-flex items-center justify-center">
                                           <div className="text-light-green text-xs">
                                             <div>
                                               {" "}

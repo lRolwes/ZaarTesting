@@ -71,10 +71,10 @@ export const HomeHeader = () => {
     setIsMenuOpen(!isMenuOpen);
   };
   return (
-    <header className= {`fixed top-0 left-0 w-full border-dark-gray z-30 flex justify-between items-center p-2 px-8 pl-6 sm:pl-2 sm:pl-2 bg-black bg-opacity-20   ${isMenuOpen? " " : " backdrop-blur-md"}`}>
+    <header className= {`fixed top-0 left-0 w-full border-dark-gray z-30 flex justify-between items-center p-3 px-8 pl-6 sm:pl-2 sm:pl-2 bg-black bg-opacity-20   ${isMenuOpen? " " : " backdrop-blur-md"}`}>
       <div className="flex justify-between items-center  w-full">
         {/* Logo and Navigation */}
-        <div className="flex items-center justify-between md:space-x-4 text-sm z-30">
+        <div className="flex items-center align-center justify-between md:space-x-4 text-sm z-30">
           {isMenuOpen && (
             <div className="space-y-3 fixed top-0 right-0 bottom-0 left-0 z-30 w-full h-full bg-black flex flex-col items-center justify-center bg-opacity-90 text-xl font-bold z-30">
               {/* Your mobile navigation menu goes here */}
@@ -103,7 +103,7 @@ export const HomeHeader = () => {
               
             </div>
           )}
-          <div className="ml-2">
+          <div className="ml-2 ">
             <Link href="/" className=" ">
               <Image
                 src="/images/logo-3d.png"
@@ -117,7 +117,7 @@ export const HomeHeader = () => {
 
           <div className="flex-grow md:hidden"></div>
         </div>
-        <div className="lg:block hidden">
+        <div className="lg:block hidden ">
           <nav className="space-x-7 uppercase relative text-sm md:ml-3 font-l flex flex-row">
             <Link href="/trade" className="contain ">
             <div className={`${page=="/trade"? "text-white " : "text-gray hover:text-hoveryellow    "}`}>
@@ -141,7 +141,7 @@ export const HomeHeader = () => {
             </Link>
           </nav>
         </div>
-        <div className="fixed top-3 left-1/2   -translate-x-1/2 flex flex-col w-[250px] md:w-[360px] text-base z-10 align-center item-center self-center" ref={wrapperRef}>
+        <div className="fixed top-3 left-1/2   -translate-x-1/2 flex flex-col w-[250px] md:w-[360px] text-base z-10 align-center justify-center item-center self-center" ref={wrapperRef}>
           <input type="text" placeholder="Search" onChange={handleInputChange} className="placeholder-gray-50 border-1 border-dark-gray-all  bg-black w-full px-4 py-2 bg-black text-white placeholder-gray-50 focus:outline-none" id="search-bar" autoComplete="off"/>
           <div className="relative">
           <div className={`absolute w-full  text-sm  ${searching? " divide-y divide-dark-gray border-b-1 border-x border-dark-gray" : " "}   `}>

@@ -33,7 +33,9 @@ body {
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-
+.relative:hover .dropdown-content {
+  display: block;
+}
 body {
   font-family: 'W95FA';
   letter-spacing: 1px;
@@ -110,4 +112,79 @@ th {
       -ms-overflow-style: none;  /* IE and Edge */
       scrollbar-width: none;  /* Firefox */
 }
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px; /* Adjust the height */
+  background: transparent; /* Remove default background */
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8px; /* Adjust the height */
+  background: linear-gradient(to right, #FBBF24 0%, #FBBF24 var(--slider-value), #E5E7EB var(--slider-value), #E5E7EB 100%);
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; /* Adjust the thumb width */
+  height: 16px; /* Adjust the thumb height */
+  background: #FBBF24; /* Customize the thumb color */
+  border-radius: 50%; /* Rounded thumb */
+  cursor: pointer;
+  margin-top: -4px; /* Adjust margin to center the thumb */
+}
+
+input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 8px; /* Adjust the height */
+  background: linear-gradient(to right, #FBBF24 0%, #FBBF24 var(--slider-value), #E5E7EB var(--slider-value), #E5E7EB 100%);
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px; /* Adjust the thumb width */
+  height: 16px; /* Adjust the thumb height */
+  background: #FBBF24; /* Customize the thumb color */
+  border-radius: 50%; /* Rounded thumb */
+  cursor: pointer;
+}
+
+input[type="range"]::-ms-track {
+  width: 100%;
+  height: 8px; /* Adjust the height */
+  background: transparent; /* Remove default background */
+  border-color: transparent;
+  color: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]::-ms-fill-lower {
+  background: #FBBF24; /* Customize the fill color */
+  border-radius: 4px; /* Rounded corners */
+}
+
+input[type="range"]::-ms-fill-upper {
+  background: #E5E7EB; /* Customize the track color */
+  border-radius: 4px; /* Rounded corners */
+}
+
+input[type="range"]::-ms-thumb {
+  width: 16px; /* Adjust the thumb width */
+  height: 16px; /* Adjust the thumb height */
+  background: #FBBF24; /* Customize the thumb color */
+  border-radius: 50%; /* Rounded thumb */
+  cursor: pointer;
+}
+
+input[type="range"]:focus {
+  outline: none; /* Remove focus outline */
+}
+
+input[type="range"]::-ms-tooltip {
+  display: none; /* Remove default tooltip in IE */
 }

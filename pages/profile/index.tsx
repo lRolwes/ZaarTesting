@@ -105,10 +105,10 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
     setCollectionSearch(value);
   };
   return (
-    <div className="bg-dark-gray w-full mx-auto px-2 lg:px-6  ">
+    <div className="bg-black w-full mx-auto px-2 lg:px-6  ">
       <div className=" flex py-3 gap-2 top-0 <lg:flex-col justify-between lg:items-center lg:sticky z-10 lg:-mr-6 mt-1">
         <div className="flex items-center gap-2">
-          <div className="border border-dark-gray-all h-10 px-2 relative flex items-center bg-gray rounded-sm w-[271px]  w-52 max-w-full">
+          <div className="border border-dark-gray-all h-10 px-2 relative flex items-center bg-black rounded-sm w-[271px]  w-52 max-w-full">
             <i className="far fa-search"></i>
             <label className="sr-only">Search items</label>
             <div className="flex-1 overflow-hidden">
@@ -155,7 +155,7 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
                 <div className="relative">
                   {/* Trigger */}
                   <button
-                    className=" space-x-2 bg-gray border-dark-gray border-all border-2 flex text-light-green items-center font-dm-sans justify-between font-medium text-sm text-gray rounded-sm pl-3 pr-2 cursor-pointer h-10  mr-4"
+                    className=" space-x-2 bg-black border-dark-gray border-all border-2 flex text-light-green items-center font-dm-sans justify-between font-medium text-sm text-gray rounded-sm pl-3 pr-2 cursor-pointer h-10  mr-4"
                     onClick={() => {
                       setSortDropdownOpen(!sortDropdownOpen);
                     }}
@@ -192,7 +192,7 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
               </div>
             </div>
             <div className="px-3 py-2">
-              <div className="border border-dark-gray-all h-10 px-2 relative flex items-center bg-gray rounded-sm w-full">
+              <div className="border border-dark-gray-all h-10 px-2 relative flex items-center bg-black rounded-sm w-full">
                 <i className="far fa-search"></i>
                 <label className="sr-only">Search Collections</label>
                 <div className="flex-1 overflow-hidden">
@@ -416,7 +416,7 @@ export const AccountModal = () => {
 
 
   return (
-      <div  className="pt-[75px] bg-dark-gray h-full w-screen bg-gradient-to-b from-yellow/15 to-transparent z-10  block text-yellow ">
+      <div  className="pt-[60px] bg-dark-gray h-full w-screen bg-gradient-to-b from-yellow/15 to-transparent z-10  block text-yellow ">
         <HomeHeader/>
         <div className="w-full py-6 pt-0 rounded-t-lg ">
           <div className="  flex flex-col w-full rounded-t-lg ">
