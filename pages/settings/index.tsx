@@ -1,6 +1,8 @@
+'use client';
+import type { PutBlobResult } from '@vercel/blob';
 import React, { use } from 'react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import {HomeHeader} from '../../components/HomeHeader';
 import {Footer} from  '../../components/Footer';
@@ -19,6 +21,8 @@ export const Settings = () => {
     const [newProfileBanner, setNewProfileBanner] = React.useState("");
     const [currentProfileBanner, setCurrentProfileBanner] = React.useState("Set New Profile Banner");
     const addr = getAccount(config).address;
+    const inputFileRef = useRef<HTMLInputElement>(null);
+    const [blob, setBlob] = useState<PutBlobResult | null>(null);
     useEffect(() => {
         if(addr != null){
             fetch(`http://localhost:3000/api/getProfile?ownerAddress=${addr}`)
@@ -126,6 +130,37 @@ export const Settings = () => {
                                         <Image width={100} height={100}  src="/images/jokerfrog.jpg" alt="Profile Image"/>
                                     </div>
                                     </div>
+                                    <form
+        onSubmit={async (event) => {
+          event.preventDefault();
+
+          if (!inputFileRef.current?.files) {
+            throw new Error("No file selected");
+          }
+
+          const file = inputFileRef.current.files[0];
+
+          const response = await fetch(
+            `/api/avatarUpload?filename=${file.name}`,
+            {
+              method: 'POST',
+              body: file,
+            },
+          );
+
+          const newBlob = (await response.json()) as PutBlobResult;
+
+          setBlob(newBlob);
+        }}
+      >
+        <input name="file" ref={inputFileRef} type="file" required />
+        <button type="submit">Upload</button>
+      </form>
+      {blob && (
+        <div>
+          Blob url: <a href={blob.url}>{blob.url}</a>
+        </div>
+      )}
                                     {/* Additional content here */}
                                 </div>
                                 <div className="flex flex-col ml-0 sm:ml-10 mt-3">
@@ -154,7 +189,6 @@ export const Settings = () => {
                   
         
             </div>
-        
           <Footer/>
       
             

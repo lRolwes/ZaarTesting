@@ -15,6 +15,11 @@ const nextConfig = {
         hostname: 'static.coinall.ltd',
         pathname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: 'my-blob-store.public.blob.vercel-storage.com',
+        port: '',
+      },
     ],
   },
   async headers() {
