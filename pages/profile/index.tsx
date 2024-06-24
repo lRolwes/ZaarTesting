@@ -13,9 +13,13 @@ import BidSection from "./../../components/profileComponents/BidsPage";
 import OffersSection from "./../../components/profileComponents/OffersPage";
 import { TokenType } from "./../../components/profileComponents/TokenCard";
 import useXP from "../../hooks/xpcalcs";
-import { getAccount } from '@wagmi/core'
-import { config } from './../../config'
+import { getAccount } from "@wagmi/core";
+import { config } from "./../../config";
 import { HomeHeader } from "./../../components/HomeHeader";
+import { createIdenticon } from 'identicon';
+import { encode } from 'base64-arraybuffer';
+
+
 const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
   const [items, setItems] = useState<TokenType[]>(userTokens);
   const [collections, setCollections] = useState<CollectionType[]>([]);
@@ -144,7 +148,7 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
             <div className="flex items-center justify-between">
               <div className="gap-2 flex items-center px-3 py-2.5">
                 <div className="text-md text-light-green font-medium flex flex-row space-x-2">
-                  <FaBook/>
+                  <FaBook />
                   <p className="ml-2">Collections</p>
                 </div>
                 <div className="px-1 rounded-full flex bg-gray h-6 text-xs p-1 text-gray w-6 items-center justify-center aspect-square">
@@ -338,7 +342,6 @@ const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
   );
 };
 
-
 type CollectionType = {
   id: string;
   name: string;
@@ -365,7 +368,41 @@ export const AccountModal = () => {
   const [navigationPage, setNavigationPage] = useState("items");
   const [totalCollectionValue, setTotalCollectionValue] = useState(0);
   const { xpcalcs } = useXP();
+  const [currentVanity, setCurrentVanity] = React.useState("");
+  const [currentBio, setCurrentBio] = React.useState("");
+  const [currentEmail, setCurrentEmail] = React.useState("");
+  const [currentProfileImage, setCurrentProfileImage] = useState<string>("");
+  const [currentProfileBanner, setCurrentProfileBanner] = useState<string>("");
+  const addr = getAccount(config).address;
+  useEffect(() => {
+    if (!addr) return; // If address is null or undefined, do nothing
 
+    async function generateProfileImage(address: string) {
+      try {
+        const buffer = await createIdenticon({ id: address, size: 200 });
+        const base64Image = encode(buffer);
+        const dataUrl = `data:image/png;base64,${base64Image}`;
+        console.log("Generated profile image:", dataUrl);
+        setCurrentProfileImage(dataUrl); // Update state with the generated image data URL
+      } catch (error) {
+        console.error("Error generating profile image:", error);
+      }
+    }
+
+    // Fetch profile data and generate profile image
+    fetch(`http://localhost:3000/api/getProfile?ownerAddress=${addr}`)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        if (data?.uName) setCurrentVanity(data.uName);
+        if (data?.bio) setCurrentBio(data.bio);
+      })
+      .catch(error => {
+        console.error('Error fetching profile data:', error);
+      });
+
+    generateProfileImage(addr); // Call the function to generate profile image
+  }, [addr]); 
   useEffect(() => {
     async function fetchUserTokens() {
       const options = {
@@ -386,7 +423,7 @@ export const AccountModal = () => {
       let data = await res.json();
       userTokens = data.tokens;
       continuation = data.continuation;
-      while(continuation!=null){
+      while (continuation != null) {
         //const addr = getAccount(config).address;
         const addr = "0x18cad576b06730ce61b98f0ab4b63da84f8ac13e";
         const res = await fetch(
@@ -402,7 +439,10 @@ export const AccountModal = () => {
       let sum = 0;
       for (let tok of userTokens) {
         //console.log(tok?.token?.floorAsk?.price?.amount?.decimal);
-        if(tok?.token?.floorAsk?.price?.amount?.decimal && tok?.token?.floorAsk?.price?.amount?.decimal>0){
+        if (
+          tok?.token?.floorAsk?.price?.amount?.decimal &&
+          tok?.token?.floorAsk?.price?.amount?.decimal > 0
+        ) {
           sum += tok?.token?.floorAsk?.price?.amount?.decimal;
         }
       }
@@ -414,58 +454,61 @@ export const AccountModal = () => {
     fetchUserTokens();
   }, [account.address]);
 
-
   return (
-      <div  className="pt-[60px] bg-dark-gray h-full w-screen bg-gradient-to-b from-yellow/15 to-transparent z-10  block text-yellow ">
-        <HomeHeader/>
-        <div className="w-full py-6 pt-0 rounded-t-lg ">
-          <div className="  flex flex-col w-full rounded-t-lg ">
-            <div className=" w-full ">
-              <div className="rounded-t-lg flex p-2 md:pt-6 md:pb-3 md:px-6 pl-5 justify-between gap-2 md:flex-row flex-col">
-                <div className="flex flex-row items-center gap-4 w-full rounded-t-lg">
-                  <div className="rounded-lg flex-shrink-0 rounded-full relative overflow-hidden width-[65px] h-[65px]">
-                    <Image
-                      alt="jokerfrog.eth"
-                      width={100}
-                      height={100}
-                      className="h-full object-cover h-[100%] w-[100%] "
-                      src="/images/profile.jpg"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <div className="text-2xl flex items-center gap-2 font-medium">
-                      <div className="flex items-center gap-1">
-                        <div className="max-w-[calc(100vw_-_12rem)]">
-                          <div className="truncate text-light-green">
-                            {account?.address?.slice(0, 4) +
-                              "..." +
-                              account?.address?.slice(-4)}
-                          </div>
+    <div className="pt-[60px] bg-dark-gray h-full w-screen bg-gradient-to-b from-yellow/15 to-transparent z-10  block text-yellow ">
+      <HomeHeader />
+      <div className="w-full py-6 pt-0 rounded-t-lg ">
+        <div className="  flex flex-col w-full rounded-t-lg ">
+          <div className=" w-full ">
+            <div className="rounded-t-lg flex p-2 md:pt-6 md:pb-3 md:px-6 pl-5 justify-between gap-2 md:flex-row flex-col">
+              <div className="flex flex-row items-center gap-4 w-full rounded-t-lg">
+                <div className="rounded-lg flex-shrink-0 rounded-full relative overflow-hidden width-[65px] h-[65px]">
+                  <Image
+                    alt="jokerfrog.eth"
+                    width={100}
+                    height={100}
+                    className="h-full object-cover h-[100%] w-[100%] "
+                    src={
+                      currentProfileImage
+                        ? currentProfileImage
+                        : "/images/profile.jpg"
+                    }
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <div className="text-2xl flex items-center gap-2 font-medium">
+                    <div className="flex items-center gap-1">
+                      <div className="max-w-[calc(100vw_-_12rem)]">
+                        <div className="truncate text-light-green">
+                          {currentVanity
+                            ? currentVanity
+                            : addr?.slice(0, 4) + "..." + addr?.slice(-4)}
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div>
+                </div>
+                <div>
                   <div className="ml-4 flex flex-row mr-8 align-center items-center justify-center">
-                        <Image
-                          alt="image"
-                          src="/images/xp.png"
-                          className="w-8 h-8"
-                          width={100}
-                          height={100}
-                        />
-                        <div className="text-2xl font-light tracking-wide ml-3">
-                          <span className="text-light-green">
-                            {xpcalcs != undefined ? Number(xpcalcs) : Number(0)}
-                          </span>
-                        </div>
-                      </div>
+                    <Image
+                      alt="image"
+                      src="/images/xp.png"
+                      className="w-8 h-8"
+                      width={100}
+                      height={100}
+                    />
+                    <div className="text-2xl font-light tracking-wide ml-3">
+                      <span className="text-light-green">
+                        {xpcalcs != undefined ? Number(xpcalcs) : Number(0)}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <div className="flex justify-center gap-2 md:items-end flex-col mt-5 sm:mt-0 md:text-xl sm:text-sm">
-                  <div className="flex items-center">
-                    <div className="flex flex-row w-full justify-center md:justify-right space-x-6 md:space-x-0  md:flex-col ml-4 md:space-y-2 justify-start">
-                      {/*<button
+              </div>
+              <div className="flex justify-center gap-2 md:items-end flex-col mt-5 sm:mt-0 md:text-xl sm:text-sm">
+                <div className="flex items-center">
+                  <div className="flex flex-row w-full justify-center md:justify-right space-x-6 md:space-x-0  md:flex-col ml-4 md:space-y-2 justify-start">
+                    {/*<button
                         onClick={() => {
                           disconnect();
                           setModalOpen(false);
@@ -482,103 +525,116 @@ export const AccountModal = () => {
                       >
                         Close
                       </button>*/}
-                      
-                    </div>
                   </div>
-                  <div className="flex flex-row justify-between"></div>
                 </div>
+                <div className="flex flex-row justify-between"></div>
               </div>
-              <div className="  z-10 flex lg:top-0 pl-5  -mx-5 lg:-mx-6 ">
-                <div className=" flex-1 z-10 lg:mx-6 flex items-center uppercase justify-between flex-wrap-reverse">
-                  <div
-                    data-simplebar="init"
-                    className="scroll-container-body inline-block w-full max-w-full sm:w-130 xl:w-148"
-                    id=":r5:"
-                  >
-                    <div className="simplebar-wrapper m-0">
-                      <div className="simplebar-height-auto-observer-wrapper">
-                        <div className="simplebar-height-auto-observer"></div>
-                      </div>
-                      <div className="simplebar-mask">
-                        <div className="simplebar-offset r-[0px] b-0;">
-                          <div
-                            className="simplebar-content-wrapper"
-                            tabIndex={0}
-                            role="region"
-                            aria-label="scrollable content h-auto overflow-hidden;"
-                          >
-                            <div className="simplebar-content p-0">
-                              <nav className="inline-flex h-[35px] ">
-                                <button
-                                  className={`${navigationPage == "items" ? " border-yellow border-b-2 text-white" : " border-none text-gray hover:text-hoveryellow"} cursor-pointer shrink-0 text-sm font-medium whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3 mr-2.5 last:mr-0 uppercase`}
-                                  onClick={() => {
-                                    setNavigationPage("items");
-                                  }}
-                                >
-                                  Items
-                                </button>
-                                <button
-                                  className={`${navigationPage == "activity" ? " border-yellow border-b-2 text-white" : " border-none text-gray hover:text-hoveryellow"} cursor-pointer shrink-0 text-sm font-medium whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3 mr-2.5 last:mr-0 uppercase`}
-                                  onClick={() => {
-                                    setNavigationPage("activity");
-                                  }}
-                                >
-                                  Activity
-                                </button>
-                                <button
-                                  className={`${navigationPage == "offers" ? " border-yellow border-b-2 text-white" : " border-none text-gray hover:text-hoveryellow"} cursor-pointer shrink-0 text-sm font-medium whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3 mr-2.5 last:mr-0 uppercase`}
-                                  onClick={() => {
-                                    setNavigationPage("offers");
-                                  }}
-                                >
-                                  Offers Recieved
-                                </button>
-                                <button
-                                  className={`${navigationPage == "bids" ? " border-yellow border-b-2 text-white" : " border-none text-gray hover:text-hoveryellow"} cursor-pointer shrink-0 text-sm font-medium whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3 mr-2.5 last:mr-0 uppercase`}
-                                  onClick={() => {
-                                    setNavigationPage("bids");
-                                  }}
-                                >
-                                  Offers Made
-                                </button>
-                              </nav>
-                            </div>
+            </div>
+            <div className="  z-10 flex lg:top-0 pl-5  -mx-5 lg:-mx-6 ">
+              <div className=" flex-1 z-10 lg:mx-6 flex items-center uppercase justify-between flex-wrap-reverse">
+                <div
+                  data-simplebar="init"
+                  className="scroll-container-body inline-block w-full max-w-full sm:w-130 xl:w-148"
+                  id=":r5:"
+                >
+                  <div className="simplebar-wrapper m-0">
+                    <div className="simplebar-height-auto-observer-wrapper">
+                      <div className="simplebar-height-auto-observer"></div>
+                    </div>
+                    <div className="simplebar-mask">
+                      <div className="simplebar-offset r-[0px] b-0;">
+                        <div
+                          className="simplebar-content-wrapper"
+                          tabIndex={0}
+                          role="region"
+                          aria-label="scrollable content h-auto overflow-hidden;"
+                        >
+                          <div className="simplebar-content p-0">
+                            <nav className="inline-flex h-[35px] ">
+                              <button
+                                className={`${navigationPage == "items" ? " border-yellow border-b-2 text-white" : " border-none text-gray hover:text-hoveryellow"} cursor-pointer shrink-0 text-sm font-medium whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3 mr-2.5 last:mr-0 uppercase`}
+                                onClick={() => {
+                                  setNavigationPage("items");
+                                }}
+                              >
+                                Items
+                              </button>
+                              <button
+                                className={`${navigationPage == "activity" ? " border-yellow border-b-2 text-white" : " border-none text-gray hover:text-hoveryellow"} cursor-pointer shrink-0 text-sm font-medium whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3 mr-2.5 last:mr-0 uppercase`}
+                                onClick={() => {
+                                  setNavigationPage("activity");
+                                }}
+                              >
+                                Activity
+                              </button>
+                              <button
+                                className={`${navigationPage == "offers" ? " border-yellow border-b-2 text-white" : " border-none text-gray hover:text-hoveryellow"} cursor-pointer shrink-0 text-sm font-medium whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3 mr-2.5 last:mr-0 uppercase`}
+                                onClick={() => {
+                                  setNavigationPage("offers");
+                                }}
+                              >
+                                Offers Recieved
+                              </button>
+                              <button
+                                className={`${navigationPage == "bids" ? " border-yellow border-b-2 text-white" : " border-none text-gray hover:text-hoveryellow"} cursor-pointer shrink-0 text-sm font-medium whitespace-nowrap leading-3 flex items-center py-3 md:py-4 px-3 mr-2.5 last:mr-0 uppercase`}
+                                onClick={() => {
+                                  setNavigationPage("bids");
+                                }}
+                              >
+                                Offers Made
+                              </button>
+                            </nav>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="text-sm font-normal flex-wrap max-w-[100vw] py-3 md:py-1 lg:justify-end font-medium lg:divide-x-1 divide-gray-300 text-gray flex items-center lg:gap-2 uppercase">
-                    <div className="flex items-center pr-2 lg:px-2 lg:pr-0">
-                      {" "}
-                      <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase">
-                        Collections Value{": "}
-                        {totalCollectionValue}
-                        {" ETH"}
-                      </span>
-                    </div>
+                </div>
+                <div className="text-sm font-normal flex-wrap max-w-[100vw] py-3 md:py-1 lg:justify-end font-medium lg:divide-x-1 divide-gray-300 text-gray flex items-center lg:gap-2 uppercase">
+                  <div className="flex items-center pr-2 lg:px-2 lg:pr-0">
+                    {" "}
+                    <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase">
+                      Collections Value{": "}
+                      {totalCollectionValue}
+                      {" ETH"}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
-            {navigationPage == "items" ? (
-              <ItemsPage userTokens={userTokens} />
-            ) : navigationPage == "activity" ? (
-              <ActivitySection
-                id={getAccount(config).address ? getAccount(config).address : "0x000000"}
-              />
-            ) : navigationPage == "offers" ? (
-              <OffersSection
-                id={getAccount(config).address ? getAccount(config).address : "0x000000"}
-              />
-            ) : navigationPage == "bids" ? (
-              <BidSection id={getAccount(config).address ? getAccount(config).address : "0x000000"} />
-            ) : (
-              <></>
-            )}
           </div>
+          {navigationPage == "items" ? (
+            <ItemsPage userTokens={userTokens} />
+          ) : navigationPage == "activity" ? (
+            <ActivitySection
+              id={
+                getAccount(config).address
+                  ? getAccount(config).address
+                  : "0x000000"
+              }
+            />
+          ) : navigationPage == "offers" ? (
+            <OffersSection
+              id={
+                getAccount(config).address
+                  ? getAccount(config).address
+                  : "0x000000"
+              }
+            />
+          ) : navigationPage == "bids" ? (
+            <BidSection
+              id={
+                getAccount(config).address
+                  ? getAccount(config).address
+                  : "0x000000"
+              }
+            />
+          ) : (
+            <></>
+          )}
         </div>
-        {/*<div className="flex justify-between items-center">
+      </div>
+      {/*<div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Account</h1>
           <button onClick={()=>{disconnect();setModalOpen(false);}} className="text-red-500">Disconnect</button>
           <button onClick={()=> {setModalOpen(false)}} className="text-red-500">Close</button>

@@ -17,3 +17,10 @@ model Xp {
   rewards       Int
   authorAddress String @id
 }
+
+model Profile {
+  bio           String
+  uName         String
+  authorAddress String @id
+  email         String 
+}
