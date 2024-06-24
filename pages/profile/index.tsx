@@ -16,7 +16,6 @@ import useXP from "../../hooks/xpcalcs";
 import { getAccount } from "@wagmi/core";
 import { config } from "./../../config";
 import { HomeHeader } from "./../../components/HomeHeader";
-import { createIdenticon } from 'identicon';
 import { encode } from 'base64-arraybuffer';
 
 
@@ -377,17 +376,7 @@ export const AccountModal = () => {
   useEffect(() => {
     if (!addr) return; // If address is null or undefined, do nothing
 
-    async function generateProfileImage(address: string) {
-      try {
-        const buffer = await createIdenticon({ id: address, size: 200 });
-        const base64Image = encode(buffer);
-        const dataUrl = `data:image/png;base64,${base64Image}`;
-        console.log("Generated profile image:", dataUrl);
-        setCurrentProfileImage(dataUrl); // Update state with the generated image data URL
-      } catch (error) {
-        console.error("Error generating profile image:", error);
-      }
-    }
+    
 
     // Fetch profile data and generate profile image
     fetch(`http://localhost:3000/api/getProfile?ownerAddress=${addr}`)
@@ -401,7 +390,6 @@ export const AccountModal = () => {
         console.error('Error fetching profile data:', error);
       });
 
-    generateProfileImage(addr); // Call the function to generate profile image
   }, [addr]); 
   useEffect(() => {
     async function fetchUserTokens() {
