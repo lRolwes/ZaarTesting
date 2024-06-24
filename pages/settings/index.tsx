@@ -9,7 +9,23 @@ import {Footer} from  '../../components/Footer';
 import {FaUser} from "react-icons/fa";
 import { getAccount } from '@wagmi/core'
 import { config } from './../../config'
+import { list } from '@vercel/blob';
+import { ListBlobResult } from '@vercel/blob';
+
 export const Settings = () => {
+    async function allImages() {
+        const blobs = await list();
+        return blobs;
+      }
+    const [images, setImages] =useState<ListBlobResult | null>();
+    useEffect(() => {
+        async function fetchImages() {
+            const imgs = await allImages();
+            setImages(imgs);
+        }
+        fetchImages();
+        }, []);
+
     const [newVanity, setNewVanity] = React.useState("");
     const [currentVanity, setCurrentVanity] = React.useState("Set New Vanity");
     const [newBio, setNewBio] = React.useState("");
@@ -128,6 +144,16 @@ export const Settings = () => {
                                     <div className="mb-6">
                                     <div className="rounded-sm w-24 h-24 overflow-hidden border-2 border-gray-700">
                                         <Image width={100} height={100}  src="/images/jokerfrog.jpg" alt="Profile Image"/>
+                                        {images? images.blobs.map((image) => (
+                                            <Image
+                                            priority
+                                            key={image.pathname}
+                                            src={image.url}
+                                            alt="Image"
+                                            width={200}
+                                            height={200}
+                                            />
+                                        )) : null}
                                     </div>
                                     </div>
                                     <form
