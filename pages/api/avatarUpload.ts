@@ -6,8 +6,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   const filename = searchParams.get('filename') || "";
 
   // ⚠️ The below code is for App Router Route Handlers only
-  if(request.body!=null){
-  const blob = await put(filename, request.body, {
+  const blob = await put(filename, request.body || new Uint8Array(), {
     access: 'public',
   });
 
@@ -17,11 +16,8 @@ export async function POST(request: Request): Promise<NextResponse> {
   // });
 
   return NextResponse.json(blob);
-}
-else{
-    return NextResponse.error();
+
     
-}
 }
 
 // The next lines are required for Pages API Routes only
