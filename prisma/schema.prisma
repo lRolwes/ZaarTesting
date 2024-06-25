@@ -23,4 +23,6 @@ model Profile {
   uName         String
   authorAddress String @id
   email         String 
+  profPicUrl    String 
+  bannerPicUrl  String
 }

@@ -16,6 +16,8 @@ import useXP from "../../hooks/xpcalcs";
 import { getAccount } from "@wagmi/core";
 import { config } from "./../../config";
 import { HomeHeader } from "./../../components/HomeHeader";
+import { FaEthereum } from 'react-icons/fa';
+
 import { encode } from 'base64-arraybuffer';
 
 
@@ -366,25 +368,25 @@ export const AccountModal = () => {
   const [userTokens, setUserTokens] = useState([]);
   const [navigationPage, setNavigationPage] = useState("items");
   const [totalCollectionValue, setTotalCollectionValue] = useState(0);
+  const [totalUnrealizedGains, setTotalUnrealizedGains] = useState(0);
   const { xpcalcs } = useXP();
   const [currentVanity, setCurrentVanity] = React.useState("");
-  const [currentBio, setCurrentBio] = React.useState("");
-  const [currentEmail, setCurrentEmail] = React.useState("");
   const [currentProfileImage, setCurrentProfileImage] = useState<string>("");
+  const [currentEmail, setCurrentEmail] = useState<string>("");
   const [currentProfileBanner, setCurrentProfileBanner] = useState<string>("");
   const addr = getAccount(config).address;
   useEffect(() => {
     if (!addr) return; // If address is null or undefined, do nothing
-
-    
-
     // Fetch profile data and generate profile image
     fetch(`http://localhost:3000/api/getProfile?ownerAddress=${addr}`)
       .then(response => response.json())
       .then(data => {
         console.log(data);
         if (data?.uName) setCurrentVanity(data.uName);
-        if (data?.bio) setCurrentBio(data.bio);
+        if (data?.profPicUrl) setCurrentProfileImage(data.profPicUrl);
+        if (data?.email) setCurrentEmail(data.email);
+        if (data?.bannerPicUrl) setCurrentProfileBanner(data.bannerPicUrl);
+        console.log(data.bannerPicUrl);
       })
       .catch(error => {
         console.error('Error fetching profile data:', error);
@@ -423,18 +425,25 @@ export const AccountModal = () => {
         continuation = data.continuation;
       }
 
-      //console.log(data);
+      console.log(data);
       let sum = 0;
+      let unrealizedGainsSum = 0;
       for (let tok of userTokens) {
         //console.log(tok?.token?.floorAsk?.price?.amount?.decimal);
         if (
-          tok?.token?.floorAsk?.price?.amount?.decimal &&
-          tok?.token?.floorAsk?.price?.amount?.decimal > 0
+          tok?.token?.topBid?.price?.amount?.decimal &&
+          tok?.token?.topBid?.price?.amount?.decimal > 0
         ) {
-          sum += tok?.token?.floorAsk?.price?.amount?.decimal;
+          sum += tok?.token?.topBid?.price?.amount?.decimal;
+          if (tok?.token?.lastSale?.price?.amount?.decimal>0 && tok?.token?.topBid?.price?.amount?.decimal>0) {
+            unrealizedGainsSum +=
+              tok?.token?.topBid?.price?.amount?.decimal -
+              tok?.token?.lastSale?.price?.amount?.decimal;
+          }
         }
       }
       setTotalCollectionValue(Number(sum.toFixed(2)));
+      setTotalUnrealizedGains(Number(unrealizedGainsSum.toFixed(2)));
       setUserTokens(userTokens);
 
       return;
@@ -443,7 +452,10 @@ export const AccountModal = () => {
   }, [account.address]);
 
   return (
-    <div className="pt-[60px] bg-dark-gray h-full w-screen bg-gradient-to-b from-yellow/15 to-transparent z-10  block text-yellow ">
+    <div 
+      className="pt-[60px] mt-[65px] max-h-[250px] bg-dark-gray h-full w-screen bg-gradient-to-b from-yellow/15 to-transparent z-10  block text-yellow " style={ {backgroundImage:`${currentProfileBanner!=""? "url("+currentProfileBanner +")" : ""}` , backgroundSize: 'cover',
+        backgroundPosition: 'center'}}
+>
       <HomeHeader />
       <div className="w-full py-6 pt-0 rounded-t-lg ">
         <div className="  flex flex-col w-full rounded-t-lg ">
@@ -467,10 +479,13 @@ export const AccountModal = () => {
                   <div className="text-2xl flex items-center gap-2 font-medium">
                     <div className="flex items-center gap-1">
                       <div className="max-w-[calc(100vw_-_12rem)]">
-                        <div className="truncate text-light-green">
+                        <div className=" flex flex-col  text-light-green">
                           {currentVanity
                             ? currentVanity
                             : addr?.slice(0, 4) + "..." + addr?.slice(-4)}
+                          <span className="text-sm ">
+                            {currentEmail ? currentEmail : ""}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -496,23 +511,6 @@ export const AccountModal = () => {
               <div className="flex justify-center gap-2 md:items-end flex-col mt-5 sm:mt-0 md:text-xl sm:text-sm">
                 <div className="flex items-center">
                   <div className="flex flex-row w-full justify-center md:justify-right space-x-6 md:space-x-0  md:flex-col ml-4 md:space-y-2 justify-start">
-                    {/*<button
-                        onClick={() => {
-                          disconnect();
-                          setModalOpen(false);
-                        }}
-                        className="text-gray-300 bg-transparent hover:text-white border border-gray-600 hover:border-white rounded p-1 text-sm w-[80px]"
-                      >
-                        Disconnect
-                      </button>
-                      <button
-                        onClick={() => {
-                          setModalOpen(false);
-                        }}
-                        className="text-gray-300 bg-transparent hover:text-white border border-gray-600 hover:border-white rounded p-1 text-sm w-[80px]"
-                      >
-                        Close
-                      </button>*/}
                   </div>
                 </div>
                 <div className="flex flex-row justify-between"></div>
@@ -579,12 +577,17 @@ export const AccountModal = () => {
                   </div>
                 </div>
                 <div className="text-sm font-normal flex-wrap max-w-[100vw] py-3 md:py-1 lg:justify-end font-medium lg:divide-x-1 divide-gray-300 text-gray flex items-center lg:gap-2 uppercase">
-                  <div className="flex items-center pr-2 lg:px-2 lg:pr-0">
+                  <div className="flex items-center ml-2 md:ml-0 pr-2 lg:px-2 lg:pr-0 space-x-2">
                     {" "}
                     <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase">
                       Collections Value{": "}
                       {totalCollectionValue}
-                      {" ETH"}
+                      <FaEthereum/>
+                    </span>
+                    <span className="cursor-default text-xs font-bold px-2 py-1 leading-1 text-light-green rounded-sm inline-flex items-center h-5 bg-gray uppercase">
+                      Unrealized Gains/Losses{": "}
+                      {totalUnrealizedGains}
+                      <FaEthereum/>
                     </span>
                   </div>
                 </div>

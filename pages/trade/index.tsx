@@ -117,7 +117,7 @@ const TableSection: React.FC<{WatchlistItems:WatchList}> = ({WatchlistItems}) =>
           }
         >
 
-          <div className="overflow-x-auto rounded-lg z-10">
+          <div className="overflow-x-none rounded-lg z-10">
             <div className="table-wrapper max-h-screen overflow-y-auto  no-scrollbar">
               <table className="sticky-first-column w-full text-sm text-left text-light-green z-10">
                 <thead className="max-h-[800px] text-s uppercase text-gray w-full z-1 whitespace-nowrap">

@@ -74,15 +74,17 @@ export const HomeHeader = () => {
     <header className= {`fixed top-0 left-0 w-full border-dark-gray z-30 flex justify-between items-center p-3 px-8 pl-6 sm:pl-2 sm:pl-2 bg-black bg-opacity-20   ${isMenuOpen? " " : " backdrop-blur-md"}`}>
       <div className="flex justify-between items-center  w-full">
         {/* Logo and Navigation */}
-        <div className="flex items-center align-center justify-between md:space-x-4 text-sm z-30">
+        <div className="flex items-center align-center justify-between md:space-x-4 text-base z-30">
           {isMenuOpen && (
-            <div className="space-y-3 fixed top-0 right-0 bottom-0 left-0 z-30 w-full h-full bg-black flex flex-col items-center justify-center bg-opacity-90 text-xl font-bold z-30">
+            <div className="space-y-3 fixed top-0 right-0 bottom-0 left-0 z-30 w-full h-full bg-black flex flex-col items-center justify-top bg-opacity-90 font-bold z-30 ">
               {/* Your mobile navigation menu goes here */}
+              <div className="p-5 "/>
               <ConnectWallet />
+
               <Link href="/" className={`${page=="/"? "text-white" : "text-yellow hover:text-hoveryellow "}`}>
                 <div className="p-4 ">HOME</div>
               </Link>
-              <Link href="/trade" className={`${page=="/trade"? "text-white" : "text-yellow hover:text-hoveryellow   "}`}>
+              <Link href="/trade" className={`${page=="/trade" || page.slice(2)=="/0x" ? "text-white" : "text-yellow hover:text-hoveryellow   "}`}>
                 <div className="p-4 ">TRADE</div>
               </Link>
               <Link href="/migration" className={`${page=="/migration"? "text-white" : "text-yellow hover:text-hoveryellow   "}`}>
@@ -92,7 +94,7 @@ export const HomeHeader = () => {
                 <div className="p-4 ">EARN XP</div>
               </Link>
               <Link href="https://swap.defillama.com/?chain=ethereum&from=0x0000000000000000000000000000000000000000&to=0x95ac17ce4021417e25b8edf807366fc3be091b5e" className={`text-yellow hover:text-hoveryellow `}>
-                <div className="p-4 ">Buy $ZAAR</div>
+                <div className="p-4 ">BUY $ZAAR</div>
               </Link>
               <Link
                 href="https://t.me/ZaarTradingBot"
@@ -120,8 +122,8 @@ export const HomeHeader = () => {
         <div className="lg:block hidden ">
           <nav className="space-x-7 uppercase relative text-sm md:ml-3 font-l flex flex-row">
             <Link href="/trade" className="contain ">
-            <div className={`${page=="/trade"? "text-white " : "text-gray hover:text-hoveryellow    "}`}>
-              Trade
+            <div className={`${page=="/trade" || page.slice(0,3)=="/0x"? "text-white " : "text-gray hover:text-hoveryellow    "}`}>
+              Trade 
               </div>
             </Link>
             <Link href="/migration" className="contain ">

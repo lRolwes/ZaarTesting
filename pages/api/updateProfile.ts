@@ -27,10 +27,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const userName = req.query.uName?.toString() || ""; // Assuming the address is passed as a query parameter
     const newBio = req.query.bio?.toString() || ""; // Assuming the address is passed as a query parameter
     const newEmail = req.query.email?.toString() || ""; // Assuming the address is passed as a query parameter
+    const newProfPicURL = req.query.profPicUrl?.toString() || ""; // Assuming the address is passed as a query parameter
+    const newBannerPicURL = req.query.bannerPicUrl?.toString() || ""; // Assuming the address is passed as a query parameter
     const userData = await prisma.profile.upsert({
         where: { authorAddress: ownerAddress },
-        update: { uName: userName, bio: newBio, email: newEmail},
-        create: {uName: userName, bio: newBio, authorAddress: ownerAddress, email: newEmail,},
+        update: { uName: userName, bio: newBio, email: newEmail, profPicUrl: newProfPicURL, bannerPicUrl: newBannerPicURL},
+        create: {uName: userName, bio: newBio, authorAddress: ownerAddress, email: newEmail, profPicUrl: newProfPicURL, bannerPicUrl: newBannerPicURL} ,
         });
     res.status(200).json(userData);
   } catch (error) {
