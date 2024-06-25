@@ -20,7 +20,7 @@ export const ConnectWallet = () => {
   useEffect(() => {
     if (!addr) return; // If address is null or undefined, do nothing
     // Fetch profile data and generate profile image
-    fetch(`http://localhost:3000/api/getProfile?ownerAddress=${addr}`)
+    fetch(`./api/getProfile?ownerAddress=${addr}`)
       .then(response => response.json())
       .then(data => {
         console.log(data);

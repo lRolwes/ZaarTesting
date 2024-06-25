@@ -25,7 +25,7 @@ export const Settings = () => {
   //const inputFileRef = useRef(null);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/getProfile?ownerAddress=${addr}`)
+    fetch(`./api/getProfile?ownerAddress=${addr}`)
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
