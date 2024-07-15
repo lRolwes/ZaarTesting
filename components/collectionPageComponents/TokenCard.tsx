@@ -1,6 +1,8 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { BuyModal, BidModal, Trait } from "@reservoir0x/reservoir-kit-ui";
+import { FaEthereum } from 'react-icons/fa';
+
 type TokenType = {
   market: {
     floorAsk: {
@@ -87,7 +89,7 @@ function TokenCard({
           </span>
         </div>
         <div className="flex-1 relative flex justify-center items-center">
-          <div className="object-cover w-[350px] h-[260px] bg-gray-200 overflow-hidden">
+          <div className="object-cover w-[350px] max-h-[260px] bg-gray-200 overflow-hidden">
             {nft.token.image != " " ? (
               <Image
                 src={
@@ -112,15 +114,15 @@ function TokenCard({
           </div>
         </div>
         <div className="flex flex-col p-2">
-          <div className="mb-1.5 flex items-center gap-1 text-white">
+          <div className="mb-1.5 flex items-center gap-1 text-white text-sm">
             {nft.token.name}
           </div>
           <div className="flex justify-between items-center mb-1 relative">
             <button
               type="button"
-              className="flex items-center justify-center px-2 py-1.5 text-xs font-medium text-light-green border border-dark-gray-all gray hover:border-gray-400 rounded"
+              className="flex items-center justify-center px-2 py-1.5 text-sm font-medium text-white  border border-dark-gray-all gray hover:border-gray-400 rounded"
             >
-              {nft.market?.floorAsk?.price?.amount?.decimal?.toString()} ETH
+              {nft.market?.floorAsk?.price?.amount?.decimal?.toFixed(3)} <FaEthereum className="ml-1"/>
             </button>
             <a
               id="btn"

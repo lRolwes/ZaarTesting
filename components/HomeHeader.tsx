@@ -29,7 +29,7 @@ export const HomeHeader = () => {
   async function nftLookup(target: string) {
     const options = {
       method: 'GET',
-      url: 'https://api.reservoir.tools/collections/search/v1?prefix=' + target,
+      url: 'https://api.reservoir.tools/collections/search/v1?prefix=' + target +'&limit=5',
       headers: {accept: '*/*', 'x-api-key': 'f1bc813b-97f8-5808-83de-1238af13d6f9'}
     };
 
@@ -71,18 +71,20 @@ export const HomeHeader = () => {
     setIsMenuOpen(!isMenuOpen);
   };
   return (
-    <header className= {`fixed top-0 left-0 w-full border-dark-gray z-30 flex justify-between items-center px-8 pl-6 sm:pl-2 bg-black bg-opacity-20   ${isMenuOpen? " " : " backdrop-blur-md"}`}>
-      <div className="flex justify-between items-center p-3 px-0  pl-2 w-full">
+    <header className= {`fixed top-0 left-0 w-full border-dark-gray z-30 flex justify-between items-center p-3 px-8 pl-6 sm:pl-2 sm:pl-2 bg-black bg-opacity-20   ${isMenuOpen? " " : " backdrop-blur-md"}`}>
+      <div className="flex justify-between items-center  w-full">
         {/* Logo and Navigation */}
-        <div className="flex items-center justify-between md:space-x-4 text-sm z-30">
+        <div className="flex items-center align-center justify-between md:space-x-4 text-base z-30">
           {isMenuOpen && (
-            <div className="space-y-3 fixed top-0 right-0 bottom-0 left-0 z-30 w-full h-full bg-black flex flex-col items-center justify-center bg-opacity-90 text-xl font-bold z-30">
+            <div className="space-y-3 fixed top-0 right-0 bottom-0 left-0 z-30 w-full h-full bg-black flex flex-col items-center justify-top bg-opacity-90 font-bold z-30 ">
               {/* Your mobile navigation menu goes here */}
+              <div className="p-5 "/>
               <ConnectWallet />
+
               <Link href="/" className={`${page=="/"? "text-white" : "text-yellow hover:text-hoveryellow "}`}>
                 <div className="p-4 ">HOME</div>
               </Link>
-              <Link href="/trade" className={`${page=="/trade"? "text-white" : "text-yellow hover:text-hoveryellow   "}`}>
+              <Link href="/trade" className={`${page=="/trade" || page.slice(2)=="/0x" ? "text-white" : "text-yellow hover:text-hoveryellow   "}`}>
                 <div className="p-4 ">TRADE</div>
               </Link>
               <Link href="/migration" className={`${page=="/migration"? "text-white" : "text-yellow hover:text-hoveryellow   "}`}>
@@ -92,7 +94,7 @@ export const HomeHeader = () => {
                 <div className="p-4 ">EARN XP</div>
               </Link>
               <Link href="https://swap.defillama.com/?chain=ethereum&from=0x0000000000000000000000000000000000000000&to=0x95ac17ce4021417e25b8edf807366fc3be091b5e" className={`text-yellow hover:text-hoveryellow `}>
-                <div className="p-4 ">Buy $ZAAR</div>
+                <div className="p-4 ">BUY $ZAAR</div>
               </Link>
               <Link
                 href="https://t.me/ZaarTradingBot"
@@ -103,7 +105,7 @@ export const HomeHeader = () => {
               
             </div>
           )}
-          <div className="ml-0">
+          <div className="ml-2 ">
             <Link href="/" className=" ">
               <Image
                 src="/images/logo-3d.png"
@@ -117,11 +119,11 @@ export const HomeHeader = () => {
 
           <div className="flex-grow md:hidden"></div>
         </div>
-        <div className="lg:block hidden">
+        <div className="lg:block hidden ">
           <nav className="space-x-7 uppercase relative text-sm md:ml-3 font-l flex flex-row">
             <Link href="/trade" className="contain ">
-            <div className={`${page=="/trade"? "text-white " : "text-gray hover:text-hoveryellow    "}`}>
-              Trade
+            <div className={`${page=="/trade" || page.slice(0,3)=="/0x"? "text-white " : "text-gray hover:text-hoveryellow    "}`}>
+              Trade 
               </div>
             </Link>
             <Link href="/migration" className="contain ">
@@ -141,66 +143,65 @@ export const HomeHeader = () => {
             </Link>
           </nav>
         </div>
-        <div className="fixed top-2 left-1/2   -translate-x-1/2 flex flex-col w-[250px] md:w-[360px] text-base z-10 align-center item-center self-center" ref={wrapperRef}>
-          <input type="text" placeholder="Search" onChange={handleInputChange} className="placeholder-gray-50 border-dark-gray-all border-l border-r border-t bg-black w-full px-4 py-2 rounded-sm bg-black text-white placeholder-gray-50 focus:outline-none ml-2" id="search-bar" autoComplete="off"/>
+        <div className="fixed top-3 left-1/2   -translate-x-1/2 flex flex-col w-[250px] md:w-[360px] text-base z-10 align-center justify-center item-center self-center" ref={wrapperRef}>
+          <input type="text" placeholder="Search" onChange={handleInputChange} className="placeholder-gray-50 border-1 border-dark-gray-all  bg-black w-full px-4 py-2 bg-black text-white placeholder-gray-50 focus:outline-none" id="search-bar" autoComplete="off"/>
           <div className="relative">
-          <div className="absolute ">
-
-            {searching && <Link href={`/${searchData[0]?.id? searchData[0].id:""}`} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
-                      <a><div
-                        className="h-10 w-10 rounded-sm mr-4 "
-                        style={{ 
-                          backgroundImage: searchData[0].image? `url(${searchData[0].image})` : "url(/images/logo-3d.png)",
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                          backgroundRepeat: 'no-repeat',
-                        }}
-                      /></a>
-                       {searchData[0].name? searchData[0].name: " "} </Link>}
-                       {searching && <Link href={`/${searchData[1].id}`} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px]  flex flex-row  items-center hover:bg-gray border-l border-r border-t border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+          <div className={`absolute w-full  text-sm  ${searching? " divide-y divide-dark-gray border-b-1 border-x border-dark-gray" : " "}   `}>
+            {searching && searchData[0] && <Link href={`/${searchData[0]?.id? searchData[0].id:""}`} onClick={()=>{setSearching(false);}} className="  text-light-green hover:text-light-green flex flex-row  items-center hover:bg-gray  bg-black w-full px-4 py-2  bg-black text-white " >
                       <div
-                        className="h-10 w-10 rounded-sm mr-4 "
+                        className="h-7 w-7  mr-4 "
                         style={{ 
-                          backgroundImage: searchData[1].image? `url(${searchData[1].image})` : "url(/images/logo-3d.png)",
+                          backgroundImage: searchData[0]?.image? `url(${searchData[0].image})` : "url(/images/logo-3d.png)",
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
                           backgroundRepeat: 'no-repeat',
                         }}
                       />
-                       {searchData[1].name? searchData[1].name: " "} </Link>}
-                       {searching && <Link href={`/${searchData[2].id}`} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+                       {searchData[0]?.name? searchData[0].name: " "} </Link>}
+                       {searching && searchData[1] && <Link href={`/${searchData[1]?.id}`} onClick={()=>{setSearching(false);}} className="  text-light-green hover:text-light-green flex flex-row  items-center hover:bg-gray   bg-black w-full px-4 py-2 bg-black text-white" >
                       <div
-                        className="h-10 w-10 rounded-sm mr-4"
+                        className="h-7 w-7  mr-4 "
                         style={{ 
-                          backgroundImage: searchData[2].image? `url(${searchData[2].image})` : "url(/images/logo-3d.png)",
+                          backgroundImage: searchData[1]?.image? `url(${searchData[1].image})` : "url(/images/logo-3d.png)",
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
                           backgroundRepeat: 'no-repeat',
                         }}
                       />
-                       {searchData[2].name? searchData[2].name: " "} </Link>}
-                       {searching && <Link href={`/${searchData[3].id}`} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-l border-r border-t border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+                       {searchData[1]?.name? searchData[1].name: " "} </Link>}
+                       {searching && searchData[2] && <Link href={`/${searchData[2]?.id}`} onClick={()=>{setSearching(false);}} className="text-light-green hover:text-light-green  flex flex-row  items-center hover:bg-gray bg-black w-full px-4 py-2 bg-black text-white " >
                       <div
-                        className="h-10 w-10 rounded-sm mr-4 "
+                        className="h-7 w-7 mr-4"
                         style={{ 
-                          backgroundImage: searchData[3].image? `url(${searchData[3].image})` : "url(/images/logo-3d.png)",
+                          backgroundImage: searchData[2]?.image? `url(${searchData[2].image})` : "url(/images/logo-3d.png)",
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
                           backgroundRepeat: 'no-repeat',
                         }}
                       />
-                       {searchData[3].name? searchData[3].name: " "} </Link>}
-                       {searching && <Link href={`/${searchData[4].id}`} className="hover:text-hoveryellow text-yellow w-[200px] md:w-[360px] flex flex-row  items-center hover:bg-gray border-1 border-l border-r border-t border-b border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white focus:outline-none ml-2" >
+                       {searchData[2]?.name? searchData[2].name: " "} </Link>}
+                       {searching && searchData[3] && <Link href={`/${searchData[3]?.id}`} onClick={()=>{setSearching(false);}} className="text-light-green hover:text-light-green flex flex-row  items-center hover:bg-gray  bg-black w-full px-4 py-2 bg-black text-white " >
                       <div
-                        className="h-10 w-10 rounded-sm mr-4 "
+                        className="h-7 w-7 mr-4 "
                         style={{ 
-                          backgroundImage: searchData[4].image? `url(${searchData[4].image})` : "url(/images/logo-3d.png)",
+                          backgroundImage: searchData[3]?.image? `url(${searchData[3].image})` : "url(/images/logo-3d.png)",
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
                           backgroundRepeat: 'no-repeat',
                         }}
                       />
-                       {searchData[4].name? searchData[4].name: " "} </Link>}
+                       {searchData[3]?.name? searchData[3].name: " "} </Link>}
+                       {searching && searchData[4] && <Link href={`/${searchData[4]?.id}`} onClick={()=>{setSearching(false);}} className="text-light-green hover:text-light-green flex flex-row  items-center hover:bg-gray bg-black w-full px-4 py-2 bg-black text-white " >
+                      <div
+                        className="h-7 w-7   mr-4 "
+                        style={{ 
+                          backgroundImage: searchData[4]?.image? `url(${searchData[4].image})` : "url(/images/logo-3d.png)",
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          backgroundRepeat: 'no-repeat',
+                        }}
+                      />
+                       {searchData[4]?.name? searchData[4].name: " "} </Link>}
             
             </div>
             </div>
@@ -213,7 +214,7 @@ export const HomeHeader = () => {
               <button
                 id="menu-btn"
                 onClick={handleMenuButtonClick}
-                className={` ${isMenuOpen? "fixed top-3 right-8 z-30 " : ""}p-2 focus:outline-none lg:hidden text-light-green border border-dark-gray-all hover:border-light-green-all rounded-sm transition-colors duration-150 lg:hidden`}
+                className={` ${isMenuOpen? "fixed top-3 right-8 z-30 " : ""} p-2 focus:outline-none lg:hidden text-light-green border border-dark-gray-all hover:border-light-green-all rounded-sm transition-colors duration-150 lg:hidden`}
               >
                 {!isMenuOpen? <svg
                   className="h-6 w-6 text-yellow lg:hidden"

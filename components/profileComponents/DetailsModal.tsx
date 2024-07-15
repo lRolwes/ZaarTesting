@@ -221,8 +221,9 @@ const DetailsModal = ({
       <div>
         <div className="fixed top-0 left-0 w-screen h-screen fixed top-0 left-0 bg-black opacity-60 z-40"></div>
         {/*view NFT modal*/}
-        <div className="fixed z-50 max-w-[80%] h-[4/5] block top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-2/3 "
-        >
+        
+        <div className="fixed overflow-y-scroll z-50 w-screen h-screen md:h-[800px] md:max-h-[100%] px-2 lg:px-0 md:overflow-y-auto lg:w-[80%] lg:max-w-[1000px] md:h-[4/5] block top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
+
           <div className="flex flex-col">
             {/* Modal Header */}
             <div className="bg-dark-gray p-2 flex justify-end items-center rounded-sm">

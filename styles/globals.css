@@ -33,7 +33,9 @@ body {
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-
+.relative:hover .dropdown-content {
+  display: block;
+}
 body {
   font-family: 'W95FA';
   letter-spacing: 1px;
@@ -87,7 +89,7 @@ a:hover {
   border-top: 1px solid #303030;
   border-right: 1px solid #303030;
 }
-
+#search-bar::placeholder { color: #5d5d5d; }
 .sticky-header {
   position: sticky;
   top: 0;
@@ -110,4 +112,104 @@ th {
       -ms-overflow-style: none;  /* IE and Edge */
       scrollbar-width: none;  /* Firefox */
 }
+}
+
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  background: #4a5568;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity .2s;
+  border-radius: 4px;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #ecc94b;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #ecc94b;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+/*
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(to right, #FBBF24 0%, #FBBF24 var(--slider-value), #E5E7EB var(--slider-value), #E5E7EB 100%);
+  border-radius: 4px; 
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; 
+  height: 16px; 
+  background: #FBBF24;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -4px; 
+}
+
+input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 8px; 
+  background: linear-gradient(to right, #FBBF24 0%, #FBBF24 var(--slider-value), #E5E7EB var(--slider-value), #E5E7EB 100%);
+  border-radius: 4px; 
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px; 
+  height: 16px; 
+  background: #FBBF24; 
+  border-radius: 50%; 
+  cursor: pointer;
+}
+
+input[type="range"]::-ms-track {
+  width: 100%;
+  height: 8px; 
+  background: transparent; 
+  border-color: transparent;
+  color: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]::-ms-fill-lower {
+  background: #FBBF24; 
+  border-radius: 4px; 
+}
+
+input[type="range"]::-ms-fill-upper {
+  background: #E5E7EB; 
+  border-radius: 4px;
+}
+
+input[type="range"]::-ms-thumb {
+  width: 16px; 
+  height: 16px; 
+  background: #FBBF24; 
+  border-radius: 50%; 
+  cursor: pointer;
+}*/
+
+input[type="range"]:focus {
+  outline: none; /* Remove focus outline */
+}
+
+input[type="range"]::-ms-tooltip {
+  display: none; /* Remove default tooltip in IE */
 }

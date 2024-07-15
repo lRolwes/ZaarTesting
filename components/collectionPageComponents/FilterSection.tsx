@@ -310,6 +310,13 @@ function FilterSection({ id, count }: { id: string; count: number }) {
     setMyItems(false);
         return;
     }
+    useEffect(() => {
+      setTokenData([]);
+      
+    }, [
+      id,
+    ]);
+
     async function moreDataLookup(cont: string | null) {
       let lookupString = `https://api.reservoir.tools/tokens/v7?collection=${id}`;
       if (search != "") {
@@ -428,7 +435,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
           }
         }
         lookupString +=
-          "&includeTopBid=true&includeLastSale=true&includeAttributes=true&limit=100";
+          "&includeTopBid=true&includeLastSale=true&includeAttributes=true&limit=16";
         const options = {
           method: "GET",
           url: `${lookupString}`,
@@ -440,8 +447,8 @@ function FilterSection({ id, count }: { id: string; count: number }) {
           const response = await axios.request(options);
           const data = response.data;
           setContinuation(response.data.continuation);
-          console.log(continuation);
-          console.log(response.data);
+          //console.log(continuation);
+          //console.log(response.data);
           return data.tokens;
         } catch (error) {
           console.error(error);
@@ -458,7 +465,6 @@ function FilterSection({ id, count }: { id: string; count: number }) {
       }
     }, [
       id,
-      count,
       search,
       sort,
       sortDirection,
@@ -472,6 +478,76 @@ function FilterSection({ id, count }: { id: string; count: number }) {
   
     useEffect(() => {
       let nftData = tokenData;
+      async function queryMoreData(cont: string | null) {
+        let lookupString = `https://api.reservoir.tools/tokens/v7?collection=${id}`;
+        if (search != "") {
+          lookupString += `&tokenName=${search}`;
+        }
+        if (activePriceFloor > 0) {
+          lookupString += `&minFloorAskPrice=${activePriceFloor}`;
+        }
+        if (activePriceCeiling < 10000) {
+          lookupString += `&maxFloorAskPrice=${activePriceCeiling}`;
+        }
+        if (
+          activeRarityFloor >= 1 &&
+          activePriceFloor <= 0 &&
+          activePriceCeiling >= 10000
+        ) {
+          lookupString += `&minRarityRank=${activeRarityFloor}`;
+        }
+        if (
+          activeRarityCeiling < 10000 &&
+          activePriceFloor <= 0 &&
+          activePriceCeiling >= 10000
+        ) {
+          lookupString += `&maxRarityRank=${activeRarityCeiling}`;
+        }
+        if (sort == "floorAskPrice") {
+          lookupString += "&sortBy=floorAskPrice";
+        }
+        if (sort == "rarity") {
+          lookupString += "&sortBy=rarity";
+        }
+        if (sort == "listedAt") {
+          lookupString += "&sortBy=listedAt";
+        }
+        if (sortDirection == "desc") {
+          lookupString += "&sortDirection=desc";
+        }
+        if (traitFilterApplied) {
+          for (let attribute in traitFilterSelection) {
+            if (traitFilterSelection[attribute]) {
+              let parts = attribute.split(":");
+              lookupString += `&attributes[${parts[0]}]=${parts[1]}`;
+            }
+          }
+        }
+        lookupString +=
+          "&includeTopBid=true&includeLastSale=true&includeAttributes=true&limit=100";
+        if (cont != null) {
+          lookupString += `&continuation=${cont}`;
+        }
+    
+        const options = {
+          method: "GET",
+          url: `${lookupString}`,
+          headers: {
+            "x-api-key": "f1bc813b-97f8-5808-83de-1238af13d6f9",
+          },
+        };
+        try {
+          const response = await axios.request(options);
+          const data = response.data;
+          console.log(response.data);
+          setContinuation(response.data.continuation);
+          setTokenData((prevData) => [...prevData, ...data.tokens]);
+          return;
+        } catch (error) {
+          console.error(error);
+          return;
+        }
+      }
       if (statusFilter  && nftData.length > 0) {
         nftData = nftData.filter(
           (item: TokenType) => ((listedFilter && item.market?.floorAsk?.price?.amount?.decimal > 0) ||
@@ -523,14 +599,18 @@ function FilterSection({ id, count }: { id: string; count: number }) {
       }
   
       setFilteredTokenData(nftData);
-      if (nftData.length < 50 && continuation != null) {
+      if (nftData.length < 50 && continuation != null && search=="") {
         console.log(continuation);
-        moreDataLookup(continuation);
+        queryMoreData(continuation);
         setContinuation(null);
       }
     }, [
-      tokenData,
       id,
+      tokenData,
+      continuation,
+      offersFilter,
+      statusFilter,
+      newFilter,
       search,
       sort,
       sortDirection,
@@ -966,9 +1046,9 @@ function FilterSection({ id, count }: { id: string; count: number }) {
               </div>
               {/* Dropdown Content */}
               <div
-                className={`absolute bg-dark-gray dropdown-content w-full z-30 mt-1 ${market ? "block" : "hidden"}`}
+                className={`absolute bg-dark-gray dropdown-content w-full z-30 mt-2 ${market ? "block" : "hidden"}`}
               >
-                <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
+                <div className="text-light-green rounded-sm shadow-lg">
                   {/* Market Options with additional data */}
                   <label className="block cursor-pointer px-4 py-2">
                     <input
@@ -1053,7 +1133,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
               {/* Dropdown Content */}
               <div
                 id="traits-dropdown"
-                className={`z-30 ${traitsOpen ? "block" : "hidden"} absolute mt-1  bg-dark-gray border-gray-all rounded-sm shadow-lg w-full h-[330px]`}
+                className={`z-30 ${traitsOpen ? "block" : "hidden"} absolute mt-1  bg-dark-gray border-dark-gray-all rounded-sm shadow-lg w-full h-[330px]`}
               >
                 <div className="p-4 h-full">
                   {/* Search and Rarity Filter */}
@@ -1113,7 +1193,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                     </div>
                     <div className="w-[400px] h-[250px] p-2 overflow-y-auto text-sm text-light-gray border-dark-gray-l no-scrollbar">
                       {traitData.map((thisTraitCategory) => (
-                        <div key={thisTraitCategory.key} className="text-white">
+                        <div key={thisTraitCategory.key} className="text-light-green">
                           {selectedTraitCategory == "all" ||
                             selectedTraitCategory == thisTraitCategory.key ? (
                             <div>
@@ -1127,7 +1207,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                                       ],
                                   }));
                                 }}
-                                className="text-white py-4 text-lg flex flex-row justify-between"
+                                className="text-light-green py-4 text-sm flex flex-row justify-between border-dark-gray"
                               >
                                 {thisTraitCategory.key}
   
@@ -1237,7 +1317,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                     type="text"
                     placeholder="Search for tokens"
                     onChange={handleSearchInputChange}
-                    className=" border-2 border-dark-gray border-l border-r border-t bg-black w-full px-4 py-2 rounded-sm bg-black text-white placeholder-gray-50 focus:outline-none lg:ml-2 h-10"
+                    className=" border-1 border-dark-gray-all bg-black w-full px-4 py-2 rounded-sm bg-black text-white placeholder-gray-50 focus:outline-none lg:ml-2 h-10"
                     autoComplete="off"
                   />
                 </div>
@@ -1464,9 +1544,9 @@ function FilterSection({ id, count }: { id: string; count: number }) {
               </div>
               {/* Dropdown Content */}
               <div
-                className={`absolute bg-gray dropdown-content w-[200px] z-30 mt-1 ${market ? "block" : "hidden"}`}
+                className={`absolute dropdown-content w-[200px] z-30 mt-2 ${market ? "block" : "hidden"}`}
               >
-                <div className="bg-dark-gray mt-2 text-light-green rounded-sm shadow-lg">
+                <div className="bg-dark-gray text-light-green rounded-sm shadow-lg">
                   {/* Market Options with additional data */}
                   <label className="block cursor-pointer px-4 py-2">
                     <input
@@ -1551,7 +1631,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
               {/* Dropdown Content */}
               <div
                 id="traits-dropdown"
-                className={`z-30 ${traitsOpen ? "block" : "hidden"} absolute mt-3 right-0 mt-1  bg-dark-gray border-gray-all rounded-sm shadow-lg w-[500px] h-[330px]`}
+                className={`z-30 ${traitsOpen ? "block" : "hidden"} absolute mt-3 right-0 mt-1  bg-dark-gray border-dark-gray-all rounded-sm shadow-lg w-[500px] h-[330px]`}
               >
                 <div className="p-4 h-full">
                   {/* Search and Rarity Filter */}
@@ -1586,8 +1666,8 @@ function FilterSection({ id, count }: { id: string; count: number }) {
   
                   {/* Tabbed Content with Scrollable Sections */}
                   <div className="absolute flex h-full">
-                    <div className="w-[100px] bg-dark-gray p-0 pt-2 pr-2 overflow-y-auto max-h-[260px] no-scrollbar">
-                      <ul className="text-sm text-light-gray ">
+                    <div className="w-[100px] bg-dark-gray p-0 pt-2 pr-2 overflow-y-auto max-h-[260px] no-scrollbar  border-dark-gray-r">
+                      <ul className="text-sm text-light-gray">
                         <li
                           className={`p-2 hover:bg-gray cursor-pointer ${selectedTraitCategory == "all" ? "bg-gray text-yellow" : ""}`}
                           onClick={() => {
@@ -1609,13 +1689,13 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                         ))}
                       </ul>
                     </div>
-                    <div className="w-[400px] h-[250px] p-2 overflow-y-auto text-sm text-light-gray border-dark-gray-l no-scrollbar">
+                    <div className="w-[370px] h-[250px] p-2 overflow-y-auto text-sm text-light-gray border-dark-gray-l no-scrollbar">
                       {traitData.map((thisTraitCategory) => (
-                        <div key={thisTraitCategory.key} className="text-white">
+                        <div key={thisTraitCategory.key} className="text-light-green">
                           {selectedTraitCategory == "all" ||
                             selectedTraitCategory == thisTraitCategory.key ? (
                             <div>
-                              <span
+                              <div
                                 onClick={() => {
                                   setTraitCategoryDropdown((prevState) => ({
                                     ...prevState,
@@ -1625,16 +1705,16 @@ function FilterSection({ id, count }: { id: string; count: number }) {
                                       ],
                                   }));
                                 }}
-                                className="text-white py-4 text-lg flex flex-row justify-between"
+                                className="text-light-green border-dark-gray py-4 text-sm flex flex-row justify-between "
                               >
                                 {thisTraitCategory.key}
   
                                 {traitCategoryDropdown[thisTraitCategory.key] ? (
-                                  <FaChevronUp className="text-gray-400 mr-4 align-right" />
+                                  <FaChevronUp className="text-light-green mr-4 align-right" />
                                 ) : (
-                                  <FaChevronDown className="text-gray-400 mr-4 align-right" />
+                                  <FaChevronDown className="text-light-green mr-4 align-right" />
                                 )}
-                              </span>
+                              </div>
                               {traitCategoryDropdown[thisTraitCategory.key] ? (
                                 <ul className="text-md text-white bg-black w-full py-2">
                                   {thisTraitCategory.values?.map(
@@ -1722,9 +1802,8 @@ function FilterSection({ id, count }: { id: string; count: number }) {
           <div className="pl-6">
             <div className="flex items-center">
               <div className="pr-1 inline-flex items-center justify-center rounded-full w-[10px] h-[10px] bg-yellow" />
-
               <span className="text-xs text-gray mr-2 ml-2">
-                {filteredTokenData.length==100? filteredTokenData.length+"+" : filteredTokenData.length} results
+                {filteredTokenData.length>=100? "100+ " : filteredTokenData.length} results
               </span>
             </div>
           </div>
@@ -2029,7 +2108,7 @@ function FilterSection({ id, count }: { id: string; count: number }) {
           {/* NFT Cards Section */}
           {filteredTokenData ? (
             
-            <div className="z-20 min-h-[500px] mb-[50px] grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 2xl:grid-cols-8 gap-4 px-2 py-4">
+            <div className="z-20 min-h-[500px] mb-[50px] grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 4xl:grid-cols-8 gap-4 px-2 py-4">
               {filteredTokenData.map((nft) => (
                 <TokenCard
                   setDetailsModal={setDetailsModal}

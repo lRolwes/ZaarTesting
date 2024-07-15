@@ -83,12 +83,12 @@ const HeroContent = () => {
       {currentIndex==0 ?
       <div className="container fixed relative z-20 mt-10 w-full mb-[150px]">
         <div className="text-center text-white flex flex-col justify-center items-center">
-          <div className="flex relative w-[400px] md:w-[35%] justify-center items-center h-auto z-20 ">
+          <div className="flex relative w-[300px] md:w-[25%] justify-center items-center h-auto z-20 ">
             <Image
               src="/images/logo-white.png"
               alt="logo"
               className="fixed rounded-sm z-20 item-center relative"
-              layout="responsive"
+              style={{ objectFit: "cover", width: "100%", height: "100%" }}
               width={600}
               height={600}
             />
@@ -218,7 +218,6 @@ const TableSection = () => {
   const [collectionOnSaleCount, setOnSaleCount] = useState(["0"]);
   const [collectionTokenCount, setTokenCount] = useState(["0"]);
 
-
   useEffect(() => {
     if (collections != null) {
       let ids = [];
@@ -286,15 +285,10 @@ const TableSection = () => {
           <h1 className="font-medium text-white font-medium text-xl uppercase ml-2">
             Trending Collections
           </h1>
-          <p className="text-sm text-white leading-6 ml-2">
-            Aggregated from over{" "}
-            <div
-              className="border-dashed !cursor-pointer"
-            >
-              100 marketplaces
-            </div>
-            .
-          </p>
+          <div className="text-sm text-white leading-6 ml-2">
+            Aggregated from over 100 marketplaces
+            
+          </div>
         </header>
         {/* Table */}
         <div className="overflow-x-auto rounded-lg">
@@ -503,6 +497,9 @@ const BottomSection = () => {
 const Home: NextPage = () => {
   return (
     <div className="overflow-y-hidden overflow-x-hidden">
+    <Head>
+      <title>Zaar: a full-featured mobile-friendly NFT marketplace</title>
+    </Head>
       <main id="landing" className="font-secondary">
         <HomeHeader />
         <HeroContent />
