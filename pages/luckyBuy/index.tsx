@@ -6,6 +6,7 @@ import { Footer } from "../../components/Footer";
 
 export const LuckyBuy = () => {
     //const output = document.getElementById("slider-output");
+    const [odds, setOdds] = useState(3);
     const percentages = ["1%", "15%", "30%", "45%", "60%", "75%"];
     function updateSliderLabelPosition(){
         const x=3;
@@ -16,7 +17,7 @@ export const LuckyBuy = () => {
     <div className="bg-black text-white p-4 w-screen " id="lucky-buy">
           <HomeHeader/>
 
-      <h1 className="font-medium text-light-green font-medium text-2xl uppercase ml-2 text-center mt-[50px] mb-2">
+      <h1 className="font-medium text-light-green font-medium text-2xl uppercase ml-2 text-center mt-[70px] mb-2">
         LUCKY BUY
       </h1>
       <p className="text-center text-light-green mb-5">
@@ -109,26 +110,27 @@ export const LuckyBuy = () => {
           CHOOSE YOUR ODDS
         </div>
         <div className="relative pt-1">
-          <input
+      <input
+        type="range"
+        min="1"
+        max="6"
+        value={odds}
+        step="1"
+        className="slider w-full h-2 rounded-sm cursor-pointer accent-yellow-500"
+        id="odds-slider"
+        onChange={(e) => { setOdds(parseInt(e.target.value)); updateSliderLabelPosition(); }}
+        style={{ background: `linear-gradient(to left, green, yellow, orange, red)` }}
 
-            type="range"
-            min="1"
-            max="6"
-            value="2"
-            step="1"
-            className="slider w-full h-2 rounded-sm cursor-pointer accent-yellow-500"
-            id="odds-slider"
-            onChange={()=>{updateSliderLabelPosition();}}
-          />
-          <div className="flex justify-between text-sm px-2 text-gray">
-            <span>1%</span>
-            <span>15%</span>
-            <span>30%</span>
-            <span>45%</span>
-            <span>60%</span>
-            <span>75%</span>
-          </div>
-        </div>
+      />
+      <div className="flex justify-between text-sm px-2 text-gray">
+        <span>1%</span>
+        <span>15%</span>
+        <span>30%</span>
+        <span>45%</span>
+        <span>60%</span>
+        <span>75%</span>
+      </div>
+    </div>
       </div>
 
       <div className="max-w-md mx-auto bg-black rounded-sm overflow-hidden md:max-w-lg">
@@ -168,7 +170,7 @@ export const LuckyBuy = () => {
                   <input
                     id="termsCheckbox"
                     type="checkbox"
-                    className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 accent-yellow-500"
+                    className="w-4 h-4 accent-yellow bg-yellow rounded border-gray-300"
                     required
                   />
                   <label  className="text-sm text-gray">

@@ -8,6 +8,8 @@ import { Footer } from "../../components/Footer";
 import { FaUser } from "react-icons/fa";
 import { getAccount } from "@wagmi/core";
 import { config } from "./../../config";
+import toast, { Toaster } from 'react-hot-toast';
+
 export const Settings = () => {
   const [newVanity, setNewVanity] = React.useState("");
   const [currentVanity, setCurrentVanity] = React.useState("Set New Vanity");
@@ -49,11 +51,14 @@ export const Settings = () => {
   }, []);
   function updateProfile() {
     fetch(
-      `http://localhost:3000/api/updateProfile?ownerAddress=${addr}&uName=${newVanity != "" ? newVanity : currentVanity}&bio=${newBio != "" ? newBio : currentBio}&email=${newEmail != "" ? newEmail : currentEmail}&profPicUrl=${newProfileImage != "" ? newProfileImage : currentProfileImage}&bannerPicUrl=${newProfileBanner != "" ? newProfileBanner: currentProfileBanner}`
+      `./api/updateProfile?ownerAddress=${addr}&uName=${newVanity != "" ? newVanity : currentVanity}&bio=${newBio != "" ? newBio : currentBio}&email=${newEmail != "" ? newEmail : currentEmail}&profPicUrl=${newProfileImage != "" ? newProfileImage : currentProfileImage}&bannerPicUrl=${newProfileBanner != "" ? newProfileBanner: currentProfileBanner}`
     )
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+      })
+      .then(() => {
+        toast.success('Profile Updated Successfully');
       });
   }
   const handleNewUserNameChange = (event: {
@@ -111,6 +116,7 @@ export const Settings = () => {
 
   return (
     <div>
+      <Toaster />
       <HomeHeader />
       <div className="mt-[60px] container-fluid mx-auto py-6 pt-0">
         <div className="bg-black text-white min-h-screen">
