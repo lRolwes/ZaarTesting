@@ -7,6 +7,11 @@ import Head from 'next/head';
 
 import useBalance from "../../hooks/Balance";
 import useXP from "../../hooks/xpcalcs";
+import { Metadata } from 'next';
+export const metadata: Metadata = {
+  title: "XP",
+  description: "Earn XP and level up with Zaar!",
+}
   const HeroContent = () => {
   const {xpcalcs} = useXP();
   

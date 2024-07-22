@@ -6,6 +6,11 @@ import { Footer } from '../../components/Footer';
 import { HomeHeader } from '../../components/HomeHeader';
 import { TopSection } from '../../components/TopSection';
 import { Migration } from '../../components/Migration';
+import { Metadata } from 'next';
+export const metadata: Metadata = {
+  title: "Migrate",
+  description: "Migrate your PRTC to Zaar Coins",
+}
 
 const Home: NextPage = () => {
   return (

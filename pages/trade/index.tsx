@@ -13,6 +13,11 @@ import { useAccount } from "wagmi";
 import { getAccount } from '@wagmi/core'
 import { config } from './../../config'
 import {FavStar} from './../../components/FavStar';
+import { Metadata } from 'next';
+export const metadata: Metadata = {
+  title: "Trade",
+  description: "Trade NFTs on Zaar - the most user friendly and universal NFT marketplace",
+}
 const TableSection: React.FC<{WatchlistItems:WatchList}> = ({WatchlistItems}) => {
   const watchlist: WatchList = WatchlistItems;
   const { data: collections } = useTrendingCollections({

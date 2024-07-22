@@ -19,11 +19,17 @@ const theme = lightTheme({
   primaryColor: "#323aa8",
   primaryHoverColor: "#252ea5",
 })
- 
+
 export const metadata: Metadata = {
-  title: 'Zaar',
+  title: {
+    default: 'Zaar',
+    template: '%s | Zaar',
+  },
   description: 'A first-in-class NFT trading platform for traders of every caliber.',
-}
+  twitter: {
+    card: 'summary_large_image',
+  },
+  }
 const client = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {

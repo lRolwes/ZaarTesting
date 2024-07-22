@@ -9,7 +9,11 @@ import { FaUser } from "react-icons/fa";
 import { getAccount } from "@wagmi/core";
 import { config } from "./../../config";
 import toast, { Toaster } from 'react-hot-toast';
-
+import { Metadata } from 'next';
+export const metadata: Metadata = {
+  title: "Settings",
+  description: "Customize your profile and settings, your app your way.",
+}
 export const Settings = () => {
   const [newVanity, setNewVanity] = React.useState("");
   const [currentVanity, setCurrentVanity] = React.useState("Set New Vanity");

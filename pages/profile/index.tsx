@@ -19,7 +19,11 @@ import { HomeHeader } from "./../../components/HomeHeader";
 import { FaEthereum } from 'react-icons/fa';
 
 import { encode } from 'base64-arraybuffer';
-
+import { Metadata } from 'next';
+export const metadata: Metadata = {
+  title: "Profile",
+  description: "View and manage ALL your NFT's with Zaars custom Profile module",
+}
 
 const ItemsPage = ({ userTokens }: { userTokens: TokenType[] }) => {
   const [items, setItems] = useState<TokenType[]>(userTokens);
