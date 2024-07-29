@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "apis": [
+    {
+      "identifier": "reservoirprotocol",
+      "source": "@reservoirprotocol/v3.0#12s56e2elwkyy124",
+      "integrity": "sha512-8cunrH/keIGwlMr72UBxPmUlHqtDboYyj05hxCrayrVlEUTAPqY46cIenMcroU8zvdAaCwmdqmx0wHKD1sBjxg==",
+      "installerVersion": "6.1.1"
+    }
+  ]
+}

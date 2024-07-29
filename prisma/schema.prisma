@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Watch {
+  address       String[]
+  authorAddress String   @id
+}
+
+model Xp {
+  rewards       Int
+  authorAddress String @id
+}
+
+model Profile {
+  bio           String
+  uName         String
+  authorAddress String @id
+  email         String 
+  profPicUrl    String 
+  bannerPicUrl  String
+}

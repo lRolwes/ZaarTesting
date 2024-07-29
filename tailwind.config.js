@@ -17,6 +17,19 @@ module.exports = {
         'gray-medium': '#404040',
         'text-gray': '#929292',
         'text-light-grey' : '#c1c1c1',
+        'whitish':'#ededed',
+        'disabled-gray': '#5a5a5a',
+        'hoveryellow':'#e4d26f',
+        'red': '#ff0000',
+        'light-green':'#d7e0cc',
+        'blue': '#7baeff',
+        'light-gray': '#c1c1c1',
+      },
+      filter: { // extending the filter utility
+        'blur': 'blur(2px)', // custom blur class
+      },
+      blur: {
+        'tiny': '1px',
       },
       fontFamily: {
         primary: ['PrimaryFont', 'sans-serif'],
@@ -24,5 +37,6 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+  ],
 }
